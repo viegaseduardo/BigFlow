@@ -5,6 +5,14 @@
  */
 package fcul.viegas.bigflow;
 
+import fcul.viegas.bigflow.dto.NetworkPacketDTO;
+import fcul.viegas.bigflow.parser.NetworkPacketParserMapFunction;
+import fcul.viegas.bigflow.timestamp.NetworkPacketTimestampAssigner;
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+
 /**
  *
  * @author viegas
@@ -12,7 +20,20 @@ package fcul.viegas.bigflow;
 public class Main {
     
     public static void main (String []args){
-        System.out.println("hi");
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        //env.setParallelism(5);
+
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        
+        //read file
+        DataStreamSource<String> dataStreamSource = env.readTextFile("/home/viegas/Desktop/saida/cenario1.txt");
+        dataStreamSource.setParallelism(1);
+
+        //parse data and correct order
+        SingleOutputStreamOperator<NetworkPacketDTO> singleOutput = dataStreamSource.map(new NetworkPacketParserMapFunction())
+                .assignTimestampsAndWatermarks(new NetworkPacketTimestampAssigner());
+        
+        
     }
     
 }
