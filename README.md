@@ -8,6 +8,6 @@ Extracts over 250 features based solely on raw network packet header traces
     15 features from **
     
     
-Number of Features | Paper
---- | ---
-15 | [Online and Scalable Unsupervised Network Anomaly Detection Method](http://ieeexplore.ieee.org/document/7740019/)
+Nr. of Feat. | Nr. of Orig. Feat. | Paper
+--- | --- | ---
+15 | 17 | [Online and Scalable Unsupervised Network Anomaly Detection Method](http://ieeexplore.ieee.org/document/7740019/)
