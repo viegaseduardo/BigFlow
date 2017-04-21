@@ -1,5 +1,5 @@
 # BigFlow
-An extensive network flow measurement corpus measurement and analysis of massive network activity
+An extensive corpus for network flow measurement and analysis of massive network activity
 
 ### Measurement Architecture
 Extracts over 250 features based solely on raw network packet header traces. All features are extracted in real-time based on several papers.
