@@ -17,4 +17,5 @@ public class Definitions {
     public static final Float PROTOCOL_ICMP = 3.0f;
     public static final Float PROTOCOL_OTHER = 4.0f;
     
+    public static final Long TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B = 5000l;
 }

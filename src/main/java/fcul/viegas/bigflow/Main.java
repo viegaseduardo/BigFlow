@@ -5,15 +5,20 @@
  */
 package fcul.viegas.bigflow;
 
+import fcul.viegas.bigflow.definitions.Definitions;
+import fcul.viegas.bigflow.dto.Features_A_B;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import fcul.viegas.bigflow.parser.NetworkPacketParserMapFunction;
 import fcul.viegas.bigflow.timestamp.NetworkPacketTimestampAssigner;
+import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindowAB;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.time.Time;
 
 /**
  *
@@ -35,31 +40,23 @@ public class Main {
         SingleOutputStreamOperator<NetworkPacketDTO> singleOutput = dataStreamSource.map(new NetworkPacketParserMapFunction())
                 .assignTimestampsAndWatermarks(new NetworkPacketTimestampAssigner());
 
-        //
-        KeyedStream<NetworkPacketDTO, Integer> keyIPSrcDst = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Integer>() {
+        //key stream by ips regardless of source and dest order
+        KeyedStream<NetworkPacketDTO, Long> keyIPSrcDst = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Long>() {
             @Override
-            public Integer getKey(NetworkPacketDTO in) throws Exception {
-                Integer srcDstHash = (in.getSourceIP() + in.getDestinationIP()).hashCode();
-                Integer dstSrcHash = (in.getDestinationIP() + in.getSourceIP()).hashCode();
-                Integer hash = (srcDstHash > dstSrcHash)
-                        ? srcDstHash ^ dstSrcHash
-                        : dstSrcHash ^ srcDstHash;
+            public Long getKey(NetworkPacketDTO in) throws Exception {
+                Long srcDstHash = Long.valueOf((in.getSourceIP() + in.getDestinationIP()).hashCode());
+                Long dstSrcHash = Long.valueOf((in.getDestinationIP() + in.getSourceIP()).hashCode());
+                Long hash = (srcDstHash > dstSrcHash)
+                        ? srcDstHash << 32 + dstSrcHash
+                        : dstSrcHash << 32 + srcDstHash;
                 return hash;
             }
         });
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+        keyIPSrcDst.timeWindow(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B))
+                .fold(new Features_A_B(), new NetworkPacketWindowAB());
         
         
 
