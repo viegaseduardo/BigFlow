@@ -19,8 +19,20 @@ public class Features_A_B {
 
     private Features_ORUNADA_A_B_Middleware_DTO features_ORUNADA_A_B_Middleware;
 
+    private Features_NIGEL_A_B_Middleware_DTO features_NIGEL_A_B_Middleware;
+
     public Features_A_B() {
         this.firstTime = true;
+        this.features_ORUNADA_A_B_Middleware = new Features_ORUNADA_A_B_Middleware_DTO();
+        this.features_NIGEL_A_B_Middleware = new Features_NIGEL_A_B_Middleware_DTO();
+    }
+
+    public Features_NIGEL_A_B_Middleware_DTO getFeatures_NIGEL_A_B_Middleware() {
+        return features_NIGEL_A_B_Middleware;
+    }
+
+    public void setFeatures_NIGEL_A_B_Middleware(Features_NIGEL_A_B_Middleware_DTO features_NIGEL_A_B_Middleware) {
+        this.features_NIGEL_A_B_Middleware = features_NIGEL_A_B_Middleware;
     }
 
     public Features_ORUNADA_A_B_Middleware_DTO getFeatures_ORUNADA_A_B_Middleware() {
@@ -30,7 +42,7 @@ public class Features_A_B {
     public void setFeatures_ORUNADA_A_B_Middleware(Features_ORUNADA_A_B_Middleware_DTO features_ORUNADA_A_B_Middleware) {
         this.features_ORUNADA_A_B_Middleware = features_ORUNADA_A_B_Middleware;
     }
-    
+
     public String getSourceAddress() {
         return sourceAddress;
     }

@@ -10,7 +10,7 @@ import fcul.viegas.bigflow.dto.Features_A_B;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import fcul.viegas.bigflow.parser.NetworkPacketParserMapFunction;
 import fcul.viegas.bigflow.timestamp.NetworkPacketTimestampAssigner;
-import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindowAB;
+import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A_B;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -53,10 +53,20 @@ public class Main {
             }
         });
         
+        //key stream by ips regardless of source and dest order
+        KeyedStream<NetworkPacketDTO, Integer> keyIPSrc = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Integer>() {
+            @Override
+            public Integer getKey(NetworkPacketDTO in) throws Exception {
+                return (in.getSourceIP()).hashCode();
+            }
+        });
+        
+        
+        
         
 
         keyIPSrcDst.timeWindow(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B))
-                .fold(new Features_A_B(), new NetworkPacketWindowAB());
+                .fold(new Features_A_B(), new NetworkPacketWindow_A_B());
         
         
 

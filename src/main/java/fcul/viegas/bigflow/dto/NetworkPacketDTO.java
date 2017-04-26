@@ -15,7 +15,7 @@ public class NetworkPacketDTO {
 
     private String sourceIP;
     private String destinationIP;
-    private String protocol;
+    private Float protocol;
     private Integer timeToLive;
     private Integer sourcePort;
     private Integer destinationPort;
@@ -37,12 +37,21 @@ public class NetworkPacketDTO {
     private Boolean tcp_psh;
     private Boolean tcp_ack;
     private Boolean tcp_urg;
+    private Boolean tcp_cwr;
 
     //icmp
     private Integer icmp_type;
     private Integer icmp_code;
 
     private Integer packet_size;
+
+    public Boolean getTcp_cwr() {
+        return tcp_cwr;
+    }
+
+    public void setTcp_cwr(Boolean tcp_cwr) {
+        this.tcp_cwr = tcp_cwr;
+    }
 
     public Integer getSourcePort() {
         return sourcePort;
@@ -92,11 +101,11 @@ public class NetworkPacketDTO {
         this.destinationIP = destinationIP;
     }
 
-    public String getProtocol() {
+    public Float getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(String protocol) {
+    public void setProtocol(Float protocol) {
         this.protocol = protocol;
     }
 

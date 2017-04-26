@@ -5,6 +5,7 @@
  */
 package fcul.viegas.bigflow.parser;
 
+import fcul.viegas.bigflow.definitions.Definitions;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import org.apache.flink.api.common.functions.MapFunction;
 
@@ -23,7 +24,16 @@ public class NetworkPacketParserMapFunction implements MapFunction<String, Netwo
         networkPacketDTO.setTimestamp(Long.valueOf(split[0]));
         networkPacketDTO.setSourceIP(split[1]);
         networkPacketDTO.setDestinationIP(split[2]);
-        networkPacketDTO.setProtocol(split[3]);
+        String protocol = split[3];
+        if(protocol.equals("TCP")){
+            networkPacketDTO.setProtocol(Definitions.PROTOCOL_TCP);
+        }else if(protocol.equals("UDP")){
+            networkPacketDTO.setProtocol(Definitions.PROTOCOL_UDP);
+        }else if(protocol.equals("ICMP")){
+            networkPacketDTO.setProtocol(Definitions.PROTOCOL_ICMP);
+        }else{
+            networkPacketDTO.setProtocol(Definitions.PROTOCOL_OTHER);
+        }
         networkPacketDTO.setTimeToLive(Integer.valueOf(split[4]));
         networkPacketDTO.setUdp_source(Integer.valueOf(split[5]));
         networkPacketDTO.setUdp_dest(Integer.valueOf(split[6]));
@@ -38,9 +48,10 @@ public class NetworkPacketParserMapFunction implements MapFunction<String, Netwo
         networkPacketDTO.setTcp_psh(split[15].equals("1"));
         networkPacketDTO.setTcp_ack(split[16].equals("1"));
         networkPacketDTO.setTcp_urg(split[17].equals("1"));
-        networkPacketDTO.setIcmp_type(Integer.valueOf(split[18]));
-        networkPacketDTO.setIcmp_code(Integer.valueOf(split[19]));
-        networkPacketDTO.setPacket_size(Integer.valueOf(split[20]));
+        networkPacketDTO.setTcp_cwr(split[18].equals("1"));
+        networkPacketDTO.setIcmp_type(Integer.valueOf(split[19]));
+        networkPacketDTO.setIcmp_code(Integer.valueOf(split[20]));
+        networkPacketDTO.setPacket_size(Integer.valueOf(split[21]));
         if(networkPacketDTO.getUdp_source() == 0){
             networkPacketDTO.setSourcePort(networkPacketDTO.getTcp_source());
             networkPacketDTO.setDestinationPort(networkPacketDTO.getTcp_dest());

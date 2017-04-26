@@ -3,31 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fcul.viegas.bigflow.windows.feature.extractor;
+package fcul.viegas.bigflow.extractors;
 
+import fcul.viegas.bigflow.dto.Features_A;
 import fcul.viegas.bigflow.dto.Features_A_B;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
-import org.apache.flink.api.common.functions.FoldFunction;
 
 /**
  *
  * @author viegas
  */
-public class NetworkPacketWindowAB implements FoldFunction<NetworkPacketDTO, Features_A_B> {
+public class Features_ORUNADA_Extractor {
 
-    private void initializeFeatures(Features_A_B featAB, NetworkPacketDTO networkPacket) {
-        featAB.setFirstTime(false);
-        featAB.setSourceAddressHash(networkPacket.getSourceIP().hashCode());
-        featAB.setDestinationAddressHash(networkPacket.getDestinationIP().hashCode());
-        featAB.setSourceAddress(networkPacket.getSourceIP());
-        featAB.setDestinationAddress(networkPacket.getDestinationIP());
-    }
-
-    private void extract_NIGEL_Features(Features_A_B featAB, NetworkPacketDTO networkPacket) {
-
-    }
-
-    private void extract_ORUNADA_Features(Features_A_B featAB, NetworkPacketDTO networkPacket) {
+    public static void extractFeatures_A_B(Features_A_B featAB, NetworkPacketDTO networkPacket) {
 
         //number of packets
         featAB.getFeatures_ORUNADA_A_B_Middleware().setNumberOfPackets(featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfPackets() + 1);
@@ -41,8 +29,8 @@ public class NetworkPacketWindowAB implements FoldFunction<NetworkPacketDTO, Fea
         featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfRST().addNumber((networkPacket.getTcp_rst()) ? 1 : 0);
         //average FIN
         featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfFIN().addNumber((networkPacket.getTcp_fin()) ? 1 : 0);
-        //need to extract CWR flag
-        //featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfCWR().addNumber((networkPacket.get()) ? 1 : 0);
+        //average CWR 
+        featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfCWR().addNumber((networkPacket.getTcp_cwr()) ? 1 : 0);
         //average URG
         featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber((networkPacket.getTcp_urg()) ? 1 : 0);
 
@@ -54,32 +42,26 @@ public class NetworkPacketWindowAB implements FoldFunction<NetworkPacketDTO, Fea
 
         //average ICMP redirect
         featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber((networkPacket.getIcmp_type() == 5) ? 1 : 0);
-        
+
         //average ICMP time Exceeded
         featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber((networkPacket.getIcmp_type() == 11) ? 1 : 0);
-        
+
         //average ICMP Unreachable
         featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber((networkPacket.getIcmp_type() == 3) ? 1 : 0);
-        
+
         //average ICMP others
-        if(networkPacket.getIcmp_type() != 5 && networkPacket.getIcmp_type() != 11 && networkPacket.getIcmp_type() != 3){
+        if (networkPacket.getIcmp_type() != 5 && networkPacket.getIcmp_type() != 11 && networkPacket.getIcmp_type() != 3) {
             featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber(1);
-        }else{
+        } else {
             featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber(0);
         }
-        
     }
 
-    @Override
-    public Features_A_B fold(Features_A_B featAB, NetworkPacketDTO networkPacket) throws Exception {
-        if (featAB.getFirstTime()) {
-            this.initializeFeatures(featAB, networkPacket);
-        }
-
-        this.extract_NIGEL_Features(featAB, networkPacket);
-        this.extract_ORUNADA_Features(featAB, networkPacket);
-
-        return featAB;
+    public static void extractFeatures_A(Features_A featA, NetworkPacketDTO networkPacket) {
+        //add different destination ip addresses
+        featA.getFeatures_ORUNADA_A_Middleware().getUniqueDestinationIPs().add(networkPacket.getDestinationIP().hashCode());
+        //add different destination ports
+        featA.getFeatures_ORUNADA_A_Middleware().getUniqueDestinationPorts().add(networkPacket.getDestinationPort());
     }
 
 }
