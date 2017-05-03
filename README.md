@@ -1,4 +1,4 @@
- <center># BigFlow</center>
+ # BigFlow
 An extensive corpus for network flow measurement and analysis of massive network activity
 
 ### Measurement Architecture
