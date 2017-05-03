@@ -2,8 +2,9 @@
 An extensive corpus for network flow measurement and analysis of massive network activity
 
 ### Measurement Architecture
-Extracts over 250 features based solely on raw network packet header traces. 
-All features are extracted in real-time based on several papers. Only features that can be extracted directly from the network packet header is extracted (flags + fields - options)
+Extracts over 158 features based solely on raw network packet header traces. (Note that some features may be repeated...)
+All features are extracted in real-time based on several papers. 
+Only features that can be extracted directly from the network packet header is extracted (flags + fields - options)
 #### Features set overview
 Nr. of Feat. | Nr. of Orig. Feat. | Paper
 :---:  | :---:  | ---
