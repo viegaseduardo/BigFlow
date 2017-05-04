@@ -6,11 +6,11 @@
 package fcul.viegas.bigflow.windows.feature.extractor;
 
 import fcul.viegas.bigflow.dto.Features_A_B;
-import fcul.viegas.bigflow.dto.Features_NIGEL_A_B_Middleware_DTO;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import fcul.viegas.bigflow.extractors.Features_MOORE_Extractor;
 import fcul.viegas.bigflow.extractors.Features_NIGEL_Extractor;
 import fcul.viegas.bigflow.extractors.Features_ORUNADA_Extractor;
+import fcul.viegas.bigflow.extractors.Features_VIEGAS_Extractor;
 import org.apache.flink.api.common.functions.FoldFunction;
 
 /**
@@ -37,6 +37,10 @@ public class NetworkPacketWindow_A_B implements FoldFunction<NetworkPacketDTO, F
 
     private void extract_MOORE_Features(Features_A_B featAB, NetworkPacketDTO networkPacket) {
         Features_MOORE_Extractor.extractFeatures(featAB, networkPacket);
+    }
+
+    private void extract_VIEGAS_Features(Features_A_B featAB, NetworkPacketDTO networkPacket) {
+        Features_VIEGAS_Extractor.extractFeatures_A_B(featAB, networkPacket);
     }
 
     @Override

@@ -23,11 +23,22 @@ public class Features_A_B {
 
     private Features_MOORE_A_B_Middleware_DTO features_MOORE_A_B_Middleware;
 
+    private Features_VIEGAS_A_B_Middleware_DTO features_VIEGAS_A_B_Middleware;
+
     public Features_A_B() {
         this.firstTime = true;
         this.features_ORUNADA_A_B_Middleware = new Features_ORUNADA_A_B_Middleware_DTO();
         this.features_NIGEL_A_B_Middleware = new Features_NIGEL_A_B_Middleware_DTO();
         this.features_MOORE_A_B_Middleware = new Features_MOORE_A_B_Middleware_DTO();
+        this.features_VIEGAS_A_B_Middleware = new Features_VIEGAS_A_B_Middleware_DTO();
+    }
+
+    public Features_VIEGAS_A_B_Middleware_DTO getFeatures_VIEGAS_A_B_Middleware() {
+        return features_VIEGAS_A_B_Middleware;
+    }
+
+    public void setFeatures_VIEGAS_A_B_Middleware(Features_VIEGAS_A_B_Middleware_DTO features_VIEGAS_A_B_Middleware) {
+        this.features_VIEGAS_A_B_Middleware = features_VIEGAS_A_B_Middleware;
     }
 
     public Features_MOORE_A_B_Middleware_DTO getFeatures_MOORE_A_B_Middleware() {

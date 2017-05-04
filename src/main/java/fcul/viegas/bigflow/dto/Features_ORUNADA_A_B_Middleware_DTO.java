@@ -27,7 +27,6 @@ public class Features_ORUNADA_A_B_Middleware_DTO {
     private MathUtils averageICMPTimeExceeded;
     private MathUtils averageICMPUnreachable;
     private MathUtils averageICMPOther;
-    
 
     public Features_ORUNADA_A_B_Middleware_DTO() {
         this.averageOfPackets = 0;
@@ -123,6 +122,62 @@ public class Features_ORUNADA_A_B_Middleware_DTO {
     }
 
     public void setNumberOfURG(MathUtils averageOfURG) {
+        this.averageOfURG = averageOfURG;
+    }
+
+    public int getAverageOfPackets() {
+        return averageOfPackets;
+    }
+
+    public void setAverageOfPackets(int averageOfPackets) {
+        this.averageOfPackets = averageOfPackets;
+    }
+
+    public MathUtils getAverageOfSYN() {
+        return averageOfSYN;
+    }
+
+    public void setAverageOfSYN(MathUtils averageOfSYN) {
+        this.averageOfSYN = averageOfSYN;
+    }
+
+    public MathUtils getAverageOfACK() {
+        return averageOfACK;
+    }
+
+    public void setAverageOfACK(MathUtils averageOfACK) {
+        this.averageOfACK = averageOfACK;
+    }
+
+    public MathUtils getAverageOfRST() {
+        return averageOfRST;
+    }
+
+    public void setAverageOfRST(MathUtils averageOfRST) {
+        this.averageOfRST = averageOfRST;
+    }
+
+    public MathUtils getAverageOfFIN() {
+        return averageOfFIN;
+    }
+
+    public void setAverageOfFIN(MathUtils averageOfFIN) {
+        this.averageOfFIN = averageOfFIN;
+    }
+
+    public MathUtils getAverageOfCWR() {
+        return averageOfCWR;
+    }
+
+    public void setAverageOfCWR(MathUtils averageOfCWR) {
+        this.averageOfCWR = averageOfCWR;
+    }
+
+    public MathUtils getAverageOfURG() {
+        return averageOfURG;
+    }
+
+    public void setAverageOfURG(MathUtils averageOfURG) {
         this.averageOfURG = averageOfURG;
     }
 

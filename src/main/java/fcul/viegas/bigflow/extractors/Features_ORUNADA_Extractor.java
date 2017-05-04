@@ -41,27 +41,27 @@ public class Features_ORUNADA_Extractor {
         featAB.getFeatures_ORUNADA_A_B_Middleware().getAverageTTL().addNumber(networkPacket.getTimeToLive());
 
         //average ICMP redirect
-        featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber((networkPacket.getIcmp_type() == 5) ? 1 : 0);
+        featAB.getFeatures_ORUNADA_A_B_Middleware().getAverageICMPRedirect().addNumber((networkPacket.getIcmp_type() == 5) ? 1 : 0);
 
         //average ICMP time Exceeded
-        featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber((networkPacket.getIcmp_type() == 11) ? 1 : 0);
+        featAB.getFeatures_ORUNADA_A_B_Middleware().getAverageICMPTimeExceeded().addNumber((networkPacket.getIcmp_type() == 11) ? 1 : 0);
 
         //average ICMP Unreachable
-        featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber((networkPacket.getIcmp_type() == 3) ? 1 : 0);
+        featAB.getFeatures_ORUNADA_A_B_Middleware().getAverageICMPUnreachable().addNumber((networkPacket.getIcmp_type() == 3) ? 1 : 0);
 
         //average ICMP others
         if (networkPacket.getIcmp_type() != 5 && networkPacket.getIcmp_type() != 11 && networkPacket.getIcmp_type() != 3) {
-            featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber(1);
+            featAB.getFeatures_ORUNADA_A_B_Middleware().getAverageICMPOther().addNumber(1);
         } else {
-            featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfURG().addNumber(0);
+            featAB.getFeatures_ORUNADA_A_B_Middleware().getAverageICMPOther().addNumber(0);
         }
     }
 
     public static void extractFeatures_A(Features_A featA, NetworkPacketDTO networkPacket) {
         //add different destination ip addresses
         featA.getFeatures_ORUNADA_A_Middleware().getUniqueDestinationIPs().add(networkPacket.getDestinationIP().hashCode());
-        //add different destination ports
-        featA.getFeatures_ORUNADA_A_Middleware().getUniqueDestinationPorts().add(networkPacket.getDestinationPort());
+        //add different destination services
+        featA.getFeatures_ORUNADA_A_Middleware().getUniqueDestinationPorts().add((networkPacket.getDestinationIP() + networkPacket.getDestinationPort()).hashCode());
     }
 
 }

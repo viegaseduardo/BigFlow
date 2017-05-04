@@ -8,6 +8,7 @@ package fcul.viegas.bigflow.windows.feature.extractor;
 import fcul.viegas.bigflow.dto.Features_A;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import fcul.viegas.bigflow.extractors.Features_ORUNADA_Extractor;
+import fcul.viegas.bigflow.extractors.Features_VIEGAS_Extractor;
 import org.apache.flink.api.common.functions.FoldFunction;
 
 /**
@@ -26,12 +27,17 @@ public class NetworkPacketWindow_A implements FoldFunction<NetworkPacketDTO, Fea
         Features_ORUNADA_Extractor.extractFeatures_A(featA, networkPacket);
     }
     
+    private void extract_VIEGAS_Features(Features_A featA, NetworkPacketDTO networkPacket) {
+        Features_VIEGAS_Extractor.extractFeatures_A(featA, networkPacket);
+    }
+    
     @Override
     public Features_A fold(Features_A featA, NetworkPacketDTO networkPacket) throws Exception {
         if (featA.getFirstTime()) {
             this.initializeFeatures(featA, networkPacket);
         }
         this.extract_ORUNADA_Features(featA, networkPacket);
+        this.extract_VIEGAS_Features(featA, networkPacket);
         
         return featA;
     }
