@@ -28,6 +28,11 @@ public class NetworkPacketWindowJoiner implements JoinFunction<Features_A_B_DTO,
         Features_ORUNADA_Extractor.extractFeatureDTO(featDTO.getFeatureORUNADA(), featAB, featA);
         Features_MOORE_Extractor.extractFeatureDTO(featDTO.getFeatureMOORE(), featAB, featA);
         Features_NIGEL_Extractor.extractFeatureDTO(featDTO.getFeatureNIGEL(), featAB, featA);
+        
+        featDTO.setSourceIP(featAB.getSourceAddress());
+        featDTO.setDestinationIP(featAB.getDestinationAddress());
+        featDTO.setSourcePort(featAB.getSourcePortAddress());
+        featDTO.setDestinationPort(featAB.getDestinationPortAddress());
 
         return featDTO;
     }

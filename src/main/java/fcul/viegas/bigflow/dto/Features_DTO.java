@@ -12,17 +12,91 @@ import fcul.viegas.bigflow.definitions.Definitions;
  * @author viegas
  */
 public class Features_DTO {
-    
+
+    private String sourceIP;
+    private String destinationIP;
+    private Integer sourcePort;
+    private Integer destinationPort;
+
+    private String taxonomy;
+    private Float distance;
+    private Integer nbDetectors;
+    private String label;
+
     private Features_MOORE_DTO featureMOORE;
     private Features_NIGEL_DTO featureNIGEL;
     private Features_ORUNADA_DTO featureORUNADA;
     private Features_VIEGAS_DTO featureVIEGAS;
-    
-    public Features_DTO(){
+
+    public Features_DTO() {
         this.featureMOORE = new Features_MOORE_DTO();
         this.featureNIGEL = new Features_NIGEL_DTO();
         this.featureORUNADA = new Features_ORUNADA_DTO();
         this.featureVIEGAS = new Features_VIEGAS_DTO();
+    }
+
+    public String getTaxonomy() {
+        return taxonomy;
+    }
+
+    public void setTaxonomy(String taxonomy) {
+        this.taxonomy = taxonomy;
+    }
+
+    public Float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Float distance) {
+        this.distance = distance;
+    }
+
+    public Integer getNbDetectors() {
+        return nbDetectors;
+    }
+
+    public void setNbDetectors(Integer nbDetectors) {
+        this.nbDetectors = nbDetectors;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getSourceIP() {
+        return sourceIP;
+    }
+
+    public void setSourceIP(String sourceIP) {
+        this.sourceIP = sourceIP;
+    }
+
+    public String getDestinationIP() {
+        return destinationIP;
+    }
+
+    public void setDestinationIP(String destinationIP) {
+        this.destinationIP = destinationIP;
+    }
+
+    public Integer getSourcePort() {
+        return sourcePort;
+    }
+
+    public void setSourcePort(Integer sourcePort) {
+        this.sourcePort = sourcePort;
+    }
+
+    public Integer getDestinationPort() {
+        return destinationPort;
+    }
+
+    public void setDestinationPort(Integer destinationPort) {
+        this.destinationPort = destinationPort;
     }
 
     public Features_MOORE_DTO getFeatureMOORE() {
@@ -56,16 +130,21 @@ public class Features_DTO {
     public void setFeatureVIEGAS(Features_VIEGAS_DTO featureVIEGAS) {
         this.featureVIEGAS = featureVIEGAS;
     }
-    
-    public String toString(){
+
+    public String toString() {
         String ret = "";
-        
+
         ret = ret + this.featureORUNADA.toString() + Definitions.FIELD_DELIM;
         ret = ret + this.featureNIGEL.toString() + Definitions.FIELD_DELIM;
         ret = ret + this.featureMOORE.toString() + Definitions.FIELD_DELIM;
         ret = ret + this.featureVIEGAS.toString() + Definitions.FIELD_DELIM;
         
+        ret = ret + this.taxonomy + Definitions.FIELD_DELIM;
+        ret = ret + this.distance + Definitions.FIELD_DELIM;
+        ret = ret + this.nbDetectors + Definitions.FIELD_DELIM;
+        ret = ret + this.label;
+
         return ret;
     }
-    
+
 }

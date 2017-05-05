@@ -16,17 +16,17 @@ import org.apache.flink.streaming.api.watermark.Watermark;
 public class NetworkPacketTimestampAssigner implements AssignerWithPeriodicWatermarks<NetworkPacketDTO>{
     
     private long maxTimestamp = 0l;
-    private final long maxLatenessSize = 10l;
+    private final long maxLatenessSize = 100l;
 
     @Override
     public long extractTimestamp(NetworkPacketDTO t, long l) {
-        maxTimestamp = Math.max(t.getTimestamp(), maxTimestamp);
+        maxTimestamp = Math.max(t.getTimestamp()/1000, maxTimestamp/1000);
         return t.getTimestamp()/1000;
     }
 
     @Override
     public Watermark getCurrentWatermark() {
-        Watermark watermark = new Watermark((long) ((maxTimestamp/1000.0f) - maxLatenessSize));
+        Watermark watermark = new Watermark(maxTimestamp - maxLatenessSize);
         return watermark;
     }
     

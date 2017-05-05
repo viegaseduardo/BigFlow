@@ -32,7 +32,7 @@ public class MathUtilsArray {
     }
 
     private void sortArray() {
-        this.vec = (Integer[]) this.values.toArray();
+        this.vec = this.values.toArray(new Integer[this.values.size()]);;
         Arrays.sort(this.vec);
         this.isSorted = true;
     }

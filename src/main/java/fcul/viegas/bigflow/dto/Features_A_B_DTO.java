@@ -16,6 +16,8 @@ public class Features_A_B_DTO {
     private Integer destinationAddressHash;
     private String sourceAddress;
     private String destinationAddress;
+    private Integer sourcePortAddress;
+    private Integer destinationPortAddress;
 
     private Features_ORUNADA_A_B_Middleware_DTO features_ORUNADA_A_B_Middleware;
 
@@ -103,6 +105,22 @@ public class Features_A_B_DTO {
 
     public void setFirstTime(Boolean firstTime) {
         this.firstTime = firstTime;
+    }
+
+    public Integer getSourcePortAddress() {
+        return sourcePortAddress;
+    }
+
+    public void setSourcePortAddress(Integer sourcePortAddress) {
+        this.sourcePortAddress = sourcePortAddress;
+    }
+
+    public Integer getDestinationPortAddress() {
+        return destinationPortAddress;
+    }
+
+    public void setDestinationPortAddress(Integer destinationPortAddress) {
+        this.destinationPortAddress = destinationPortAddress;
     }
 
 }

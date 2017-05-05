@@ -25,6 +25,7 @@ public class MathUtils {
     public void addNumber(int number){
         this.count += 1;
         this.sum += number;
+        this.sumSq += number*number;
     }
     
     public Float getAverage(){

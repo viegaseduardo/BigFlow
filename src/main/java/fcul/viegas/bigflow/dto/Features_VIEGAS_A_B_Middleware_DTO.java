@@ -45,6 +45,9 @@ public class Features_VIEGAS_A_B_Middleware_DTO {
         this.percentageICMPTimeExceeded = new MathUtils();
         this.percentageICMPUnreacheable = new MathUtils();
         this.percentageICMPOtherTypes = new MathUtils();
+        
+        this.forward = new Features_VIEGAS_A_B_Direction_Middleware_DTO();
+        this.backward = new Features_VIEGAS_A_B_Direction_Middleware_DTO();
     }
 
     public Integer getCountPackets() {

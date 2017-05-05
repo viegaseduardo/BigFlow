@@ -198,7 +198,7 @@ public class Features_MOORE_Extractor {
         featMOORE.setUrgent_pkts_sent_a_b(featMooreAB.getForward().getUrgent_pkts_sent().intValue());
         featMOORE.setUrgent_pkts_sent_b_a(featMooreAB.getBackward().getUrgent_pkts_sent().intValue());
 
-        if (featMooreAB.getForward().getLastNetworkPacket() != null &&
+        if (featMooreAB.getForward().getLastNetworkPacket() == null ||
                 Objects.equals(featMooreAB.getForward().getFirst_timestamp(), featMooreAB.getForward().getLastNetworkPacket().getTimestamp())) {
             featMOORE.setThroughput_a_b(0);
         } else {
@@ -208,7 +208,7 @@ public class Features_MOORE_Extractor {
             featMOORE.setThroughput_a_b(throughput.intValue());
         }
 
-        if (featMooreAB.getBackward().getLastNetworkPacket() != null &&
+        if (featMooreAB.getBackward().getLastNetworkPacket() == null ||
                 Objects.equals(featMooreAB.getBackward().getFirst_timestamp(), featMooreAB.getBackward().getLastNetworkPacket().getTimestamp())) {
             featMOORE.setThroughput_b_a(0);
         } else {
