@@ -11,8 +11,6 @@ package fcul.viegas.bigflow.dto;
  */
 public class Features_VIEGAS_DTO {
 
-    private Integer destinationPort;
-
     private Integer countPackets;
     private Integer countBytes;
     private Float averagePacketSize;
@@ -64,14 +62,6 @@ public class Features_VIEGAS_DTO {
     private Float percentageICMPTimeExceeded_A;
     private Float percentageICMPUnreacheable_A;
     private Float percentageICMPOtherTypes_A;
-
-    public Integer getDestinationPort() {
-        return destinationPort;
-    }
-
-    public void setDestinationPort(Integer destinationPort) {
-        this.destinationPort = destinationPort;
-    }
 
     public Integer getCountPackets() {
         return countPackets;
@@ -456,7 +446,5 @@ public class Features_VIEGAS_DTO {
     public void setPercentageICMPOtherTypes_A(Float percentageICMPOtherTypes_A) {
         this.percentageICMPOtherTypes_A = percentageICMPOtherTypes_A;
     }
-
-    
 
 }

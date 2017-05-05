@@ -53,24 +53,32 @@ public class MathUtilsArray {
         }
         if (this.vec.length > 0) {
             if (this.vec.length % 2 == 0) {
-                return (this.vec[this.vec.length / 2] +  this.vec[(this.vec.length / 2) - 1])/2;
+                return (this.vec[this.vec.length / 2] + this.vec[(this.vec.length / 2) - 1]) / 2;
             } else {
                 return this.vec[this.vec.length / 2];
             }
         }
         return 0;
     }
-    
-    public Float getAverage(){
+
+    public Float getAverage() {
         return this.mathUtils.getAverage();
     }
-    
+
     public double getVariance() {
         return this.mathUtils.getVariance();
     }
-    
-    public double getStandardDeviation(){
+
+    public double getStandardDeviation() {
         return this.mathUtils.getStandardDeviation();
+    }
+
+    public MathUtils getMathUtils() {
+        return mathUtils;
+    }
+
+    public void setMathUtils(MathUtils mathUtils) {
+        this.mathUtils = mathUtils;
     }
 
 }

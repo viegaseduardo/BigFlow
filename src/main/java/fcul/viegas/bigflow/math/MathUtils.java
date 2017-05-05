@@ -20,6 +20,7 @@ public class MathUtils {
         this.sum = 0l;
         this.sumSq = 0l;
     }
+   
     
     public void addNumber(int number){
         this.count += 1;

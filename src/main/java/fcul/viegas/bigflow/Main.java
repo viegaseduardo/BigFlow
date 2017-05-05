@@ -6,18 +6,24 @@
 package fcul.viegas.bigflow;
 
 import fcul.viegas.bigflow.definitions.Definitions;
-import fcul.viegas.bigflow.dto.Features_A_B;
+import fcul.viegas.bigflow.dto.Features_A_DTO;
+import fcul.viegas.bigflow.dto.Features_A_B_DTO;
+import fcul.viegas.bigflow.dto.Features_DTO;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import fcul.viegas.bigflow.parser.NetworkPacketParserMapFunction;
 import fcul.viegas.bigflow.timestamp.NetworkPacketTimestampAssigner;
+import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindowJoiner;
+import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A_B;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
 /**
@@ -52,7 +58,7 @@ public class Main {
                 return hash;
             }
         });
-        
+
         //key stream by ips regardless of source and dest order
         KeyedStream<NetworkPacketDTO, Integer> keyIPSrc = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Integer>() {
             @Override
@@ -60,16 +66,34 @@ public class Main {
                 return (in.getSourceIP()).hashCode();
             }
         });
-        
-        
-        
-        
 
-        keyIPSrcDst.timeWindow(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B))
-                .fold(new Features_A_B(), new NetworkPacketWindow_A_B());
-        
-        
+        //A to B window operator
+        SingleOutputStreamOperator<Features_A_B_DTO> networkPacketWindow_A_B
+                = keyIPSrcDst.timeWindow(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B))
+                        .fold(new Features_A_B_DTO(), new NetworkPacketWindow_A_B());
 
+        //A window operator
+        SingleOutputStreamOperator<Features_A_DTO> networkPacketWindow_A
+                = keyIPSrcDst.timeWindow(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A))
+                        .fold(new Features_A_DTO(), new NetworkPacketWindow_A());
+
+        //join A and AtoB back together
+        DataStream<Features_DTO> networkFeatures = networkPacketWindow_A_B.join(networkPacketWindow_A)
+                .where(new KeySelector<Features_A_B_DTO, Integer>() {
+                    @Override
+                    public Integer getKey(Features_A_B_DTO in) throws Exception {
+                        return (in.getSourceAddress()).hashCode();
+                    }
+                }).equalTo(new KeySelector<Features_A_DTO, Integer>() {
+            @Override
+            public Integer getKey(Features_A_DTO in) throws Exception {
+                return (in.getAddress()).hashCode();
+            }
+        }).window(TumblingEventTimeWindows.of(Time.milliseconds(2000l)))
+                .apply(new NetworkPacketWindowJoiner());
+
+        
+        
         long startTime = System.currentTimeMillis();
 
         env.execute("meu job");

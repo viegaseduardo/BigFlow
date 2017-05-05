@@ -17,7 +17,7 @@ public class Features_MOORE_DTO {
     private Integer avgInterArrivalTime;
     private Integer quartileThirdInterArrivalTime;
     private Integer maximumInterArrivalTime;
-    private Integer varianceInterArrivalTime;
+    private Double varianceInterArrivalTime;
 
     private Integer minimumInterArrivalTime_a_b;
     private Integer quartileFirstInterArrivalTime_a_b;
@@ -25,7 +25,7 @@ public class Features_MOORE_DTO {
     private Integer avgInterArrivalTime_a_b;
     private Integer quartileThirdInterArrivalTime_a_b;
     private Integer maximumInterArrivalTime_a_b;
-    private Integer varianceInterArrivalTime_a_b;
+    private Double varianceInterArrivalTime_a_b;
 
     private Integer minimumInterArrivalTime_b_a;
     private Integer quartileFirstInterArrivalTime_b_a;
@@ -33,32 +33,32 @@ public class Features_MOORE_DTO {
     private Integer avgInterArrivalTime_b_a;
     private Integer quartileThirdInterArrivalTime_b_a;
     private Integer maximumInterArrivalTime_b_a;
-    private Integer varianceInterArrivalTime_b_a;
+    private Double varianceInterArrivalTime_b_a;
 
     //for us dataWire = packetLength
     private Integer minimumDataWire;
     private Integer quartileFirstDataWire;
     private Integer medianDataWire;
     private Integer avgDataWire;
-    private Integer quartileDataWire;
+    private Integer quartileThirdDataWire;
     private Integer maximumDataWire;
-    private Integer varianceDataWire;
+    private Double varianceDataWire;
 
     private Integer minimumDataWire_a_b;
     private Integer quartileFirstDataWire_a_b;
     private Integer medianDataWire_a_b;
     private Integer avgDataWire_a_b;
-    private Integer quartileDataWire_a_b;
+    private Integer quartileThirdDataWire_a_b;
     private Integer maximumDataWire_a_b;
-    private Integer varianceDataWire_a_b;
+    private Double varianceDataWire_a_b;
 
     private Integer minimumDataWire_b_a;
     private Integer quartileFirstDataWire_b_a;
     private Integer medianDataWire_b_a;
     private Integer avgDataWire_b_a;
-    private Integer quartileDataWire_b_a;
+    private Integer quartileThirdDataWire_b_a;
     private Integer maximumDataWire_b_a;
-    private Integer varianceDataWire_b_a;
+    private Double varianceDataWire_b_a;
 
     private Integer total_packets_a_b;
     private Integer total_packets_b_a;
@@ -132,11 +132,11 @@ public class Features_MOORE_DTO {
         this.maximumInterArrivalTime = maximumInterArrivalTime;
     }
 
-    public Integer getVarianceInterArrivalTime() {
+    public Double getVarianceInterArrivalTime() {
         return varianceInterArrivalTime;
     }
 
-    public void setVarianceInterArrivalTime(Integer varianceInterArrivalTime) {
+    public void setVarianceInterArrivalTime(Double varianceInterArrivalTime) {
         this.varianceInterArrivalTime = varianceInterArrivalTime;
     }
 
@@ -188,11 +188,11 @@ public class Features_MOORE_DTO {
         this.maximumInterArrivalTime_a_b = maximumInterArrivalTime_a_b;
     }
 
-    public Integer getVarianceInterArrivalTime_a_b() {
+    public Double getVarianceInterArrivalTime_a_b() {
         return varianceInterArrivalTime_a_b;
     }
 
-    public void setVarianceInterArrivalTime_a_b(Integer varianceInterArrivalTime_a_b) {
+    public void setVarianceInterArrivalTime_a_b(Double varianceInterArrivalTime_a_b) {
         this.varianceInterArrivalTime_a_b = varianceInterArrivalTime_a_b;
     }
 
@@ -244,11 +244,11 @@ public class Features_MOORE_DTO {
         this.maximumInterArrivalTime_b_a = maximumInterArrivalTime_b_a;
     }
 
-    public Integer getVarianceInterArrivalTime_b_a() {
+    public Double getVarianceInterArrivalTime_b_a() {
         return varianceInterArrivalTime_b_a;
     }
 
-    public void setVarianceInterArrivalTime_b_a(Integer varianceInterArrivalTime_b_a) {
+    public void setVarianceInterArrivalTime_b_a(Double varianceInterArrivalTime_b_a) {
         this.varianceInterArrivalTime_b_a = varianceInterArrivalTime_b_a;
     }
 
@@ -284,12 +284,12 @@ public class Features_MOORE_DTO {
         this.avgDataWire = avgDataWire;
     }
 
-    public Integer getQuartileDataWire() {
-        return quartileDataWire;
+    public Integer getQuartileThirdDataWire() {
+        return quartileThirdDataWire;
     }
 
-    public void setQuartileDataWire(Integer quartileDataWire) {
-        this.quartileDataWire = quartileDataWire;
+    public void setQuartileThirdDataWire(Integer quartileThirdDataWire) {
+        this.quartileThirdDataWire = quartileThirdDataWire;
     }
 
     public Integer getMaximumDataWire() {
@@ -300,11 +300,11 @@ public class Features_MOORE_DTO {
         this.maximumDataWire = maximumDataWire;
     }
 
-    public Integer getVarianceDataWire() {
+    public Double getVarianceDataWire() {
         return varianceDataWire;
     }
 
-    public void setVarianceDataWire(Integer varianceDataWire) {
+    public void setVarianceDataWire(Double varianceDataWire) {
         this.varianceDataWire = varianceDataWire;
     }
 
@@ -340,12 +340,12 @@ public class Features_MOORE_DTO {
         this.avgDataWire_a_b = avgDataWire_a_b;
     }
 
-    public Integer getQuartileDataWire_a_b() {
-        return quartileDataWire_a_b;
+    public Integer getQuartileThirdDataWire_a_b() {
+        return quartileThirdDataWire_a_b;
     }
 
-    public void setQuartileDataWire_a_b(Integer quartileDataWire_a_b) {
-        this.quartileDataWire_a_b = quartileDataWire_a_b;
+    public void setQuartileThirdDataWire_a_b(Integer quartileThirdDataWire_a_b) {
+        this.quartileThirdDataWire_a_b = quartileThirdDataWire_a_b;
     }
 
     public Integer getMaximumDataWire_a_b() {
@@ -356,11 +356,11 @@ public class Features_MOORE_DTO {
         this.maximumDataWire_a_b = maximumDataWire_a_b;
     }
 
-    public Integer getVarianceDataWire_a_b() {
+    public Double getVarianceDataWire_a_b() {
         return varianceDataWire_a_b;
     }
 
-    public void setVarianceDataWire_a_b(Integer varianceDataWire_a_b) {
+    public void setVarianceDataWire_a_b(Double varianceDataWire_a_b) {
         this.varianceDataWire_a_b = varianceDataWire_a_b;
     }
 
@@ -396,12 +396,12 @@ public class Features_MOORE_DTO {
         this.avgDataWire_b_a = avgDataWire_b_a;
     }
 
-    public Integer getQuartileDataWire_b_a() {
-        return quartileDataWire_b_a;
+    public Integer getQuartileThirdDataWire_b_a() {
+        return quartileThirdDataWire_b_a;
     }
 
-    public void setQuartileDataWire_b_a(Integer quartileDataWire_b_a) {
-        this.quartileDataWire_b_a = quartileDataWire_b_a;
+    public void setQuartileThirdDataWire_b_a(Integer quartileThirdDataWire_b_a) {
+        this.quartileThirdDataWire_b_a = quartileThirdDataWire_b_a;
     }
 
     public Integer getMaximumDataWire_b_a() {
@@ -412,11 +412,11 @@ public class Features_MOORE_DTO {
         this.maximumDataWire_b_a = maximumDataWire_b_a;
     }
 
-    public Integer getVarianceDataWire_b_a() {
+    public Double getVarianceDataWire_b_a() {
         return varianceDataWire_b_a;
     }
 
-    public void setVarianceDataWire_b_a(Integer varianceDataWire_b_a) {
+    public void setVarianceDataWire_b_a(Double varianceDataWire_b_a) {
         this.varianceDataWire_b_a = varianceDataWire_b_a;
     }
 

@@ -11,57 +11,38 @@ package fcul.viegas.bigflow.dto;
  */
 public class Features_NIGEL_DTO {
 
-    private Float minimumForwardPacketLength;
+    private Integer minimumForwardPacketLength;
     private Float meanForwardPacketLength;
-    private Float maximumForwardPacketLength;
+    private Integer maximumForwardPacketLength;
     private Float standardDeviationForwardPacketLength;
-    private Float minimumBackwardPacketLength;
+    
+    private Integer minimumBackwardPacketLength;
     private Float meanBackwardPacketLength;
-    private Float maximumBackwardPacketLength;
+    private Integer maximumBackwardPacketLength;
     private Float standardDeviationBackwardPacketLength;
-    private Float minimumForwardInterArrivalTime;
+    
+    private Integer minimumForwardInterArrivalTime;
     private Float meanForwardInterArrivalTime;
-    private Float maximumForwardInterArrivalTime;
+    private Integer maximumForwardInterArrivalTime;
     private Float standardDeviationForwardInterArrivalTime;
-    private Float minimumBackwardInterArrivalTime;
+    
+    private Integer minimumBackwardInterArrivalTime;
     private Float meanBackwardInterArrivalTime;
-    private Float maximumBackwardInterArrivalTime;
+    private Integer maximumBackwardInterArrivalTime;
     private Float standardDeviationBackwardInterArrivalTime;
+    
     private Float protocol;
-    private Float numberOfPacketsInForwardDirection;
-    private Float numberOfBytesInForwardDirection;
-    private Float numberOfPacketsInBackwardDirection;
-    private Float numberOfBytesInBackwardDirection;
+    
+    private Integer numberOfPacketsInForwardDirection;
+    private Integer numberOfBytesInForwardDirection;
+    private Integer numberOfPacketsInBackwardDirection;
+    private Integer numberOfBytesInBackwardDirection;
 
-    public Features_NIGEL_DTO() {
-        this.minimumForwardPacketLength = 0.0f;
-        this.meanForwardPacketLength = 0.0f;
-        this.maximumForwardPacketLength = 0.0f;
-        this.standardDeviationForwardPacketLength = 0.0f;
-        this.minimumBackwardPacketLength = 0.0f;
-        this.meanBackwardPacketLength = 0.0f;
-        this.maximumBackwardPacketLength = 0.0f;
-        this.standardDeviationBackwardPacketLength = 0.0f;
-        this.minimumForwardInterArrivalTime = 0.0f;
-        this.meanForwardInterArrivalTime = 0.0f;
-        this.maximumForwardInterArrivalTime = 0.0f;
-        this.standardDeviationForwardInterArrivalTime = 0.0f;
-        this.minimumBackwardInterArrivalTime = 0.0f;
-        this.meanBackwardInterArrivalTime = 0.0f;
-        this.maximumBackwardInterArrivalTime = 0.0f;
-        this.standardDeviationBackwardInterArrivalTime = 0.0f;
-        this.protocol = 0.0f;
-        this.numberOfPacketsInForwardDirection = 0.0f;
-        this.numberOfBytesInForwardDirection = 0.0f;
-        this.numberOfPacketsInBackwardDirection = 0.0f;
-        this.numberOfBytesInBackwardDirection = 0.0f;
-    }
-
-    public Float getMinimumForwardPacketLength() {
+    public Integer getMinimumForwardPacketLength() {
         return minimumForwardPacketLength;
     }
 
-    public void setMinimumForwardPacketLength(Float minimumForwardPacketLength) {
+    public void setMinimumForwardPacketLength(Integer minimumForwardPacketLength) {
         this.minimumForwardPacketLength = minimumForwardPacketLength;
     }
 
@@ -73,11 +54,11 @@ public class Features_NIGEL_DTO {
         this.meanForwardPacketLength = meanForwardPacketLength;
     }
 
-    public Float getMaximumForwardPacketLength() {
+    public Integer getMaximumForwardPacketLength() {
         return maximumForwardPacketLength;
     }
 
-    public void setMaximumForwardPacketLength(Float maximumForwardPacketLength) {
+    public void setMaximumForwardPacketLength(Integer maximumForwardPacketLength) {
         this.maximumForwardPacketLength = maximumForwardPacketLength;
     }
 
@@ -89,11 +70,11 @@ public class Features_NIGEL_DTO {
         this.standardDeviationForwardPacketLength = standardDeviationForwardPacketLength;
     }
 
-    public Float getMinimumBackwardPacketLength() {
+    public Integer getMinimumBackwardPacketLength() {
         return minimumBackwardPacketLength;
     }
 
-    public void setMinimumBackwardPacketLength(Float minimumBackwardPacketLength) {
+    public void setMinimumBackwardPacketLength(Integer minimumBackwardPacketLength) {
         this.minimumBackwardPacketLength = minimumBackwardPacketLength;
     }
 
@@ -105,11 +86,11 @@ public class Features_NIGEL_DTO {
         this.meanBackwardPacketLength = meanBackwardPacketLength;
     }
 
-    public Float getMaximumBackwardPacketLength() {
+    public Integer getMaximumBackwardPacketLength() {
         return maximumBackwardPacketLength;
     }
 
-    public void setMaximumBackwardPacketLength(Float maximumBackwardPacketLength) {
+    public void setMaximumBackwardPacketLength(Integer maximumBackwardPacketLength) {
         this.maximumBackwardPacketLength = maximumBackwardPacketLength;
     }
 
@@ -121,11 +102,11 @@ public class Features_NIGEL_DTO {
         this.standardDeviationBackwardPacketLength = standardDeviationBackwardPacketLength;
     }
 
-    public Float getMinimumForwardInterArrivalTime() {
+    public Integer getMinimumForwardInterArrivalTime() {
         return minimumForwardInterArrivalTime;
     }
 
-    public void setMinimumForwardInterArrivalTime(Float minimumForwardInterArrivalTime) {
+    public void setMinimumForwardInterArrivalTime(Integer minimumForwardInterArrivalTime) {
         this.minimumForwardInterArrivalTime = minimumForwardInterArrivalTime;
     }
 
@@ -137,11 +118,11 @@ public class Features_NIGEL_DTO {
         this.meanForwardInterArrivalTime = meanForwardInterArrivalTime;
     }
 
-    public Float getMaximumForwardInterArrivalTime() {
+    public Integer getMaximumForwardInterArrivalTime() {
         return maximumForwardInterArrivalTime;
     }
 
-    public void setMaximumForwardInterArrivalTime(Float maximumForwardInterArrivalTime) {
+    public void setMaximumForwardInterArrivalTime(Integer maximumForwardInterArrivalTime) {
         this.maximumForwardInterArrivalTime = maximumForwardInterArrivalTime;
     }
 
@@ -153,11 +134,11 @@ public class Features_NIGEL_DTO {
         this.standardDeviationForwardInterArrivalTime = standardDeviationForwardInterArrivalTime;
     }
 
-    public Float getMinimumBackwardInterArrivalTime() {
+    public Integer getMinimumBackwardInterArrivalTime() {
         return minimumBackwardInterArrivalTime;
     }
 
-    public void setMinimumBackwardInterArrivalTime(Float minimumBackwardInterArrivalTime) {
+    public void setMinimumBackwardInterArrivalTime(Integer minimumBackwardInterArrivalTime) {
         this.minimumBackwardInterArrivalTime = minimumBackwardInterArrivalTime;
     }
 
@@ -169,11 +150,11 @@ public class Features_NIGEL_DTO {
         this.meanBackwardInterArrivalTime = meanBackwardInterArrivalTime;
     }
 
-    public Float getMaximumBackwardInterArrivalTime() {
+    public Integer getMaximumBackwardInterArrivalTime() {
         return maximumBackwardInterArrivalTime;
     }
 
-    public void setMaximumBackwardInterArrivalTime(Float maximumBackwardInterArrivalTime) {
+    public void setMaximumBackwardInterArrivalTime(Integer maximumBackwardInterArrivalTime) {
         this.maximumBackwardInterArrivalTime = maximumBackwardInterArrivalTime;
     }
 
@@ -193,35 +174,35 @@ public class Features_NIGEL_DTO {
         this.protocol = protocol;
     }
 
-    public Float getNumberOfPacketsInForwardDirection() {
+    public Integer getNumberOfPacketsInForwardDirection() {
         return numberOfPacketsInForwardDirection;
     }
 
-    public void setNumberOfPacketsInForwardDirection(Float numberOfPacketsInForwardDirection) {
+    public void setNumberOfPacketsInForwardDirection(Integer numberOfPacketsInForwardDirection) {
         this.numberOfPacketsInForwardDirection = numberOfPacketsInForwardDirection;
     }
 
-    public Float getNumberOfBytesInForwardDirection() {
+    public Integer getNumberOfBytesInForwardDirection() {
         return numberOfBytesInForwardDirection;
     }
 
-    public void setNumberOfBytesInForwardDirection(Float numberOfBytesInForwardDirection) {
+    public void setNumberOfBytesInForwardDirection(Integer numberOfBytesInForwardDirection) {
         this.numberOfBytesInForwardDirection = numberOfBytesInForwardDirection;
     }
 
-    public Float getNumberOfPacketsInBackwardDirection() {
+    public Integer getNumberOfPacketsInBackwardDirection() {
         return numberOfPacketsInBackwardDirection;
     }
 
-    public void setNumberOfPacketsInBackwardDirection(Float numberOfPacketsInBackwardDirection) {
+    public void setNumberOfPacketsInBackwardDirection(Integer numberOfPacketsInBackwardDirection) {
         this.numberOfPacketsInBackwardDirection = numberOfPacketsInBackwardDirection;
     }
 
-    public Float getNumberOfBytesInBackwardDirection() {
+    public Integer getNumberOfBytesInBackwardDirection() {
         return numberOfBytesInBackwardDirection;
     }
 
-    public void setNumberOfBytesInBackwardDirection(Float numberOfBytesInBackwardDirection) {
+    public void setNumberOfBytesInBackwardDirection(Integer numberOfBytesInBackwardDirection) {
         this.numberOfBytesInBackwardDirection = numberOfBytesInBackwardDirection;
     }
 

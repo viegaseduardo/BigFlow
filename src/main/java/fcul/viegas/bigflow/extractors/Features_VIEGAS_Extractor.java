@@ -5,11 +5,12 @@
  */
 package fcul.viegas.bigflow.extractors;
 
-import fcul.viegas.bigflow.dto.Features_A;
-import fcul.viegas.bigflow.dto.Features_A_B;
+import fcul.viegas.bigflow.dto.Features_A_DTO;
+import fcul.viegas.bigflow.dto.Features_A_B_DTO;
 import fcul.viegas.bigflow.dto.Features_VIEGAS_A_B_Direction_Middleware_DTO;
 import fcul.viegas.bigflow.dto.Features_VIEGAS_A_B_Middleware_DTO;
 import fcul.viegas.bigflow.dto.Features_VIEGAS_A_Middleware_DTO;
+import fcul.viegas.bigflow.dto.Features_VIEGAS_DTO;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 
 /**
@@ -18,7 +19,7 @@ import fcul.viegas.bigflow.dto.NetworkPacketDTO;
  */
 public class Features_VIEGAS_Extractor {
 
-    public static void extractFeatures_A_B(Features_A_B featAB, NetworkPacketDTO networkPacket) {
+    public static void extractFeatures_A_B(Features_A_B_DTO featAB, NetworkPacketDTO networkPacket) {
         Features_VIEGAS_A_B_Middleware_DTO featuresViegas_A_B = featAB.getFeatures_VIEGAS_A_B_Middleware();
 
         if (networkPacket.getSourceIP().equals(featAB.getSourceAddress())) {
@@ -113,7 +114,7 @@ public class Features_VIEGAS_Extractor {
         }
     }
 
-    public static void extractFeatures_A(Features_A featA, NetworkPacketDTO networkPacket) {
+    public static void extractFeatures_A(Features_A_DTO featA, NetworkPacketDTO networkPacket) {
         Features_VIEGAS_A_Middleware_DTO featureViegas = featA.getFeatures_VIEGAS_A_Middleware();
 
         //add different destination ip addresses
@@ -157,6 +158,63 @@ public class Features_VIEGAS_Extractor {
         } else {
             featureViegas.getPercentageICMPOtherTypes().addNumber(0);
         }
+    }
+
+    public static void extractFeatureDTO(Features_VIEGAS_DTO featViegas, Features_A_B_DTO featAB, Features_A_DTO featA) {
+        Features_VIEGAS_A_Middleware_DTO featViegasA = featA.getFeatures_VIEGAS_A_Middleware();
+        Features_VIEGAS_A_B_Middleware_DTO featViegasAB = featAB.getFeatures_VIEGAS_A_B_Middleware();
+
+        featViegas.setCountPackets(featViegasAB.getCountPackets());
+        featViegas.setCountBytes(featViegasAB.getCountBytes());
+        featViegas.setAveragePacketSize(featViegasAB.getAveragePacketSize().getAverage());
+        featViegas.setPercentagePushed(featViegasAB.getPercentagePushed().getAverage());
+        featViegas.setPercentageSynFin(featViegasAB.getPercentageSynFin().getAverage());
+        featViegas.setPercentageFin(featViegasAB.getPercentageFin().getAverage());
+        featViegas.setPercentageSyn(featViegasAB.getPercentageSyn().getAverage());
+        featViegas.setPercentageAck(featViegasAB.getPercentageAck().getAverage());
+        featViegas.setPercentageRst(featViegasAB.getPercentageRst().getAverage());
+        featViegas.setPercentageICMPRedirect(featViegasAB.getPercentageICMPRedirect().getAverage());
+        featViegas.setPercentageICMPTimeExceeded(featViegasAB.getPercentageICMPTimeExceeded().getAverage());
+        featViegas.setPercentageICMPUnreacheable(featViegasAB.getPercentageICMPUnreacheable().getAverage());
+        featViegas.setPercentageICMPOtherTypes(featViegasAB.getPercentageICMPOtherTypes().getAverage());
+
+        featViegas.setAveragePacketSize_A_B(featViegasAB.getForward().getAveragePacketSize().getAverage());
+        featViegas.setPercentagePushed_A_B(featViegasAB.getForward().getPercentagePushed().getAverage());
+        featViegas.setPercentageSynFin_A_B(featViegasAB.getForward().getPercentageSynFin().getAverage());
+        featViegas.setPercentageFin_A_B(featViegasAB.getForward().getPercentageFin().getAverage());
+        featViegas.setPercentageSyn_A_B(featViegasAB.getForward().getPercentageSyn().getAverage());
+        featViegas.setPercentageAck_A_B(featViegasAB.getForward().getPercentageAck().getAverage());
+        featViegas.setPercentageRst_A_B(featViegasAB.getForward().getPercentageRst().getAverage());
+        featViegas.setPercentageICMPRedirect_A_B(featViegasAB.getForward().getPercentageICMPRedirect().getAverage());
+        featViegas.setPercentageICMPTimeExceeded_A_B(featViegasAB.getForward().getPercentageICMPTimeExceeded().getAverage());
+        featViegas.setPercentageICMPUnreacheable_A_B(featViegasAB.getForward().getPercentageICMPUnreacheable().getAverage());
+        featViegas.setPercentageICMPOtherTypes_A_B(featViegasAB.getForward().getPercentageICMPOtherTypes().getAverage());
+
+        featViegas.setAveragePacketSize_B_A(featViegasAB.getBackward().getAveragePacketSize().getAverage());
+        featViegas.setPercentagePushed_B_A(featViegasAB.getBackward().getPercentagePushed().getAverage());
+        featViegas.setPercentageSynFin_B_A(featViegasAB.getBackward().getPercentageSynFin().getAverage());
+        featViegas.setPercentageFin_B_A(featViegasAB.getBackward().getPercentageFin().getAverage());
+        featViegas.setPercentageSyn_B_A(featViegasAB.getBackward().getPercentageSyn().getAverage());
+        featViegas.setPercentageAck_B_A(featViegasAB.getBackward().getPercentageAck().getAverage());
+        featViegas.setPercentageRst_B_A(featViegasAB.getBackward().getPercentageRst().getAverage());
+        featViegas.setPercentageICMPRedirect_B_A(featViegasAB.getBackward().getPercentageICMPRedirect().getAverage());
+        featViegas.setPercentageICMPTimeExceeded_B_A(featViegasAB.getBackward().getPercentageICMPTimeExceeded().getAverage());
+        featViegas.setPercentageICMPUnreacheable_B_A(featViegasAB.getBackward().getPercentageICMPUnreacheable().getAverage());
+        featViegas.setPercentageICMPOtherTypes_B_A(featViegasAB.getBackward().getPercentageICMPOtherTypes().getAverage());
+
+        featViegas.setNumberOfDifferentDestinations_A(featViegasA.getUniqueDestinationIPs().size());
+        featViegas.setNumberOfDifferentServices_A(featViegasA.getUniqueDestinationPorts().size());
+        featViegas.setAveragePacketSize_A(featViegasAB.getBackward().getAveragePacketSize().getAverage());
+        featViegas.setPercentagePushed_A(featViegasA.getPercentagePushed().getAverage());
+        featViegas.setPercentageSynFin_A(featViegasA.getPercentageSynFin().getAverage());
+        featViegas.setPercentageFin_A(featViegasA.getPercentageFin().getAverage());
+        featViegas.setPercentageSyn_A(featViegasA.getPercentageSyn().getAverage());
+        featViegas.setPercentageAck_A(featViegasA.getPercentageAck().getAverage());
+        featViegas.setPercentageRst_A(featViegasA.getPercentageRst().getAverage());
+        featViegas.setPercentageICMPRedirect_A(featViegasA.getPercentageICMPRedirect().getAverage());
+        featViegas.setPercentageICMPTimeExceeded_A(featViegasA.getPercentageICMPTimeExceeded().getAverage());
+        featViegas.setPercentageICMPUnreacheable_A(featViegasA.getPercentageICMPUnreacheable().getAverage());
+        featViegas.setPercentageICMPOtherTypes_A(featViegasA.getPercentageICMPOtherTypes().getAverage());
     }
 
 }

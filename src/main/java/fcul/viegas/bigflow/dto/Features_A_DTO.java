@@ -9,7 +9,7 @@ package fcul.viegas.bigflow.dto;
  *
  * @author viegas
  */
-public class Features_A {
+public class Features_A_DTO {
     
     private Boolean firstTime;
     private Integer addressHash;
@@ -19,7 +19,7 @@ public class Features_A {
     
     private Features_VIEGAS_A_Middleware_DTO features_VIEGAS_A_Middleware;
     
-    public Features_A(){
+    public Features_A_DTO(){
         this.firstTime = true;
         this.features_ORUNADA_A_Middleware = new Features_ORUNADA_A_Middleware_DTO();
         this.features_VIEGAS_A_Middleware = new Features_VIEGAS_A_Middleware_DTO();

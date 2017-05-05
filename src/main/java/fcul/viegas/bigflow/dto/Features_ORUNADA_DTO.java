@@ -27,9 +27,9 @@ public class Features_ORUNADA_DTO {
     private Float percentageICMPOtherTypes;
 
     //aggregated by IPSrc
-    private Long numberOfDifferentDestinations;
-    //aggregated by IPDst
-    private Long numberOfDifferentSources;
+    private Integer numberOfDifferentDestinations;
+    //aggregated by IPSrc
+    private Integer numberOfDifferentServices;
 
     public Features_ORUNADA_DTO() {
         
@@ -47,8 +47,8 @@ public class Features_ORUNADA_DTO {
         this.percentageICMPUnreacheable = 0.0f;
         this.percentageICMPOtherTypes = 0.0f;
 
-        this.numberOfDifferentDestinations = 0l;
-        this.numberOfDifferentSources = 0l;
+        this.numberOfDifferentDestinations = 0;
+        this.numberOfDifferentServices = 0;
     }
 
     public Long getNumberOfPackets() {
@@ -155,20 +155,24 @@ public class Features_ORUNADA_DTO {
         this.percentageICMPOtherTypes = percentageICMPOtherTypes;
     }
 
-    public Long getNumberOfDifferentDestinations() {
+    public Integer getNumberOfDifferentDestinations() {
         return numberOfDifferentDestinations;
     }
 
-    public void setNumberOfDifferentDestinations(Long numberOfDifferentDestinations) {
+    public void setNumberOfDifferentDestinations(Integer numberOfDifferentDestinations) {
         this.numberOfDifferentDestinations = numberOfDifferentDestinations;
     }
 
-    public Long getNumberOfDifferentSources() {
-        return numberOfDifferentSources;
+    public Integer getNumberOfDifferentServices() {
+        return numberOfDifferentServices;
     }
 
-    public void setNumberOfDifferentSources(Long numberOfDifferentSources) {
-        this.numberOfDifferentSources = numberOfDifferentSources;
+    public void setNumberOfDifferentServices(Integer numberOfDifferentServices) {
+        this.numberOfDifferentServices = numberOfDifferentServices;
     }
+
+    
+
+    
 
 }

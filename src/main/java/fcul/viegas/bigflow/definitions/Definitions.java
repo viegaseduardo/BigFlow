@@ -17,7 +17,8 @@ public class Definitions {
     public static final Float PROTOCOL_ICMP = 3.0f;
     public static final Float PROTOCOL_OTHER = 4.0f;
     
-    public static final Long TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B = 5000l;
+    public static final Long TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B = 1000l;
+    public static final Long TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A = 1000l;
     
     public static final Long NO_VALUE_MAXIMUM = -1l;
     public static final Long NO_VALUE_MINIMUM = Long.MAX_VALUE;

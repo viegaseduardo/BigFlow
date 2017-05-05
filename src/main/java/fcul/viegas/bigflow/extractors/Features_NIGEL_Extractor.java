@@ -5,8 +5,10 @@
  */
 package fcul.viegas.bigflow.extractors;
 
-import fcul.viegas.bigflow.dto.Features_A_B;
+import fcul.viegas.bigflow.dto.Features_A_B_DTO;
+import fcul.viegas.bigflow.dto.Features_A_DTO;
 import fcul.viegas.bigflow.dto.Features_NIGEL_A_B_Middleware_DTO;
+import fcul.viegas.bigflow.dto.Features_NIGEL_DTO;
 import fcul.viegas.bigflow.dto.Features_NIGEL_Direction_Middleware_DTO;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 
@@ -16,7 +18,7 @@ import fcul.viegas.bigflow.dto.NetworkPacketDTO;
  */
 public class Features_NIGEL_Extractor {
 
-    public static void extractFeatures(Features_A_B featAB, NetworkPacketDTO networkPacket) {
+    public static void extractFeatures(Features_A_B_DTO featAB, NetworkPacketDTO networkPacket) {
         Features_NIGEL_A_B_Middleware_DTO featuresNigel = featAB.getFeatures_NIGEL_A_B_Middleware();
 
         //check if forward
@@ -63,4 +65,36 @@ public class Features_NIGEL_Extractor {
         //set last networkpacket
         featuresNigel.setLastNetworkPacket(networkPacket);
     }
+    
+    public static void extractFeatureDTO(Features_NIGEL_DTO featNigel, Features_A_B_DTO featAB, Features_A_DTO featA) {
+        Features_NIGEL_A_B_Middleware_DTO featNigelAB = featAB.getFeatures_NIGEL_A_B_Middleware();
+        
+        featNigel.setMinimumForwardPacketLength(featNigelAB.getForward().getMinimumPacketLength().intValue());
+        featNigel.setMeanForwardPacketLength(featNigelAB.getForward().getAverageAndStdDevPacketLength().getAverage());
+        featNigel.setMaximumForwardPacketLength(featNigelAB.getForward().getMaximumPacketLength().intValue());
+        featNigel.setStandardDeviationForwardPacketLength((float)featNigelAB.getForward().getAverageAndStdDevPacketLength().getStandardDeviation());
+        
+        featNigel.setMinimumBackwardPacketLength(featNigelAB.getBackward().getMinimumPacketLength().intValue());
+        featNigel.setMeanBackwardPacketLength(featNigelAB.getBackward().getAverageAndStdDevPacketLength().getAverage());
+        featNigel.setMaximumBackwardPacketLength(featNigelAB.getBackward().getMaximumPacketLength().intValue());
+        featNigel.setStandardDeviationBackwardPacketLength((float)featNigelAB.getBackward().getAverageAndStdDevPacketLength().getStandardDeviation());
+        
+        featNigel.setMinimumForwardInterArrivalTime(featNigelAB.getForward().getMinimumInterArrivalTime().intValue());
+        featNigel.setMeanForwardInterArrivalTime(featNigelAB.getForward().getAverageAndStdDevInterArrivalTime().getAverage());
+        featNigel.setMaximumForwardInterArrivalTime(featNigelAB.getForward().getMaximumInterArrivalTime().intValue());
+        featNigel.setStandardDeviationForwardInterArrivalTime((float)featNigelAB.getForward().getAverageAndStdDevInterArrivalTime().getStandardDeviation());
+        
+        featNigel.setMinimumBackwardInterArrivalTime(featNigelAB.getBackward().getMinimumInterArrivalTime().intValue());
+        featNigel.setMeanBackwardInterArrivalTime(featNigelAB.getBackward().getAverageAndStdDevInterArrivalTime().getAverage());
+        featNigel.setMaximumBackwardInterArrivalTime(featNigelAB.getBackward().getMaximumInterArrivalTime().intValue());
+        featNigel.setStandardDeviationBackwardInterArrivalTime((float)featNigelAB.getBackward().getAverageAndStdDevInterArrivalTime().getStandardDeviation());
+        
+        featNigel.setProtocol(featNigelAB.getProtocol());
+        
+        featNigel.setNumberOfPacketsInForwardDirection(featNigelAB.getForward().getNumberOfPackets().intValue());
+        featNigel.setNumberOfBytesInForwardDirection(featNigelAB.getForward().getNumberOfBytes().intValue());
+        featNigel.setNumberOfPacketsInBackwardDirection(featNigelAB.getBackward().getNumberOfPackets().intValue());
+        featNigel.setNumberOfBytesInBackwardDirection(featNigelAB.getBackward().getNumberOfBytes().intValue());
+    }
+    
 }

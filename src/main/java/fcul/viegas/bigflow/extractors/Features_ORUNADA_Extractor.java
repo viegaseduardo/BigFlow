@@ -5,8 +5,11 @@
  */
 package fcul.viegas.bigflow.extractors;
 
-import fcul.viegas.bigflow.dto.Features_A;
-import fcul.viegas.bigflow.dto.Features_A_B;
+import fcul.viegas.bigflow.dto.Features_A_DTO;
+import fcul.viegas.bigflow.dto.Features_A_B_DTO;
+import fcul.viegas.bigflow.dto.Features_ORUNADA_A_B_Middleware_DTO;
+import fcul.viegas.bigflow.dto.Features_ORUNADA_A_Middleware_DTO;
+import fcul.viegas.bigflow.dto.Features_ORUNADA_DTO;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 
 /**
@@ -15,7 +18,7 @@ import fcul.viegas.bigflow.dto.NetworkPacketDTO;
  */
 public class Features_ORUNADA_Extractor {
 
-    public static void extractFeatures_A_B(Features_A_B featAB, NetworkPacketDTO networkPacket) {
+    public static void extractFeatures_A_B(Features_A_B_DTO featAB, NetworkPacketDTO networkPacket) {
 
         //number of packets
         featAB.getFeatures_ORUNADA_A_B_Middleware().setNumberOfPackets(featAB.getFeatures_ORUNADA_A_B_Middleware().getNumberOfPackets() + 1);
@@ -57,11 +60,32 @@ public class Features_ORUNADA_Extractor {
         }
     }
 
-    public static void extractFeatures_A(Features_A featA, NetworkPacketDTO networkPacket) {
+    public static void extractFeatures_A(Features_A_DTO featA, NetworkPacketDTO networkPacket) {
         //add different destination ip addresses
         featA.getFeatures_ORUNADA_A_Middleware().getUniqueDestinationIPs().add(networkPacket.getDestinationIP().hashCode());
         //add different destination services
         featA.getFeatures_ORUNADA_A_Middleware().getUniqueDestinationPorts().add((networkPacket.getDestinationIP() + networkPacket.getDestinationPort()).hashCode());
     }
-
+    
+    public static void extractFeatureDTO(Features_ORUNADA_DTO featOrunada, Features_A_B_DTO featAB, Features_A_DTO featA) {
+        Features_ORUNADA_A_Middleware_DTO featOrunadaA = featA.getFeatures_ORUNADA_A_Middleware();
+        Features_ORUNADA_A_B_Middleware_DTO featOrunadaAB = featAB.getFeatures_ORUNADA_A_B_Middleware();
+        
+        featOrunada.setNumberOfPackets(Long.valueOf(featOrunadaAB.getNumberOfPackets()));
+        featOrunada.setPercentageOfSYNPackets(featOrunadaAB.getAverageOfSYN().getAverage());
+        featOrunada.setPercentageOfACKPackets(featOrunadaAB.getAverageOfACK().getAverage());
+        featOrunada.setPercentageOfRSTPackets(featOrunadaAB.getAverageOfRST().getAverage());
+        featOrunada.setPercentageOfFINPackets(featOrunadaAB.getAverageOfFIN().getAverage());
+        featOrunada.setPercentageOfCWRPackets(featOrunadaAB.getAverageOfCWR().getAverage());
+        featOrunada.setPercentageOfURGPackets(featOrunadaAB.getAverageOfURG().getAverage());
+        featOrunada.setAveragePacketSize(featOrunadaAB.getAveragePacketSize().getAverage());
+        featOrunada.setMeanTTL(featOrunadaAB.getAverageTTL().getAverage());
+        featOrunada.setPercentageICMPRedirect(featOrunadaAB.getAverageICMPRedirect().getAverage());
+        featOrunada.setPercentageICMPTimeExceeded(featOrunadaAB.getAverageICMPTimeExceeded().getAverage());
+        featOrunada.setPercentageICMPUnreacheable(featOrunadaAB.getAverageICMPUnreachable().getAverage());
+        featOrunada.setPercentageICMPOtherTypes(featOrunadaAB.getAverageICMPOther().getAverage());
+        
+        featOrunada.setNumberOfDifferentDestinations(featOrunadaA.getUniqueDestinationIPs().size());
+        featOrunada.setNumberOfDifferentServices(featOrunadaA.getUniqueDestinationPorts().size());
+    }
 }
