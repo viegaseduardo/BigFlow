@@ -5,6 +5,8 @@
  */
 package fcul.viegas.bigflow.dto;
 
+import fcul.viegas.bigflow.definitions.Definitions;
+
 /**
  *
  * @author viegas
@@ -55,6 +57,15 @@ public class Features_DTO {
         this.featureVIEGAS = featureVIEGAS;
     }
     
-    
+    public String toString(){
+        String ret = "";
+        
+        ret = ret + this.featureORUNADA.toString() + Definitions.FIELD_DELIM;
+        ret = ret + this.featureNIGEL.toString() + Definitions.FIELD_DELIM;
+        ret = ret + this.featureMOORE.toString() + Definitions.FIELD_DELIM;
+        ret = ret + this.featureVIEGAS.toString() + Definitions.FIELD_DELIM;
+        
+        return ret;
+    }
     
 }

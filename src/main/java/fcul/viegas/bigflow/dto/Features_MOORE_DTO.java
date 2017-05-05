@@ -5,6 +5,8 @@
  */
 package fcul.viegas.bigflow.dto;
 
+import fcul.viegas.bigflow.definitions.Definitions;
+
 /**
  *
  * @author viegas
@@ -83,6 +85,8 @@ public class Features_MOORE_DTO {
 
     private Integer throughput_a_b;
     private Integer throughput_b_a;
+    
+   
 
     public Integer getMinimumInterArrivalTime() {
         return minimumInterArrivalTime;
@@ -546,6 +550,84 @@ public class Features_MOORE_DTO {
 
     public void setThroughput_b_a(Integer throughput_b_a) {
         this.throughput_b_a = throughput_b_a;
+    }
+    
+     public String toString(){
+        String ret = "";
+        
+        ret = ret + this.minimumInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileFirstInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.medianInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.avgInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileThirdInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.varianceInterArrivalTime + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileFirstInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.medianInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.avgInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileThirdInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.varianceInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileFirstInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.medianInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.avgInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileThirdInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.varianceInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumDataWire + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileFirstDataWire + Definitions.FIELD_DELIM;
+        ret = ret + this.medianDataWire + Definitions.FIELD_DELIM;
+        ret = ret + this.avgDataWire + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileThirdDataWire + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumDataWire + Definitions.FIELD_DELIM;
+        ret = ret + this.varianceDataWire + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumDataWire_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileFirstDataWire_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.medianDataWire_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.avgDataWire_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileThirdDataWire_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumDataWire_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.varianceDataWire_a_b + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumDataWire_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileFirstDataWire_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.medianDataWire_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.avgDataWire_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.quartileThirdDataWire_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumDataWire_b_a + Definitions.FIELD_DELIM;
+        ret = ret + this.varianceDataWire_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.total_packets_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.total_packets_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.ack_pkts_sent_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.ack_pkts_sent_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.pure_acks_sent_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.pure_acks_sent_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.pushed_pkts_sent_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.pushed_pkts_sent_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.syn_pkts_sent_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.syn_pkts_sent_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.fin_pkts_sent_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.fin_pkts_sent_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.urgent_pkts_sent_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.urgent_pkts_sent_b_a + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.throughput_a_b + Definitions.FIELD_DELIM;
+        ret = ret + this.throughput_a_b;
+        
+        return ret;
     }
 
 }

@@ -5,6 +5,8 @@
  */
 package fcul.viegas.bigflow.dto;
 
+import fcul.viegas.bigflow.definitions.Definitions;
+
 /**
  *
  * @author viegas
@@ -30,26 +32,6 @@ public class Features_ORUNADA_DTO {
     private Integer numberOfDifferentDestinations;
     //aggregated by IPSrc
     private Integer numberOfDifferentServices;
-
-    public Features_ORUNADA_DTO() {
-        
-        this.numberOfPackets = 0l;
-        this.percentageOfSYNPackets = 0.0f;
-        this.percentageOfACKPackets = 0.0f;
-        this.percentageOfRSTPackets = 0.0f;
-        this.percentageOfFINPackets = 0.0f;
-        this.percentageOfCWRPackets = 0.0f;
-        this.percentageOfURGPackets = 0.0f;
-        this.averagePacketSize = 0.0f;
-        this.meanTTL = 0.0f;
-        this.percentageICMPRedirect = 0.0f;
-        this.percentageICMPTimeExceeded = 0.0f;
-        this.percentageICMPUnreacheable = 0.0f;
-        this.percentageICMPOtherTypes = 0.0f;
-
-        this.numberOfDifferentDestinations = 0;
-        this.numberOfDifferentServices = 0;
-    }
 
     public Long getNumberOfPackets() {
         return numberOfPackets;
@@ -171,8 +153,26 @@ public class Features_ORUNADA_DTO {
         this.numberOfDifferentServices = numberOfDifferentServices;
     }
 
-    
+    public String toString() {
+        String ret = "";
 
-    
+        ret = ret + this.numberOfPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageOfSYNPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageOfACKPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageOfRSTPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageOfFINPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageOfCWRPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageOfURGPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.averagePacketSize + Definitions.FIELD_DELIM;
+        ret = ret + this.meanTTL + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPRedirect + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPTimeExceeded + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPUnreacheable + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPOtherTypes + Definitions.FIELD_DELIM;
+        ret = ret + this.numberOfDifferentDestinations + Definitions.FIELD_DELIM;
+        ret = ret + this.numberOfDifferentServices;
+
+        return ret;
+    }
 
 }

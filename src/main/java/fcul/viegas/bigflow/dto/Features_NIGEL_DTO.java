@@ -5,6 +5,8 @@
  */
 package fcul.viegas.bigflow.dto;
 
+import fcul.viegas.bigflow.definitions.Definitions;
+
 /**
  *
  * @author viegas
@@ -37,6 +39,8 @@ public class Features_NIGEL_DTO {
     private Integer numberOfBytesInForwardDirection;
     private Integer numberOfPacketsInBackwardDirection;
     private Integer numberOfBytesInBackwardDirection;
+    
+    
 
     public Integer getMinimumForwardPacketLength() {
         return minimumForwardPacketLength;
@@ -204,6 +208,39 @@ public class Features_NIGEL_DTO {
 
     public void setNumberOfBytesInBackwardDirection(Integer numberOfBytesInBackwardDirection) {
         this.numberOfBytesInBackwardDirection = numberOfBytesInBackwardDirection;
+    }
+    
+    public String toString(){
+        String ret = "";
+        
+        ret = ret + this.minimumForwardPacketLength + Definitions.FIELD_DELIM;
+        ret = ret + this.meanForwardPacketLength + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumForwardPacketLength + Definitions.FIELD_DELIM;
+        ret = ret + this.standardDeviationForwardPacketLength + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumBackwardPacketLength + Definitions.FIELD_DELIM;
+        ret = ret + this.meanBackwardPacketLength + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumBackwardPacketLength + Definitions.FIELD_DELIM;
+        ret = ret + this.standardDeviationBackwardPacketLength + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumForwardInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.meanForwardInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumForwardInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.standardDeviationForwardInterArrivalTime + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.minimumBackwardInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.meanBackwardInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.maximumBackwardInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + this.standardDeviationBackwardInterArrivalTime + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.protocol + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.numberOfPacketsInForwardDirection + Definitions.FIELD_DELIM;
+        ret = ret + this.numberOfBytesInForwardDirection + Definitions.FIELD_DELIM;
+        ret = ret + this.numberOfPacketsInBackwardDirection + Definitions.FIELD_DELIM;
+        ret = ret + this.numberOfBytesInBackwardDirection;
+        
+        return ret;
     }
 
 }

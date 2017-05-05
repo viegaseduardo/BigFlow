@@ -5,6 +5,8 @@
  */
 package fcul.viegas.bigflow.dto;
 
+import fcul.viegas.bigflow.definitions.Definitions;
+
 /**
  *
  * @author viegas
@@ -62,6 +64,7 @@ public class Features_VIEGAS_DTO {
     private Float percentageICMPTimeExceeded_A;
     private Float percentageICMPUnreacheable_A;
     private Float percentageICMPOtherTypes_A;
+    
 
     public Integer getCountPackets() {
         return countPackets;
@@ -445,6 +448,64 @@ public class Features_VIEGAS_DTO {
 
     public void setPercentageICMPOtherTypes_A(Float percentageICMPOtherTypes_A) {
         this.percentageICMPOtherTypes_A = percentageICMPOtherTypes_A;
+    }
+    
+    public String toString(){
+        String ret = "";
+        
+        ret = ret + this.countPackets + Definitions.FIELD_DELIM;
+        ret = ret + this.countBytes + Definitions.FIELD_DELIM;
+        ret = ret + this.averagePacketSize + Definitions.FIELD_DELIM;
+        ret = ret + this.percentagePushed + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSynFin + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageFin + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSyn + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageAck + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageRst + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPRedirect + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPTimeExceeded + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPUnreacheable + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPOtherTypes + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.averagePacketSize_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentagePushed_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSynFin_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageFin_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSyn_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageAck_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageRst_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPRedirect_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPTimeExceeded_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPUnreacheable_A_B + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPOtherTypes_A_B + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.averagePacketSize_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentagePushed_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSynFin_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageFin_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSyn_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageAck_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageRst_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPRedirect_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPTimeExceeded_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPUnreacheable_B_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPOtherTypes_B_A + Definitions.FIELD_DELIM;
+        
+        ret = ret + this.numberOfDifferentDestinations_A + Definitions.FIELD_DELIM;
+        ret = ret + this.numberOfDifferentServices_A + Definitions.FIELD_DELIM;
+        ret = ret + this.averagePacketSize_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentagePushed_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSynFin_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageFin_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageSyn_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageAck_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageRst_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPRedirect_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPTimeExceeded_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPUnreacheable_A + Definitions.FIELD_DELIM;
+        ret = ret + this.percentageICMPOtherTypes_A;
+
+        return ret;
     }
 
 }

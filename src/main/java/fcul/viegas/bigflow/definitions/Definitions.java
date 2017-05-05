@@ -22,4 +22,6 @@ public class Definitions {
     
     public static final Long NO_VALUE_MAXIMUM = -1l;
     public static final Long NO_VALUE_MINIMUM = Long.MAX_VALUE;
+    
+    public static final String FIELD_DELIM = ",";
 }
