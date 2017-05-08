@@ -24,6 +24,7 @@ public class Definitions {
     public static final Long NO_VALUE_MINIMUM = 2000l;
 
     public static final String FIELD_DELIM = ";";
+    public static final String FIELD_DELIM_WEKA = ",";
 
     public static String CLASS_DESCRIPTION_FILE = "";
     

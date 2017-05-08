@@ -1,0 +1,69 @@
+%   BigFlow arff file
+%   This is the ARFF header for MOORE features set
+
+@RELATION MOORE_bigflow
+
+@ATTRIBUTE MOORE_minimumInterArrivalTime NUMERIC
+@ATTRIBUTE MOORE_quartileFirstInterArrivalTime NUMERIC
+@ATTRIBUTE MOORE_medianInterArrivalTime NUMERIC
+@ATTRIBUTE MOORE_avgInterArrivalTime NUMERIC
+@ATTRIBUTE MOORE_quartileThirdInterArrivalTime NUMERIC
+@ATTRIBUTE MOORE_maximumInterArrivalTime NUMERIC
+@ATTRIBUTE MOORE_varianceInterArrivalTime NUMERIC
+@ATTRIBUTE MOORE_minimumInterArrivalTime_a_b NUMERIC
+@ATTRIBUTE MOORE_quartileFirstInterArrivalTime_a_b NUMERIC
+@ATTRIBUTE MOORE_medianInterArrivalTime_a_b NUMERIC
+@ATTRIBUTE MOORE_avgInterArrivalTime_a_b NUMERIC
+@ATTRIBUTE MOORE_quartileThirdInterArrivalTime_a_b NUMERIC
+@ATTRIBUTE MOORE_maximumInterArrivalTime_a_b NUMERIC
+@ATTRIBUTE MOORE_varianceInterArrivalTime_a_b NUMERIC
+@ATTRIBUTE MOORE_minimumInterArrivalTime_b_a NUMERIC
+@ATTRIBUTE MOORE_quartileFirstInterArrivalTime_b_a NUMERIC
+@ATTRIBUTE MOORE_medianInterArrivalTime_b_a NUMERIC
+@ATTRIBUTE MOORE_avgInterArrivalTime_b_a NUMERIC
+@ATTRIBUTE MOORE_quartileThirdInterArrivalTime_b_a NUMERIC
+@ATTRIBUTE MOORE_maximumInterArrivalTime_b_a NUMERIC
+@ATTRIBUTE MOORE_varianceInterArrivalTime_b_a NUMERIC
+@ATTRIBUTE MOORE_minimumDataWire NUMERIC
+@ATTRIBUTE MOORE_quartileFirstDataWire NUMERIC
+@ATTRIBUTE MOORE_medianDataWire NUMERIC
+@ATTRIBUTE MOORE_avgDataWire NUMERIC
+@ATTRIBUTE MOORE_quartileThirdDataWire NUMERIC
+@ATTRIBUTE MOORE_maximumDataWire NUMERIC
+@ATTRIBUTE MOORE_varianceDataWire NUMERIC
+@ATTRIBUTE MOORE_minimumDataWire_a_b NUMERIC
+@ATTRIBUTE MOORE_quartileFirstDataWire_a_b NUMERIC
+@ATTRIBUTE MOORE_medianDataWire_a_b NUMERIC
+@ATTRIBUTE MOORE_avgDataWire_a_b NUMERIC
+@ATTRIBUTE MOORE_quartileThirdDataWire_a_b NUMERIC
+@ATTRIBUTE MOORE_maximumDataWire_a_b NUMERIC
+@ATTRIBUTE MOORE_varianceDataWire_a_b NUMERIC
+@ATTRIBUTE MOORE_minimumDataWire_b_a NUMERIC
+@ATTRIBUTE MOORE_quartileFirstDataWire_b_a NUMERIC
+@ATTRIBUTE MOORE_medianDataWire_b_a NUMERIC
+@ATTRIBUTE MOORE_avgDataWire_b_a NUMERIC
+@ATTRIBUTE MOORE_quartileThirdDataWire_b_a NUMERIC
+@ATTRIBUTE MOORE_maximumDataWire_b_a NUMERIC
+@ATTRIBUTE MOORE_varianceDataWire_b_a NUMERIC
+@ATTRIBUTE MOORE_total_packets_a_b NUMERIC
+@ATTRIBUTE MOORE_total_packets_b_a NUMERIC
+@ATTRIBUTE MOORE_ack_pkts_sent_a_b NUMERIC
+@ATTRIBUTE MOORE_ack_pkts_sent_b_a NUMERIC
+@ATTRIBUTE MOORE_pure_acks_sent_a_b NUMERIC
+@ATTRIBUTE MOORE_pure_acks_sent_b_a NUMERIC
+@ATTRIBUTE MOORE_pushed_pkts_sent_a_b NUMERIC
+@ATTRIBUTE MOORE_pushed_pkts_sent_b_a NUMERIC
+@ATTRIBUTE MOORE_syn_pkts_sent_a_b NUMERIC
+@ATTRIBUTE MOORE_syn_pkts_sent_b_a NUMERIC
+@ATTRIBUTE MOORE_fin_pkts_sent_a_b NUMERIC
+@ATTRIBUTE MOORE_fin_pkts_sent_b_a NUMERIC
+@ATTRIBUTE MOORE_urgent_pkts_sent_a_b NUMERIC
+@ATTRIBUTE MOORE_urgent_pkts_sent_b_a NUMERIC
+@ATTRIBUTE MOORE_throughput_a_b NUMERIC
+@ATTRIBUTE MOORE_throughput_b_a NUMERIC
+@ATTRIBUTE MAWILAB_taxonomy string
+@ATTRIBUTE MAWILAB_distance NUMERIC
+@ATTRIBUTE MAWILAB_nbDetectors NUMERIC
+@ATTRIBUTE MAWILAB_label {normal, anomalous, suspicious, notice}
+@ATTRIBUTE class {normal, attack}
+

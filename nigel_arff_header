@@ -1,0 +1,31 @@
+%   BigFlow arff file
+%   This is the ARFF header for NIGEL features set
+
+@RELATION NIGEL_bigflow
+
+@ATTRIBUTE NIGEL_minimumForwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_meanForwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_maximumForwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_standardDeviationForwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_minimumBackwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_meanBackwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_maximumBackwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_standardDeviationBackwardPacketLength NUMERIC
+@ATTRIBUTE NIGEL_minimumForwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_meanForwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_maximumForwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_standardDeviationForwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_minimumBackwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_meanBackwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_maximumBackwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_standardDeviationBackwardInterArrivalTime NUMERIC
+@ATTRIBUTE NIGEL_protocol NUMERIC
+@ATTRIBUTE NIGEL_numberOfPacketsInForwardDirection NUMERIC
+@ATTRIBUTE NIGEL_numberOfBytesInForwardDirection NUMERIC
+@ATTRIBUTE NIGEL_numberOfPacketsInBackwardDirection NUMERIC
+@ATTRIBUTE NIGEL_numberOfBytesInBackwardDirection NUMERIC
+@ATTRIBUTE MAWILAB_taxonomy string
+@ATTRIBUTE MAWILAB_distance NUMERIC
+@ATTRIBUTE MAWILAB_nbDetectors NUMERIC
+@ATTRIBUTE MAWILAB_label {normal, anomalous, suspicious, notice}
+@ATTRIBUTE class {normal, attack}

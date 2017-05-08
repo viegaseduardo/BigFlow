@@ -1,0 +1,24 @@
+%   BigFlow arff file
+%   This is the ARFF header for ORUNADA features set
+
+@RELATION ORUNADA_bigflow
+
+@ATTRIBUTE ORUNADA_numberOfPackets NUMERIC
+@ATTRIBUTE ORUNADA_percentageOfSYNPackets NUMERIC
+@ATTRIBUTE ORUNADA_percentageOfACKPackets NUMERIC
+@ATTRIBUTE ORUNADA_percentageOfRSTPackets NUMERIC
+@ATTRIBUTE ORUNADA_percentageOfFINPackets NUMERIC
+@ATTRIBUTE ORUNADA_percentageOfCWRPackets NUMERIC
+@ATTRIBUTE ORUNADA_percentageOfURGPackets NUMERIC
+@ATTRIBUTE ORUNADA_averagePacketSize NUMERIC
+@ATTRIBUTE ORUNADA_meanTTL NUMERIC
+@ATTRIBUTE ORUNADA_percentageICMPRedirect NUMERIC
+@ATTRIBUTE ORUNADA_percentageICMPTimeExceeded NUMERIC
+@ATTRIBUTE ORUNADA_percentageICMPUnreacheable NUMERIC
+@ATTRIBUTE ORUNADA_percentageICMPOtherTypes NUMERIC
+@ATTRIBUTE MAWILAB_taxonomy string
+@ATTRIBUTE MAWILAB_distance NUMERIC
+@ATTRIBUTE MAWILAB_nbDetectors NUMERIC
+@ATTRIBUTE MAWILAB_label {normal, anomalous, suspicious, notice}
+@ATTRIBUTE class {normal, attack}
+

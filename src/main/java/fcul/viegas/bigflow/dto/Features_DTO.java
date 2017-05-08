@@ -153,6 +153,11 @@ public class Features_DTO {
         ret = ret + this.nbDetectors + Definitions.FIELD_DELIM;
         ret = ret + this.label + Definitions.FIELD_DELIM;
         ret = ret + this.labelARFF;
+        
+        //fix decimal separator for english
+        ret = ret.replaceAll(",", ".");
+        //fix field sepator for weka format
+        ret = ret.replaceAll(Definitions.FIELD_DELIM, Definitions.FIELD_DELIM_WEKA);
 
         return ret;
     }
