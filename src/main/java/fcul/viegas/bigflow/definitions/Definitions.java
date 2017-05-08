@@ -20,10 +20,10 @@ public class Definitions {
     public static final Long TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A_B = 5000l;
     public static final Long TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A = 5000l;
 
-    public static final Long NO_VALUE_MAXIMUM = -1l;
-    public static final Long NO_VALUE_MINIMUM = Long.MAX_VALUE;
+    public static final Long NO_VALUE_MAXIMUM = 0l;
+    public static final Long NO_VALUE_MINIMUM = 2000l;
 
-    public static final String FIELD_DELIM = ",";
+    public static final String FIELD_DELIM = ";";
 
     public static String CLASS_DESCRIPTION_FILE = "";
     
@@ -34,5 +34,6 @@ public class Definitions {
     public static Float FEATURES_CLASS_ASSIGNER_NORMAL_DISTANCE = 0.0f;
     public static Integer FEATURES_CLASS_ASSIGNER_NORMAL_NB_DETECTORS = 0;
     public static String FEATURES_CLASS_ASSIGNER_NORMAL_LABEL = "normal";
+    public static String FEATURES_CLASS_ASSIGNER_ATTACK_LABEL = "attack";
 
 }

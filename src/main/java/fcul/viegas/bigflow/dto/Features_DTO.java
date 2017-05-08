@@ -22,6 +22,7 @@ public class Features_DTO {
     private Float distance;
     private Integer nbDetectors;
     private String label;
+    private String labelARFF;
 
     private Features_MOORE_DTO featureMOORE;
     private Features_NIGEL_DTO featureNIGEL;
@@ -33,6 +34,14 @@ public class Features_DTO {
         this.featureNIGEL = new Features_NIGEL_DTO();
         this.featureORUNADA = new Features_ORUNADA_DTO();
         this.featureVIEGAS = new Features_VIEGAS_DTO();
+    }
+
+    public String getLabelARFF() {
+        return labelARFF;
+    }
+
+    public void setLabelARFF(String labelARFF) {
+        this.labelARFF = labelARFF;
     }
 
     public String getTaxonomy() {
@@ -138,11 +147,12 @@ public class Features_DTO {
         ret = ret + this.featureNIGEL.toString() + Definitions.FIELD_DELIM;
         ret = ret + this.featureMOORE.toString() + Definitions.FIELD_DELIM;
         ret = ret + this.featureVIEGAS.toString() + Definitions.FIELD_DELIM;
-        
+
         ret = ret + this.taxonomy + Definitions.FIELD_DELIM;
         ret = ret + this.distance + Definitions.FIELD_DELIM;
         ret = ret + this.nbDetectors + Definitions.FIELD_DELIM;
-        ret = ret + this.label;
+        ret = ret + this.label + Definitions.FIELD_DELIM;
+        ret = ret + this.labelARFF;
 
         return ret;
     }

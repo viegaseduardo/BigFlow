@@ -41,7 +41,7 @@ public class Topologies_ARFF_CREATOR {
             throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         
-        //env.setParallelism(5);
+        env.setParallelism(5);
 
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
@@ -96,7 +96,7 @@ public class Topologies_ARFF_CREATOR {
             public Integer getKey(Features_A_DTO in) throws Exception {
                 return (in.getAddress()).hashCode();
             }
-        }).window(TumblingEventTimeWindows.of(Time.milliseconds(2000l)))
+        }).window(TumblingEventTimeWindows.of(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A)))
                 .apply(new NetworkPacketWindowJoiner());
 
         SingleOutputStreamOperator<Features_DTO> networkFeaturesAssingedClass

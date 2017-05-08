@@ -45,16 +45,18 @@ public class Features_MOORE_Extractor {
         //inter arrival
         if (featuresMoore.getLastNetworkPacket() != null) {
             Long interArrival = networkPacket.getTimestamp() - featuresMoore.getLastNetworkPacket().getTimestamp();
-            //minimum inter arrival
-            if (interArrival < featuresMoore.getMinimumInterArrivalTime()) {
-                featuresMoore.setMinimumInterArrivalTime(interArrival);
+            if (interArrival >= 0) {
+                //minimum inter arrival
+                if (interArrival < featuresMoore.getMinimumInterArrivalTime()) {
+                    featuresMoore.setMinimumInterArrivalTime(interArrival);
+                }
+                //maximum
+                if (interArrival > featuresMoore.getMaximumInterArrivalTime()) {
+                    featuresMoore.setMaximumInterArrivalTime(interArrival);
+                }
+                //std and deviation inter arrival
+                featuresMoore.getInterArrivalTime().addNumber(interArrival.intValue());
             }
-            //maximum
-            if (interArrival > featuresMoore.getMaximumInterArrivalTime()) {
-                featuresMoore.setMaximumInterArrivalTime(interArrival);
-            }
-            //std and deviation inter arrival
-            featuresMoore.getInterArrivalTime().addNumber(interArrival.intValue());
         }
 
         //set last networkpacket
@@ -110,16 +112,18 @@ public class Features_MOORE_Extractor {
         //inter arrival
         if (featuresMoore.getLastNetworkPacket() != null) {
             Long interArrival = networkPacket.getTimestamp() - featuresMoore.getLastNetworkPacket().getTimestamp();
-            //minimum inter arrival
-            if (interArrival < featuresMoore.getMinimumInterArrivalTime()) {
-                featuresMoore.setMinimumInterArrivalTime(interArrival);
+            if (interArrival > 0) {
+                //minimum inter arrival
+                if (interArrival < featuresMoore.getMinimumInterArrivalTime()) {
+                    featuresMoore.setMinimumInterArrivalTime(interArrival);
+                }
+                //maximum
+                if (interArrival > featuresMoore.getMaximumInterArrivalTime()) {
+                    featuresMoore.setMaximumInterArrivalTime(interArrival);
+                }
+                //std and deviation inter arrival
+                featuresMoore.getInterArrivalTime().addNumber(interArrival.intValue());
             }
-            //maximum
-            if (interArrival > featuresMoore.getMaximumInterArrivalTime()) {
-                featuresMoore.setMaximumInterArrivalTime(interArrival);
-            }
-            //std and deviation inter arrival
-            featuresMoore.getInterArrivalTime().addNumber(interArrival.intValue());
         }
 
         //set last networkpacket
@@ -198,23 +202,23 @@ public class Features_MOORE_Extractor {
         featMOORE.setUrgent_pkts_sent_a_b(featMooreAB.getForward().getUrgent_pkts_sent().intValue());
         featMOORE.setUrgent_pkts_sent_b_a(featMooreAB.getBackward().getUrgent_pkts_sent().intValue());
 
-        if (featMooreAB.getForward().getLastNetworkPacket() == null ||
-                Objects.equals(featMooreAB.getForward().getFirst_timestamp(), featMooreAB.getForward().getLastNetworkPacket().getTimestamp())) {
+        if (featMooreAB.getForward().getLastNetworkPacket() == null
+                || Objects.equals(featMooreAB.getForward().getFirst_timestamp(), featMooreAB.getForward().getLastNetworkPacket().getTimestamp())) {
             featMOORE.setThroughput_a_b(0);
         } else {
             Long sum = featMooreAB.getForward().getDataWire().getMathUtils().getSum();
             Long time = featMooreAB.getForward().getLastNetworkPacket().getTimestamp() - featMooreAB.getForward().getFirst_timestamp();
-            Long throughput = sum/time;
+            Long throughput = sum / time;
             featMOORE.setThroughput_a_b(throughput.intValue());
         }
 
-        if (featMooreAB.getBackward().getLastNetworkPacket() == null ||
-                Objects.equals(featMooreAB.getBackward().getFirst_timestamp(), featMooreAB.getBackward().getLastNetworkPacket().getTimestamp())) {
+        if (featMooreAB.getBackward().getLastNetworkPacket() == null
+                || Objects.equals(featMooreAB.getBackward().getFirst_timestamp(), featMooreAB.getBackward().getLastNetworkPacket().getTimestamp())) {
             featMOORE.setThroughput_b_a(0);
         } else {
             Long sum = featMooreAB.getBackward().getDataWire().getMathUtils().getSum();
             Long time = featMooreAB.getBackward().getLastNetworkPacket().getTimestamp() - featMooreAB.getBackward().getFirst_timestamp();
-            Long throughput = sum/time;
+            Long throughput = sum / time;
             featMOORE.setThroughput_b_a(throughput.intValue());
         }
 

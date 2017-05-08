@@ -153,22 +153,23 @@ public class Features_ORUNADA_DTO {
         this.numberOfDifferentServices = numberOfDifferentServices;
     }
 
+    @Override
     public String toString() {
         String ret = "";
 
         ret = ret + this.numberOfPackets + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageOfSYNPackets + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageOfACKPackets + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageOfRSTPackets + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageOfFINPackets + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageOfCWRPackets + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageOfURGPackets + Definitions.FIELD_DELIM;
-        ret = ret + this.averagePacketSize + Definitions.FIELD_DELIM;
-        ret = ret + this.meanTTL + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageICMPRedirect + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageICMPTimeExceeded + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageICMPUnreacheable + Definitions.FIELD_DELIM;
-        ret = ret + this.percentageICMPOtherTypes + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageOfSYNPackets) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageOfACKPackets) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageOfRSTPackets) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageOfFINPackets) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageOfCWRPackets) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageOfURGPackets) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.averagePacketSize) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.meanTTL) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageICMPRedirect) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageICMPTimeExceeded) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageICMPUnreacheable) + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.percentageICMPOtherTypes) + Definitions.FIELD_DELIM;
         ret = ret + this.numberOfDifferentDestinations + Definitions.FIELD_DELIM;
         ret = ret + this.numberOfDifferentServices;
 

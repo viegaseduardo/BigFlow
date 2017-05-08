@@ -46,6 +46,7 @@ public class Features_CLASS_ASSIGNER {
         featDTO.setDistance(Definitions.FEATURES_CLASS_ASSIGNER_NORMAL_DISTANCE);
         featDTO.setNbDetectors(Definitions.FEATURES_CLASS_ASSIGNER_NORMAL_NB_DETECTORS);
         featDTO.setLabel(Definitions.FEATURES_CLASS_ASSIGNER_NORMAL_LABEL);
+        featDTO.setLabelARFF(Definitions.FEATURES_CLASS_ASSIGNER_NORMAL_LABEL);
     }
 
     private static void isAnomaly(Features_DTO featDTO, Features_Class_DTO anomaly) {
@@ -53,6 +54,7 @@ public class Features_CLASS_ASSIGNER {
         featDTO.setDistance(anomaly.getDistance());
         featDTO.setNbDetectors(anomaly.getNbDetectors());
         featDTO.setLabel(anomaly.getLabel());
+        featDTO.setLabelARFF(Definitions.FEATURES_CLASS_ASSIGNER_ATTACK_LABEL);
     }
 
 }

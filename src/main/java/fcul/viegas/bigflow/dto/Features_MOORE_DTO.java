@@ -561,7 +561,7 @@ public class Features_MOORE_DTO {
         ret = ret + this.avgInterArrivalTime + Definitions.FIELD_DELIM;
         ret = ret + this.quartileThirdInterArrivalTime + Definitions.FIELD_DELIM;
         ret = ret + this.maximumInterArrivalTime + Definitions.FIELD_DELIM;
-        ret = ret + this.varianceInterArrivalTime + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.varianceInterArrivalTime) + Definitions.FIELD_DELIM;
         
         ret = ret + this.minimumInterArrivalTime_a_b + Definitions.FIELD_DELIM;
         ret = ret + this.quartileFirstInterArrivalTime_a_b + Definitions.FIELD_DELIM;
@@ -569,7 +569,7 @@ public class Features_MOORE_DTO {
         ret = ret + this.avgInterArrivalTime_a_b + Definitions.FIELD_DELIM;
         ret = ret + this.quartileThirdInterArrivalTime_a_b + Definitions.FIELD_DELIM;
         ret = ret + this.maximumInterArrivalTime_a_b + Definitions.FIELD_DELIM;
-        ret = ret + this.varianceInterArrivalTime_a_b + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.varianceInterArrivalTime_a_b) + Definitions.FIELD_DELIM;
         
         ret = ret + this.minimumInterArrivalTime_b_a + Definitions.FIELD_DELIM;
         ret = ret + this.quartileFirstInterArrivalTime_b_a + Definitions.FIELD_DELIM;
@@ -577,7 +577,7 @@ public class Features_MOORE_DTO {
         ret = ret + this.avgInterArrivalTime_b_a + Definitions.FIELD_DELIM;
         ret = ret + this.quartileThirdInterArrivalTime_b_a + Definitions.FIELD_DELIM;
         ret = ret + this.maximumInterArrivalTime_b_a + Definitions.FIELD_DELIM;
-        ret = ret + this.varianceInterArrivalTime_b_a + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.varianceInterArrivalTime_b_a) + Definitions.FIELD_DELIM;
         
         ret = ret + this.minimumDataWire + Definitions.FIELD_DELIM;
         ret = ret + this.quartileFirstDataWire + Definitions.FIELD_DELIM;
@@ -585,7 +585,7 @@ public class Features_MOORE_DTO {
         ret = ret + this.avgDataWire + Definitions.FIELD_DELIM;
         ret = ret + this.quartileThirdDataWire + Definitions.FIELD_DELIM;
         ret = ret + this.maximumDataWire + Definitions.FIELD_DELIM;
-        ret = ret + this.varianceDataWire + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.varianceDataWire) + Definitions.FIELD_DELIM;
         
         ret = ret + this.minimumDataWire_a_b + Definitions.FIELD_DELIM;
         ret = ret + this.quartileFirstDataWire_a_b + Definitions.FIELD_DELIM;
@@ -593,7 +593,7 @@ public class Features_MOORE_DTO {
         ret = ret + this.avgDataWire_a_b + Definitions.FIELD_DELIM;
         ret = ret + this.quartileThirdDataWire_a_b + Definitions.FIELD_DELIM;
         ret = ret + this.maximumDataWire_a_b + Definitions.FIELD_DELIM;
-        ret = ret + this.varianceDataWire_a_b + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.varianceDataWire_a_b) + Definitions.FIELD_DELIM;
         
         ret = ret + this.minimumDataWire_b_a + Definitions.FIELD_DELIM;
         ret = ret + this.quartileFirstDataWire_b_a + Definitions.FIELD_DELIM;
@@ -601,7 +601,7 @@ public class Features_MOORE_DTO {
         ret = ret + this.avgDataWire_b_a + Definitions.FIELD_DELIM;
         ret = ret + this.quartileThirdDataWire_b_a + Definitions.FIELD_DELIM;
         ret = ret + this.maximumDataWire_b_a + Definitions.FIELD_DELIM;
-        ret = ret + this.varianceDataWire_b_a + Definitions.FIELD_DELIM;
+        ret = ret + String.format("%.2f", this.varianceDataWire_b_a) + Definitions.FIELD_DELIM;
         
         ret = ret + this.total_packets_a_b + Definitions.FIELD_DELIM;
         ret = ret + this.total_packets_b_a + Definitions.FIELD_DELIM;

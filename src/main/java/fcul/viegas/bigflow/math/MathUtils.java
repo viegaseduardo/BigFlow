@@ -37,13 +37,20 @@ public class MathUtils {
     
     public double getVariance() {
         double deviation = this.getStandardDeviation();
-        return deviation*deviation;
+        deviation = deviation*deviation;
+        if(Double.isNaN(deviation)){
+            return 0.0d;
+        }
+        return deviation;
     }
     
     public double getStandardDeviation(){
         double deviation = 0.0f;
         if(this.count > 1){
-            deviation = Math.sqrt((this.sumSq - (float)this.sum*this.sum/(float)this.count)/((float)this.count-1));
+            deviation = Math.sqrt((this.sumSq - this.sum*this.sum/this.count)/((float)this.count-1));
+        }
+        if(Double.isNaN(deviation)){
+            return 0.0d;
         }
         return deviation;
     }
