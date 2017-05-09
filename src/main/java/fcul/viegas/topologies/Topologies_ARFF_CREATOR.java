@@ -34,14 +34,13 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 public class Topologies_ARFF_CREATOR {
 
     public static void runTopology(
-            String networkPacketFilePath, 
+            String networkPacketFilePath,
             String networkClassDescriptionPath,
-            String networkArffPath) 
+            String networkArffPath)
             throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        
-        //env.setParallelism(5);
 
+        //env.setParallelism(5);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
         //read file
@@ -83,26 +82,30 @@ public class Topologies_ARFF_CREATOR {
 
         //join A and AtoB back together
         DataStream<Features_DTO> networkFeatures = networkPacketWindow_A_B.join(networkPacketWindow_A)
-                .where(new KeySelector<Features_A_B_DTO, Integer>() {
+                .where(new KeySelector<Features_A_B_DTO, String>() {
                     @Override
-                    public Integer getKey(Features_A_B_DTO in) throws Exception {
-                        return (in.getSourceAddress()).hashCode();
+                    public String getKey(Features_A_B_DTO in) throws Exception {
+                        //Integer hash = (in.getSourceAddress()).hashCode();
+                        //System.out.println("AB: " + hash + "\t" + in.getSourceAddress());
+                        return in.getSourceAddress();
                     }
-                }).equalTo(new KeySelector<Features_A_DTO, Integer>() {
+                }).equalTo(new KeySelector<Features_A_DTO, String>() {
             @Override
-            public Integer getKey(Features_A_DTO in) throws Exception {
-                return (in.getAddress()).hashCode();
+            public String getKey(Features_A_DTO in) throws Exception {
+                //Integer hash = (in.getAddress()).hashCode();
+                //System.out.println("A: " + hash + "\t" + in.getAddress());
+                return in.getAddress();
             }
         }).window(TumblingEventTimeWindows.of(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A)))
                 .apply(new NetworkPacketWindowJoiner());
 
         SingleOutputStreamOperator<Features_DTO> networkFeaturesAssingedClass
                 = networkFeatures.map(new FeatureClassAssigner(networkClassDescriptionPath));
-        
+
         networkFeaturesAssingedClass.writeAsText(networkArffPath, WriteMode.OVERWRITE).setParallelism(1);
 
         long startTime = System.currentTimeMillis();
-        
+
         env.execute(networkPacketFilePath + "_JOB");
 
         long stopTime = System.currentTimeMillis();
