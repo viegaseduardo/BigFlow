@@ -42,7 +42,7 @@ public class Topologies_ARFF_CREATOR {
         
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        //env.setParallelism(5);
+        env.setParallelism(5);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
         //read file
