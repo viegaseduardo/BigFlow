@@ -77,7 +77,7 @@ public class Topologies_ARFF_CREATOR {
 
         //A window operator
         SingleOutputStreamOperator<Features_A_DTO> networkPacketWindow_A
-                = keyIPSrcDst.timeWindow(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A))
+                = keyIPSrc.timeWindow(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A))
                         .fold(new Features_A_DTO(), new NetworkPacketWindow_A());
 
         //join A and AtoB back together
