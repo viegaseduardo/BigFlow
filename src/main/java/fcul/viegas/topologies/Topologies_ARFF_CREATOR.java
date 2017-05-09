@@ -107,6 +107,7 @@ public class Topologies_ARFF_CREATOR {
         long startTime = System.currentTimeMillis();
 
         env.execute(networkPacketFilePath + "_JOB");
+        
 
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;

@@ -14,17 +14,23 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        /*String param1 = "/home/viegas/Desktop/saida/201601101400.txt";
-        String param2 = "/home/viegas/Desktop/saida/20160110_anomalous_suspicious.csv";
-        String param3 = "/home/viegas/Desktop/saida/20160110.arff";
+        if (args.length == 0) {
 
-        Topologies_ARFF_CREATOR.runTopology(
-                param1, param2, param3);
+            String param1 = "/home/viegas/Desktop/saida/201601101400.txt";
+            String param2 = "/home/viegas/Desktop/saida/20160110_anomalous_suspicious.csv";
+            String param3 = "/home/viegas/Desktop/saida/20160110.arff";
+
+            Topologies_ARFF_CREATOR.runTopology(
+                    param1, param2, param3);
+        } else if (args[0].equals("extractor")) {
+            Topologies_ARFF_CREATOR.runTopology(
+                    args[1],
+                    args[2],
+                    args[3]);
+        }
+        /*       
+        
          */
-        Topologies_ARFF_CREATOR.runTopology(
-                args[0],
-                args[1],
-                args[2]);
     }
 
 }
