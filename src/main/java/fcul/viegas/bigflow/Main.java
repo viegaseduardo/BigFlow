@@ -13,18 +13,18 @@ import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-
+/*
         String param1 = "/home/viegas/Desktop/saida/201601101400.txt";
         String param2 = "/home/viegas/Desktop/saida/20160110_anomalous_suspicious.csv";
         String param3 = "/home/viegas/Desktop/saida/20160110.arff";
-
+ 
         Topologies_ARFF_CREATOR.runTopology(
                 param1, param2, param3);
-
-        /*        Topologies_ARFF_CREATOR.runTopology(
+*/
+                Topologies_ARFF_CREATOR.runTopology(
                 args[0], 
                 args[1], 
                 args[2]);
-         */    }
+            }
 
 }
