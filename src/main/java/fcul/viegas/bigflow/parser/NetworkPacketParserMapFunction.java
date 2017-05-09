@@ -14,9 +14,18 @@ import org.apache.flink.api.common.functions.MapFunction;
  * @author viegas
  */
 public class NetworkPacketParserMapFunction implements MapFunction<String, NetworkPacketDTO> {
+    
+    private static int n = 0;
+    public static String path = "";
 
     @Override
     public NetworkPacketDTO map(String t) throws Exception {
+        
+        NetworkPacketParserMapFunction.n++;
+        if(NetworkPacketParserMapFunction.n % 100000 == 0){
+            System.out.println(NetworkPacketParserMapFunction.path + "\t" + NetworkPacketParserMapFunction.n);
+        }
+        
         String[] split = t.split(";");
         
         NetworkPacketDTO networkPacketDTO = new NetworkPacketDTO();
