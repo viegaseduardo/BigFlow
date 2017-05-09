@@ -53,14 +53,12 @@ public class Topologies_ARFF_CREATOR {
                 .assignTimestampsAndWatermarks(new NetworkPacketTimestampAssigner());
 
         //key stream by ips regardless of source and dest order
-        KeyedStream<NetworkPacketDTO, Long> keyIPSrcDst = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Long>() {
+        KeyedStream<NetworkPacketDTO, Integer> keyIPSrcDst = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Integer>() {
             @Override
-            public Long getKey(NetworkPacketDTO in) throws Exception {
-                Long srcDstHash = Long.valueOf((in.getSourceIP() + in.getDestinationIP()).hashCode());
-                Long dstSrcHash = Long.valueOf((in.getDestinationIP() + in.getSourceIP()).hashCode());
-                Long hash = (srcDstHash > dstSrcHash)
-                        ? srcDstHash << 32 + dstSrcHash
-                        : dstSrcHash << 32 + srcDstHash;
+            public Integer getKey(NetworkPacketDTO in) throws Exception {
+                Integer srcDstHash = (in.getSourceIP() + in.getDestinationIP()).hashCode();
+                Integer dstSrcHash = (in.getDestinationIP() + in.getSourceIP()).hashCode();
+                Integer hash = srcDstHash ^ dstSrcHash;
                 return hash;
             }
         });

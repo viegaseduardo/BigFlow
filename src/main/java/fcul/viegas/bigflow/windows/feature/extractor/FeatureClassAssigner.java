@@ -23,8 +23,8 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
 
     private ArrayList<Features_Class_DTO> featuresClasses;
     private String classDescriptionFile;
-    
-    public FeatureClassAssigner(String classDescriptionFile){
+
+    public FeatureClassAssigner(String classDescriptionFile) {
         this.classDescriptionFile = classDescriptionFile;
     }
 
