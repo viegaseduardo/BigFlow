@@ -49,24 +49,29 @@ public class Topologies_ARFF_CREATOR {
 
         //parse data and correct order
         SingleOutputStreamOperator<NetworkPacketDTO> singleOutput = dataStreamSource.map(new NetworkPacketParserMapFunction())
-                .assignTimestampsAndWatermarks(new NetworkPacketTimestampAssigner());
+                .assignTimestampsAndWatermarks(new NetworkPacketTimestampAssigner(Time.milliseconds(500l)));
 
         //key stream by ips regardless of source and dest order
-        KeyedStream<NetworkPacketDTO, Integer> keyIPSrcDst = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Integer>() {
+        KeyedStream<NetworkPacketDTO, String> keyIPSrcDst = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, String>() {
             @Override
-            public Integer getKey(NetworkPacketDTO in) throws Exception {
-                Integer srcDstHash = (in.getSourceIP() + in.getDestinationIP()).hashCode();
-                Integer dstSrcHash = (in.getDestinationIP() + in.getSourceIP()).hashCode();
-                Integer hash = srcDstHash ^ dstSrcHash;
-                return hash;
+            public String getKey(NetworkPacketDTO in) throws Exception {
+                Integer srcDstHash = (in.getSourceIP()).hashCode();
+                Integer dstSrcHash = (in.getDestinationIP()).hashCode();
+                String ret;
+                if(srcDstHash > dstSrcHash){
+                    ret = in.getSourceIP() + in.getDestinationIP();
+                }else{
+                    ret = in.getDestinationIP() + in.getSourceIP();
+                }
+                return ret;
             }
         });
 
         //key stream by source ip
-        KeyedStream<NetworkPacketDTO, Integer> keyIPSrc = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, Integer>() {
+        KeyedStream<NetworkPacketDTO, String> keyIPSrc = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, String>() {
             @Override
-            public Integer getKey(NetworkPacketDTO in) throws Exception {
-                return (in.getSourceIP()).hashCode();
+            public String getKey(NetworkPacketDTO in) throws Exception {
+                return in.getSourceIP();
             }
         });
 

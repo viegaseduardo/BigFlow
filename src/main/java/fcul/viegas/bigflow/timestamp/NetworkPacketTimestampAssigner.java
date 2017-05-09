@@ -7,26 +7,42 @@ package fcul.viegas.bigflow.timestamp;
 
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks;
+import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.watermark.Watermark;
+import org.apache.flink.streaming.api.windowing.time.Time;
 
 /**
  *
  * @author viegas
  */
-public class NetworkPacketTimestampAssigner implements AssignerWithPeriodicWatermarks<NetworkPacketDTO> {
+public class NetworkPacketTimestampAssigner extends BoundedOutOfOrdernessTimestampExtractor<NetworkPacketDTO> {
+    
+    public NetworkPacketTimestampAssigner(Time BoundedOutOfOrdernessTimestampExtractor){
+        super(BoundedOutOfOrdernessTimestampExtractor);
+    }
+
+    @Override
+    public long extractTimestamp(NetworkPacketDTO t) {
+        long timestamp = t.getTimestamp() / 1000;
+        return timestamp;
+    }
 
     
+    /*
     private long maxTimestamp = 0l;
+    private long lastEmittedWatermark = Long.MIN_VALUE;
     private final long maxLatenessSize = 500l;
 
     @Override
     public long extractTimestamp(NetworkPacketDTO t, long l) {
-        maxTimestamp = Math.max(t.getTimestamp()/1000, maxTimestamp/1000);
-        return t.getTimestamp()/1000;
+        long timestamp = t.getTimestamp()/1000;
+        maxTimestamp = Math.max(timestamp, maxTimestamp);
+        return timestamp;
     }
 
     @Override
     public Watermark getCurrentWatermark() {
+        long watermarkTime = this.maxTimestamp - this.maxLatenessSize;
         Watermark watermark = new Watermark(maxTimestamp - maxLatenessSize);
         return watermark;
     }
