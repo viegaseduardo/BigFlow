@@ -22,17 +22,10 @@ import org.apache.flink.configuration.Configuration;
  *
  * @author viegas
  */
-public class NetworkPacketWindow_A_B extends RichFoldFunction<NetworkPacketDTO, Features_A_B_DTO> implements FoldFunction<NetworkPacketDTO, Features_A_B_DTO> {
+public class NetworkPacketWindow_A_B implements FoldFunction<NetworkPacketDTO, Features_A_B_DTO> {
     
-    private IntCounter windowAB = new IntCounter();
-
-    @Override
-    public void open(Configuration parameters) {
-        getRuntimeContext().addAccumulator(Definitions.DEBUG_COUNTER_FEATURE_A_B, this.windowAB);
-    }
     
     private void initializeFeatures(Features_A_B_DTO featAB, NetworkPacketDTO networkPacket) {
-        this.windowAB.add(1);
         
         featAB.setFirstTime(false);
         //for now we assume that whoever have the first packet in our window is the server

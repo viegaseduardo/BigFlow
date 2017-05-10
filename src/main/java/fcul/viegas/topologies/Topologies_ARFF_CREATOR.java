@@ -45,11 +45,11 @@ public class Topologies_ARFF_CREATOR {
             String networkClassDescriptionPath,
             String networkArffPath)
             throws Exception {
-        Definitions.DEBUG_FEATURE_ARFF_FILEPATH = networkArffPath;
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        
 
-        env.setParallelism(5);
+        env.setParallelism(8);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
         //read file
@@ -122,15 +122,6 @@ public class Topologies_ARFF_CREATOR {
 
         JobExecutionResult result = env.execute(networkPacketFilePath + "_JOB");
         
-        String res = networkArffPath + Definitions.FIELD_DELIM + result.getNetRuntime() + Definitions.FIELD_DELIM;
-        Iterator it = result.getAllAccumulatorResults().entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            res = res + pair.getKey().toString() + Definitions.FIELD_DELIM + pair.getValue().toString()+ Definitions.FIELD_DELIM;
-        }
-        
-        Files.write(Paths.get("result.txt"), res.getBytes(), StandardOpenOption.APPEND);
-
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
         System.out.println("Execution Time: " + elapsedTime);

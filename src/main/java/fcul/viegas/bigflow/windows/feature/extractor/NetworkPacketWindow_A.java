@@ -19,17 +19,9 @@ import org.apache.flink.configuration.Configuration;
  *
  * @author viegas
  */
-public class NetworkPacketWindow_A extends RichFoldFunction<NetworkPacketDTO, Features_A_DTO> {
-    
-    private IntCounter windowA = new IntCounter();
-
-    @Override
-    public void open(Configuration parameters) {
-        getRuntimeContext().addAccumulator(Definitions.DEBUG_COUNTER_FEATURE_A, this.windowA);
-    }
+public class NetworkPacketWindow_A implements FoldFunction<NetworkPacketDTO, Features_A_DTO> {
     
     private void initializeFeatures(Features_A_DTO featA, NetworkPacketDTO networkPacket) {
-        this.windowA.add(1);
         featA.setFirstTime(false);
         featA.setAddressHash(networkPacket.getSourceIP().hashCode());
         featA.setAddress(networkPacket.getSourceIP());

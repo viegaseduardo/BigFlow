@@ -7,6 +7,8 @@ package fcul.viegas.bigflow.parser;
 
 import fcul.viegas.bigflow.definitions.Definitions;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
+import fcul.viegas.bigflow.windows.feature.extractor.FeatureClassAssigner;
+import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindowJoiner;
 import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
@@ -16,28 +18,11 @@ import org.apache.flink.configuration.Configuration;
  *
  * @author viegas
  */
-public class NetworkPacketParserMapFunction extends RichMapFunction<String, NetworkPacketDTO> {
+public class NetworkPacketParserMapFunction implements MapFunction<String, NetworkPacketDTO> {
 
-    private IntCounter numPackets = new IntCounter();
-
-    @Override
-    public void open(Configuration parameters) {
-        getRuntimeContext().addAccumulator(Definitions.DEBUG_COUNTER_FEATURE_NETWORK_PACKET, this.numPackets);
-    }
 
     @Override
     public NetworkPacketDTO map(String t) throws Exception {
-
-        this.numPackets.add(1);
-
-        if (this.numPackets.getLocalValuePrimitive() % 100000 == 0) {
-            System.out.println(Definitions.DEBUG_FEATURE_ARFF_FILEPATH + "\t"
-                    + Definitions.DEBUG_COUNTER_FEATURE_NETWORK_PACKET + ": " + this.numPackets.getLocalValue()
-                    + Definitions.DEBUG_COUNTER_FEATURE_A_B + ": " + getRuntimeContext().getAccumulator(Definitions.DEBUG_COUNTER_FEATURE_A_B).getLocalValue().toString()
-                    + Definitions.DEBUG_COUNTER_FEATURE_A + ": " + getRuntimeContext().getAccumulator(Definitions.DEBUG_COUNTER_FEATURE_A).getLocalValue().toString()
-                    + Definitions.DEBUG_COUNTER_FEATURE_JOINER + ": " + getRuntimeContext().getAccumulator(Definitions.DEBUG_COUNTER_FEATURE_JOINER).getLocalValue().toString()
-                    + Definitions.DEBUG_COUNTER_FEATURE_TO_FILE + ": " + getRuntimeContext().getAccumulator(Definitions.DEBUG_COUNTER_FEATURE_TO_FILE).getLocalValue().toString());
-        }
 
         String[] split = t.split(";");
 

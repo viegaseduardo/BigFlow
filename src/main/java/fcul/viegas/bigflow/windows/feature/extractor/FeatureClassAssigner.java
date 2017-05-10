@@ -25,7 +25,6 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
 
     private ArrayList<Features_Class_DTO> featuresClasses;
     private String classDescriptionFile;
-    private IntCounter toFile = new IntCounter();
     
     
     public FeatureClassAssigner(String classDescriptionFile) {
@@ -33,9 +32,6 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
     }
 
     public void open(Configuration parameters) {
-        
-        getRuntimeContext().addAccumulator(Definitions.DEBUG_COUNTER_FEATURE_TO_FILE, this.toFile);
-
         this.featuresClasses = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(this.classDescriptionFile))) {
@@ -83,9 +79,7 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
     }
 
     @Override
-    public Features_DTO map(Features_DTO featDTO) throws Exception {
-        this.toFile.add(1);
-        
+    public Features_DTO map(Features_DTO featDTO) throws Exception {        
         Features_CLASS_ASSIGNER.extractFeatures(featuresClasses, featDTO);
         return featDTO;
     }

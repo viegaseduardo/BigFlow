@@ -37,11 +37,6 @@ public class Definitions {
     public static String FEATURES_CLASS_ASSIGNER_NORMAL_LABEL = "normal";
     public static String FEATURES_CLASS_ASSIGNER_ATTACK_LABEL = "attack";
 
-    public static String DEBUG_FEATURE_ARFF_FILEPATH = "";
-    public static String DEBUG_COUNTER_FEATURE_NETWORK_PACKET = "counter_NET_PACKET";
-    public static String DEBUG_COUNTER_FEATURE_A = "counter_A";
-    public static String DEBUG_COUNTER_FEATURE_A_B = "counter_A_B";
-    public static String DEBUG_COUNTER_FEATURE_JOINER = "counter_JOIN";
-    public static String DEBUG_COUNTER_FEATURE_TO_FILE = "counter_TO_FILE";
+    
 
 }
