@@ -27,14 +27,21 @@ public class Definitions {
     public static final String FIELD_DELIM_WEKA = ",";
 
     public static String CLASS_DESCRIPTION_FILE = "";
-    
+
     public static String ANY_IP_ADDRESS = "any";
     public static Integer ANY_PORT_ADDRESS = -1;
-    
+
     public static String FEATURES_CLASS_ASSIGNER_NORMAL_TAXONOMY = "normal_taxonomy";
     public static Float FEATURES_CLASS_ASSIGNER_NORMAL_DISTANCE = 0.0f;
     public static Integer FEATURES_CLASS_ASSIGNER_NORMAL_NB_DETECTORS = 0;
     public static String FEATURES_CLASS_ASSIGNER_NORMAL_LABEL = "normal";
     public static String FEATURES_CLASS_ASSIGNER_ATTACK_LABEL = "attack";
+
+    public static String DEBUG_FEATURE_ARFF_FILEPATH = "";
+    public static String DEBUG_COUNTER_FEATURE_NETWORK_PACKET = "counter_NET_PACKET";
+    public static String DEBUG_COUNTER_FEATURE_A = "counter_A";
+    public static String DEBUG_COUNTER_FEATURE_A_B = "counter_A_B";
+    public static String DEBUG_COUNTER_FEATURE_JOINER = "counter_JOIN";
+    public static String DEBUG_COUNTER_FEATURE_TO_FILE = "counter_TO_FILE";
 
 }

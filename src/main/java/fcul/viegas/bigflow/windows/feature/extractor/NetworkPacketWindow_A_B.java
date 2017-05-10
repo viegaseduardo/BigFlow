@@ -13,15 +13,29 @@ import fcul.viegas.bigflow.extractors.Features_NIGEL_Extractor;
 import fcul.viegas.bigflow.extractors.Features_ORUNADA_Extractor;
 import fcul.viegas.bigflow.extractors.Features_VIEGAS_Extractor;
 import java.util.Objects;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.FoldFunction;
+import org.apache.flink.api.common.functions.RichFoldFunction;
+import org.apache.flink.configuration.Configuration;
 
 /**
  *
  * @author viegas
  */
-public class NetworkPacketWindow_A_B implements FoldFunction<NetworkPacketDTO, Features_A_B_DTO> {
+public class NetworkPacketWindow_A_B extends RichFoldFunction<NetworkPacketDTO, Features_A_B_DTO> {
+    
+    private IntCounter windowAB = new IntCounter();
+
+    @Override
+    public void open(Configuration parameters) {
+        getRuntimeContext().addAccumulator(Definitions.DEBUG_COUNTER_FEATURE_A_B, this.windowAB);
+    }
+    
+
 
     private void initializeFeatures(Features_A_B_DTO featAB, NetworkPacketDTO networkPacket) {
+        this.windowAB.add(1);
+        
         featAB.setFirstTime(false);
         //for now we assume that whoever have the first packet in our window is the server
         //  for the MAWI dataset it shouldnt be a problem as according to 
@@ -31,10 +45,12 @@ public class NetworkPacketWindow_A_B implements FoldFunction<NetworkPacketDTO, F
         featAB.setDestinationAddressHash(networkPacket.getDestinationIP().hashCode());
         featAB.setSourceAddress(networkPacket.getSourceIP());
         featAB.setDestinationAddress(networkPacket.getDestinationIP());
-        
+
         featAB.setDestinationPortAddress(networkPacket.getDestinationPort());
         featAB.setSourcePortAddress(networkPacket.getSourcePort());
         
+        
+
 
         /*
         //the trick here is that we may get a window in the middle of a flow

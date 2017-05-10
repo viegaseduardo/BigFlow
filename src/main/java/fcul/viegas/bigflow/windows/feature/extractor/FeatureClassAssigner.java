@@ -28,14 +28,13 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
     private IntCounter toFile = new IntCounter();
     
     
-
     public FeatureClassAssigner(String classDescriptionFile) {
         this.classDescriptionFile = classDescriptionFile;
     }
 
     public void open(Configuration parameters) {
         
-        getRuntimeContext().addAccumulator("toFile", this.toFile);
+        getRuntimeContext().addAccumulator(Definitions.DEBUG_COUNTER_FEATURE_TO_FILE, this.toFile);
 
         this.featuresClasses = new ArrayList<>();
 
@@ -85,14 +84,7 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
 
     @Override
     public Features_DTO map(Features_DTO featDTO) throws Exception {
-        
         this.toFile.add(1);
-        if(this.toFile.getLocalValuePrimitive() % 100000 == 0){
-            System.out.println(NetworkPacketParserMapFunction.path + "\tnetworkPackets: " 
-                    + NetworkPacketParserMapFunction.n + "\tnetworkJoined: " 
-                    + NetworkPacketWindowJoiner.n + "\tnetworkWritenToFile: "
-                    + this.toFile.getLocalValuePrimitive());
-        }
         
         Features_CLASS_ASSIGNER.extractFeatures(featuresClasses, featDTO);
         return featDTO;

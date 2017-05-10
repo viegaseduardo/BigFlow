@@ -45,7 +45,7 @@ public class Topologies_ARFF_CREATOR {
             String networkClassDescriptionPath,
             String networkArffPath)
             throws Exception {
-        NetworkPacketParserMapFunction.path = networkArffPath;
+        Definitions.DEBUG_FEATURE_ARFF_FILEPATH = networkArffPath;
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
