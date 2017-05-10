@@ -34,7 +34,7 @@ public class NetworkPacketParserMapFunction extends RichMapFunction<String, Netw
 
         NetworkPacketParserMapFunction.n++;
         if (NetworkPacketParserMapFunction.n % 100000 == 0) {
-            //System.out.println(NetworkPacketParserMapFunction.path + "\t" + NetworkPacketParserMapFunction.n);
+            System.out.println(NetworkPacketParserMapFunction.path + "\t" + NetworkPacketParserMapFunction.n);
         }
 
         String[] split = t.split(";");
