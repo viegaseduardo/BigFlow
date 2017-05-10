@@ -88,9 +88,9 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
         
         this.toFile.add(1);
         if(this.toFile.getLocalValuePrimitive() % 100000 == 0){
-            System.out.println(NetworkPacketParserMapFunction.path + "\t" 
-                    + NetworkPacketParserMapFunction.n + "\t" 
-                    + NetworkPacketWindowJoiner.n + "\t"
+            System.out.println(NetworkPacketParserMapFunction.path + "\tnetworkPackets: " 
+                    + NetworkPacketParserMapFunction.n + "\tnetworkJoined: " 
+                    + NetworkPacketWindowJoiner.n + "\tnetworkWritenToFile: "
                     + this.toFile.getLocalValuePrimitive());
         }
         

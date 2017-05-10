@@ -39,8 +39,8 @@ public class NetworkPacketWindowJoiner extends RichJoinFunction<Features_A_B_DTO
         NetworkPacketWindowJoiner.n++;
         
         if(this.join.getLocalValuePrimitive() % 100000 == 0){
-            System.out.println(NetworkPacketParserMapFunction.path + "\t" 
-                    + NetworkPacketParserMapFunction.n + "\t" 
+            System.out.println(NetworkPacketParserMapFunction.path + "\ttnetworkPackets: " 
+                    + NetworkPacketParserMapFunction.n + "\ttnetworkJoined: " 
                     + this.join.getLocalValuePrimitive());
         }
         
