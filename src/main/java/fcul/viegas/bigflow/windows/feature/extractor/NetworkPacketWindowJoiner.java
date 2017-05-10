@@ -12,6 +12,7 @@ import fcul.viegas.bigflow.extractors.Features_MOORE_Extractor;
 import fcul.viegas.bigflow.extractors.Features_NIGEL_Extractor;
 import fcul.viegas.bigflow.extractors.Features_ORUNADA_Extractor;
 import fcul.viegas.bigflow.extractors.Features_VIEGAS_Extractor;
+import fcul.viegas.bigflow.parser.NetworkPacketParserMapFunction;
 import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.RichJoinFunction;
@@ -24,6 +25,7 @@ import org.apache.flink.configuration.Configuration;
 public class NetworkPacketWindowJoiner extends RichJoinFunction<Features_A_B_DTO, Features_A_DTO, Features_DTO> {
     
     private IntCounter join = new IntCounter();
+    public static int n = 0;
 
     @Override
     public void open(Configuration parameters) {
@@ -34,6 +36,13 @@ public class NetworkPacketWindowJoiner extends RichJoinFunction<Features_A_B_DTO
     public Features_DTO join(Features_A_B_DTO featAB, Features_A_DTO featA) throws Exception {
         
         this.join.add(1);
+        NetworkPacketWindowJoiner.n++;
+        
+        if(this.join.getLocalValuePrimitive() % 100000 == 0){
+            System.out.println(NetworkPacketParserMapFunction.path + "\t" 
+                    + NetworkPacketParserMapFunction.n + "\t" 
+                    + this.join.getLocalValuePrimitive());
+        }
         
         Features_DTO featDTO = new Features_DTO();
 
