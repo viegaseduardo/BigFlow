@@ -7,40 +7,51 @@ package fcul.viegas.bigflow.parser;
 
 import fcul.viegas.bigflow.definitions.Definitions;
 import fcul.viegas.bigflow.dto.NetworkPacketDTO;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.RichMapFunction;
+import org.apache.flink.configuration.Configuration;
 
 /**
  *
  * @author viegas
  */
-public class NetworkPacketParserMapFunction implements MapFunction<String, NetworkPacketDTO> {
-    
+public class NetworkPacketParserMapFunction extends RichMapFunction<String, NetworkPacketDTO> {
+
     private static int n = 0;
     public static String path = "";
+    private IntCounter numPackets = new IntCounter();
+
+    @Override
+    public void open(Configuration parameters) {
+        getRuntimeContext().addAccumulator("num-packets", this.numPackets);
+    }
 
     @Override
     public NetworkPacketDTO map(String t) throws Exception {
         
+        this.numPackets.add(1);
+
         NetworkPacketParserMapFunction.n++;
-        if(NetworkPacketParserMapFunction.n % 100000 == 0){
+        if (NetworkPacketParserMapFunction.n % 100000 == 0) {
             System.out.println(NetworkPacketParserMapFunction.path + "\t" + NetworkPacketParserMapFunction.n);
         }
-        
+
         String[] split = t.split(";");
-        
+
         NetworkPacketDTO networkPacketDTO = new NetworkPacketDTO();
-        
+
         networkPacketDTO.setTimestamp(Long.valueOf(split[0]));
         networkPacketDTO.setSourceIP(split[1]);
         networkPacketDTO.setDestinationIP(split[2]);
         String protocol = split[3];
-        if(protocol.equals("TCP")){
+        if (protocol.equals("TCP")) {
             networkPacketDTO.setProtocol(Definitions.PROTOCOL_TCP);
-        }else if(protocol.equals("UDP")){
+        } else if (protocol.equals("UDP")) {
             networkPacketDTO.setProtocol(Definitions.PROTOCOL_UDP);
-        }else if(protocol.equals("ICMP")){
+        } else if (protocol.equals("ICMP")) {
             networkPacketDTO.setProtocol(Definitions.PROTOCOL_ICMP);
-        }else{
+        } else {
             networkPacketDTO.setProtocol(Definitions.PROTOCOL_OTHER);
         }
         networkPacketDTO.setTimeToLive(Integer.valueOf(split[4]));
@@ -61,14 +72,14 @@ public class NetworkPacketParserMapFunction implements MapFunction<String, Netwo
         networkPacketDTO.setIcmp_type(Integer.valueOf(split[19]));
         networkPacketDTO.setIcmp_code(Integer.valueOf(split[20]));
         networkPacketDTO.setPacket_size(Integer.valueOf(split[21]));
-        if(networkPacketDTO.getUdp_source() == 0){
+        if (networkPacketDTO.getUdp_source() == 0) {
             networkPacketDTO.setSourcePort(networkPacketDTO.getTcp_source());
             networkPacketDTO.setDestinationPort(networkPacketDTO.getTcp_dest());
-        }else{
+        } else {
             networkPacketDTO.setSourcePort(networkPacketDTO.getUdp_source());
             networkPacketDTO.setDestinationPort(networkPacketDTO.getUdp_dest());
         }
-        
+
         return networkPacketDTO;
     }
 

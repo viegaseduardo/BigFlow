@@ -16,6 +16,13 @@ import fcul.viegas.bigflow.windows.feature.extractor.FeatureClassAssigner;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindowJoiner;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A_B;
+import java.io.BufferedWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Iterator;
+import java.util.Map;
+import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.core.fs.FileSystem.WriteMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
@@ -39,7 +46,7 @@ public class Topologies_ARFF_CREATOR {
             String networkArffPath)
             throws Exception {
         NetworkPacketParserMapFunction.path = networkArffPath;
-        
+
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         env.setParallelism(5);
@@ -51,7 +58,7 @@ public class Topologies_ARFF_CREATOR {
 
         //parse data and correct order
         SingleOutputStreamOperator<NetworkPacketDTO> singleOutput = dataStreamSource.map(new NetworkPacketParserMapFunction())
-                .assignTimestampsAndWatermarks(new NetworkPacketTimestampAssigner(Time.milliseconds(500l)));
+                .assignTimestampsAndWatermarks(new NetworkPacketTimestampAssigner(Time.milliseconds(100l)));
 
         //key stream by ips regardless of source and dest order
         KeyedStream<NetworkPacketDTO, String> keyIPSrcDst = singleOutput.keyBy(new KeySelector<NetworkPacketDTO, String>() {
@@ -60,9 +67,9 @@ public class Topologies_ARFF_CREATOR {
                 Integer srcDstHash = (in.getSourceIP()).hashCode();
                 Integer dstSrcHash = (in.getDestinationIP()).hashCode();
                 String ret;
-                if(srcDstHash > dstSrcHash){
+                if (srcDstHash > dstSrcHash) {
                     ret = in.getSourceIP() + in.getDestinationIP();
-                }else{
+                } else {
                     ret = in.getDestinationIP() + in.getSourceIP();
                 }
                 return ret;
@@ -113,8 +120,16 @@ public class Topologies_ARFF_CREATOR {
 
         long startTime = System.currentTimeMillis();
 
-        env.execute(networkPacketFilePath + "_JOB");
+        JobExecutionResult result = env.execute(networkPacketFilePath + "_JOB");
         
+        String res = networkArffPath + Definitions.FIELD_DELIM + result.getNetRuntime() + Definitions.FIELD_DELIM;
+        Iterator it = result.getAllAccumulatorResults().entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            res = res + pair.getKey().toString() + Definitions.FIELD_DELIM + pair.getValue().toString()+ Definitions.FIELD_DELIM;
+        }
+        
+        Files.write(Paths.get("result.txt"), res.getBytes(), StandardOpenOption.APPEND);
 
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;

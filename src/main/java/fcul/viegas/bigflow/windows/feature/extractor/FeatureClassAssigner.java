@@ -12,6 +12,7 @@ import fcul.viegas.bigflow.extractors.Features_CLASS_ASSIGNER;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 
@@ -23,12 +24,17 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
 
     private ArrayList<Features_Class_DTO> featuresClasses;
     private String classDescriptionFile;
+    private IntCounter toFile = new IntCounter();
+    
+    
 
     public FeatureClassAssigner(String classDescriptionFile) {
         this.classDescriptionFile = classDescriptionFile;
     }
 
     public void open(Configuration parameters) {
+        
+        getRuntimeContext().addAccumulator("toFile", this.toFile);
 
         this.featuresClasses = new ArrayList<>();
 
@@ -78,6 +84,9 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
 
     @Override
     public Features_DTO map(Features_DTO featDTO) throws Exception {
+        
+        this.toFile.add(1);
+        
         Features_CLASS_ASSIGNER.extractFeatures(featuresClasses, featDTO);
         return featDTO;
     }

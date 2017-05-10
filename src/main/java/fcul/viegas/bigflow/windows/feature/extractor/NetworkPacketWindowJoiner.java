@@ -12,16 +12,29 @@ import fcul.viegas.bigflow.extractors.Features_MOORE_Extractor;
 import fcul.viegas.bigflow.extractors.Features_NIGEL_Extractor;
 import fcul.viegas.bigflow.extractors.Features_ORUNADA_Extractor;
 import fcul.viegas.bigflow.extractors.Features_VIEGAS_Extractor;
+import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.functions.JoinFunction;
+import org.apache.flink.api.common.functions.RichJoinFunction;
+import org.apache.flink.configuration.Configuration;
 
 /**
  *
  * @author viegas
  */
-public class NetworkPacketWindowJoiner implements JoinFunction<Features_A_B_DTO, Features_A_DTO, Features_DTO> {
+public class NetworkPacketWindowJoiner extends RichJoinFunction<Features_A_B_DTO, Features_A_DTO, Features_DTO> {
+    
+    private IntCounter join = new IntCounter();
+
+    @Override
+    public void open(Configuration parameters) {
+        getRuntimeContext().addAccumulator("join", this.join);
+    }
 
     @Override
     public Features_DTO join(Features_A_B_DTO featAB, Features_A_DTO featA) throws Exception {
+        
+        this.join.add(1);
+        
         Features_DTO featDTO = new Features_DTO();
 
         Features_VIEGAS_Extractor.extractFeatureDTO(featDTO.getFeatureVIEGAS(), featAB, featA);
