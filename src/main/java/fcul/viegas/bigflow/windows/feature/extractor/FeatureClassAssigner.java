@@ -9,6 +9,7 @@ import fcul.viegas.bigflow.definitions.Definitions;
 import fcul.viegas.bigflow.dto.Features_Class_DTO;
 import fcul.viegas.bigflow.dto.Features_DTO;
 import fcul.viegas.bigflow.extractors.Features_CLASS_ASSIGNER;
+import fcul.viegas.bigflow.parser.NetworkPacketParserMapFunction;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -86,6 +87,9 @@ public class FeatureClassAssigner extends RichMapFunction<Features_DTO, Features
     public Features_DTO map(Features_DTO featDTO) throws Exception {
         
         this.toFile.add(1);
+        if(this.toFile.getLocalValuePrimitive() % 100000 == 0){
+            System.out.println(NetworkPacketParserMapFunction.path + "\t" + NetworkPacketParserMapFunction.n + "\t" + this.toFile.getLocalValuePrimitive());
+        }
         
         Features_CLASS_ASSIGNER.extractFeatures(featuresClasses, featDTO);
         return featDTO;
