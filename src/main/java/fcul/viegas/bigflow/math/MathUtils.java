@@ -32,7 +32,7 @@ public class MathUtils {
         if(this.count == 0){
             return 0.0f;
         }
-        return ((float)this.sum/this.count);
+        return (this.sum/(float)this.count);
     }
     
     public double getVariance() {
