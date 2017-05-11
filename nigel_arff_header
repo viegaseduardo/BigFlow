@@ -30,3 +30,4 @@
 @ATTRIBUTE MAWILAB_label {normal, anomalous, suspicious, notice}
 @ATTRIBUTE class {normal, attack}
 @DATA
+
