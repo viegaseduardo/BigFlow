@@ -16,12 +16,6 @@ import fcul.viegas.bigflow.windows.feature.extractor.FeatureClassAssigner;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindowJoiner;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A_B;
-import java.io.BufferedWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Iterator;
-import java.util.Map;
 import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.core.fs.FileSystem.WriteMode;
@@ -49,7 +43,7 @@ public class Topologies_ARFF_CREATOR {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         
 
-        env.setParallelism(8);
+        env.setParallelism(5);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
         //read file

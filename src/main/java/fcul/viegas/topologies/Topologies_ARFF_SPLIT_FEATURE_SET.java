@@ -9,6 +9,10 @@ import fcul.viegas.bigflow.definitions.Definitions;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -16,19 +20,49 @@ import java.io.PrintWriter;
  */
 public class Topologies_ARFF_SPLIT_FEATURE_SET {
 
-    public static void runTopology(String featureSetPath) throws Exception {
+    public static PrintWriter[] createFiles(String path, String name) throws Exception {
+        PrintWriter writerVIEGAS = new PrintWriter(path + "_VIEGAS_" + name, "UTF-8");
+        PrintWriter writerORUNADA = new PrintWriter(path + "_ORUNADA_" + name, "UTF-8");
+        PrintWriter writerNIGEL = new PrintWriter(path + "_NIGEL_" + name, "UTF-8");
+        PrintWriter writerMOORE = new PrintWriter(path + "_MOORE_" + name, "UTF-8");
+
+        PrintWriter[] print = new PrintWriter[4];
+
+        print[0] = writerVIEGAS;
+        print[1] = writerORUNADA;
+        print[2] = writerNIGEL;
+        print[3] = writerMOORE;
+
+        return print;
+    }
+
+    public static void runTopology(String featureSetPath, String newFeatureSetPath) throws Exception {
 
         BufferedReader br = new BufferedReader(new FileReader(featureSetPath));
 
-        PrintWriter writerVIEGAS = new PrintWriter(featureSetPath + "_VIEGAS", "UTF-8");
-        PrintWriter writerORUNADA = new PrintWriter(featureSetPath + "_ORUNADA", "UTF-8");
-        PrintWriter writerNIGEL = new PrintWriter(featureSetPath + "_NIGEL", "UTF-8");
-        PrintWriter writerMOORE = new PrintWriter(featureSetPath + "_MOORE", "UTF-8");
+        HashMap<String, PrintWriter[]> map = new HashMap<String, PrintWriter[]>();
+
+        PrintWriter writerVIEGAS;
+        PrintWriter writerORUNADA;
+        PrintWriter writerNIGEL;
+        PrintWriter writerMOORE;
 
         String line;
-        int i = 0;
+        
         while ((line = br.readLine()) != null) {
+            int i = 0;
             String[] split = line.split(Definitions.FIELD_DELIM_WEKA);
+            String type = split[split.length - 5];
+
+            PrintWriter[] prints = map.get(type);
+            if (prints == null) {
+                prints = Topologies_ARFF_SPLIT_FEATURE_SET.createFiles(newFeatureSetPath, type);
+                map.put(type, prints);
+            }
+            writerVIEGAS = prints[0];
+            writerORUNADA = prints[1];
+            writerNIGEL = prints[2];
+            writerMOORE = prints[3];
 
             String viegas = "";
             String orunada = "";
@@ -91,7 +125,7 @@ public class Topologies_ARFF_SPLIT_FEATURE_SET {
             moore = moore + split[split.length - 3] + Definitions.FIELD_DELIM_WEKA;
             moore = moore + split[split.length - 2] + Definitions.FIELD_DELIM_WEKA;
             moore = moore + split[split.length - 1];
-            
+
             for (int j = 0; j < 48; j++) {
                 viegas = viegas + split[i++] + Definitions.FIELD_DELIM_WEKA;
             }
@@ -100,7 +134,7 @@ public class Topologies_ARFF_SPLIT_FEATURE_SET {
             viegas = viegas + split[split.length - 3] + Definitions.FIELD_DELIM_WEKA;
             viegas = viegas + split[split.length - 2] + Definitions.FIELD_DELIM_WEKA;
             viegas = viegas + split[split.length - 1];
-            
+
             writerVIEGAS.println(viegas);
             writerORUNADA.println(orunada);
             writerNIGEL.println(nigel);
@@ -108,11 +142,17 @@ public class Topologies_ARFF_SPLIT_FEATURE_SET {
         }
 
         br.close();
-        writerVIEGAS.close();
-        writerORUNADA.close();
-        writerNIGEL.close();
-        writerMOORE.close();
 
+        Set set = map.entrySet();
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry mentry = (Map.Entry) iterator.next();
+            PrintWriter[] prints = (PrintWriter[]) mentry.getValue();
+            prints[0].close();
+            prints[1].close();
+            prints[2].close();
+            prints[3].close();
+        }
     }
 
 }

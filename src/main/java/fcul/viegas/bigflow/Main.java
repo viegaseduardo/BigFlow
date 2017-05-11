@@ -6,6 +6,7 @@
 package fcul.viegas.bigflow;
 
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
+import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 
 /*
  * @author viegas
@@ -27,10 +28,10 @@ public class Main {
                     args[1],
                     args[2],
                     args[3]);
+        } else if (args[0].equals("stratification")) {
+            Topologies_ARFF_SPLIT_FEATURE_SET.runTopology(
+                    args[1], args[2]);
         }
-        /*       
-        
-         */
-    }
 
+    }
 }
