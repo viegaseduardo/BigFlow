@@ -106,6 +106,7 @@ public class Topologies_BATCH_No_Update {
 
         InputMappedClassifier classifier = null;
 
+        System.out.println("total;attack;normal;fp;fn;acc");
         for (FilesByDateDTO filesBy : filesByDate) {
 
             if (classifier == null) {
@@ -116,6 +117,22 @@ public class Topologies_BATCH_No_Update {
 
             Evaluation eval = new Evaluation(testData);
             eval.evaluateModel(classifier, testData);
+
+            float attackEvents = (float) (eval.confusionMatrix()[1][0]
+                    + eval.confusionMatrix()[1][1]);
+            float normalEvents = (float) (eval.confusionMatrix()[0][0]
+                    + eval.confusionMatrix()[0][1]);
+            float totalEvents = attackEvents + normalEvents;
+            float fp = (float) (eval.confusionMatrix()[0][1] / normalEvents);
+            float fn = (float) (eval.confusionMatrix()[1][0] / attackEvents);
+            float acc = (float) ((eval.confusionMatrix()[0][0] + eval.confusionMatrix()[1][1]) / totalEvents);
+
+            System.out.println(totalEvents + ";" + 
+                    attackEvents + ";" + 
+                    normalEvents + ";" + 
+                    fp + ";" + 
+                    fn + ";" + 
+                    acc);
 
             System.out.println(eval.toSummaryString());
         }
