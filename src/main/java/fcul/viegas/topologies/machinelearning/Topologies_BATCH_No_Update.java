@@ -46,6 +46,7 @@ public class Topologies_BATCH_No_Update {
                     }
                 }
             }
+            filesByDate.add(fileByDate);
         }
 
         for (File file : files) {
@@ -77,6 +78,9 @@ public class Topologies_BATCH_No_Update {
 
         for (FilesByDateDTO filesBy : filesByDate) {
             System.out.println("Train: " + filesBy.train + " date: " + filesBy.date);
+            for(String s : filesBy.files){
+                System.out.println("\t" + s);
+            }
         }
 
     }
