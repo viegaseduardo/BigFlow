@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
@@ -172,7 +173,7 @@ public class Topologies_BATCH_No_Update {
 
         InputMappedClassifier mappedCls = new InputMappedClassifier();
 
-        J48 tree = new J48();
+        NaiveBayes tree = new NaiveBayes();
 
         mappedCls.setModelHeader(dataTrain);
         mappedCls.setSuppressMappingReport(false);
