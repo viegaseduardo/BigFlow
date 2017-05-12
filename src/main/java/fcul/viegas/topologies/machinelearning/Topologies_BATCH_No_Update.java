@@ -6,6 +6,8 @@
 package fcul.viegas.topologies.machinelearning;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -103,14 +105,14 @@ public class Topologies_BATCH_No_Update {
         System.out.println("Found " + filesByDate.size() + " days of test.");
 
         System.out.println("Evaluating Classifier overtime...");
-
+        System.out.println("Training classifier");
         InputMappedClassifier classifier = null;
 
-        System.out.println("total;attack;normal;fp;fn;acc");
+        System.out.println("date;total;attack;normal;fp;fn;acc");
         for (FilesByDateDTO filesBy : filesByDate) {
 
             if (classifier == null) {
-                System.out.println("Training classifier");
+
                 classifier = Topologies_BATCH_No_Update.getClassifer(filesBy.train);
             }
             weka.core.Instances testData = Topologies_BATCH_No_Update.loadData(filesBy.train);
@@ -127,14 +129,20 @@ public class Topologies_BATCH_No_Update {
             float fn = (float) (eval.confusionMatrix()[1][0] / attackEvents);
             float acc = (float) ((eval.confusionMatrix()[0][0] + eval.confusionMatrix()[1][1]) / totalEvents);
 
-            System.out.println(totalEvents + ";" + 
-                    attackEvents + ";" + 
-                    normalEvents + ";" + 
-                    fp + ";" + 
-                    fn + ";" + 
-                    acc);
+            LocalDate localDate = filesBy.date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int year = localDate.getYear();
+            int month = localDate.getMonthValue();
+            int day = localDate.getDayOfMonth();
 
-            System.out.println(eval.toSummaryString());
+            System.out.println(day + "/" + month + "/" + year + ";"
+                    + totalEvents + ";"
+                    + attackEvents + ";"
+                    + normalEvents + ";"
+                    + fp + ";"
+                    + fn + ";"
+                    + acc);
+
+            //System.out.println(eval.toSummaryString());
         }
     }
 
