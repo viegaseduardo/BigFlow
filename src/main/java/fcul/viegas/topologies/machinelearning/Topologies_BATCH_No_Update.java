@@ -8,6 +8,8 @@ package fcul.viegas.topologies.machinelearning;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -32,13 +34,14 @@ public class Topologies_BATCH_No_Update {
 
             Calendar c = Calendar.getInstance();
             c.set(Calendar.YEAR, Integer.valueOf(directory.substring(directory.length() - 30, directory.length() - 26)));
-            c.set(Calendar.MONTH, Integer.valueOf(directory.substring(directory.length() - 26, directory.length() - 24)));
+            c.set(Calendar.MONTH, Integer.valueOf(directory.substring(directory.length() - 26, directory.length() - 24)) - 1);
             c.set(Calendar.DAY_OF_MONTH, Integer.valueOf(directory.substring(directory.length() - 24, directory.length() - 22)));
             fileByDate.date = c.getTime();
             fileByDate.files = new ArrayList<>();
 
             for (File file : files) {
-                if (file.getName().contains("train") && file.getName().contains(featureSetPrefix)) {
+                if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(file.getName(), "train")
+                        && org.apache.commons.lang3.StringUtils.containsIgnoreCase(file.getName(), featureSetPrefix)) {
                     fileByDate.train = file.getAbsolutePath();
                 } else {
                     if (file.getName().contains(featureSetPrefix)) {
@@ -76,12 +79,22 @@ public class Topologies_BATCH_No_Update {
 
         Topologies_BATCH_No_Update.findFilesPath(files, featureSetPrefix, "", filesByDate, 0);
 
+        
+        Collections.sort(filesByDate, new Comparator<FilesByDateDTO>() {
+            @Override
+            public int compare(FilesByDateDTO o1, FilesByDateDTO o2) {
+                return o1.date.compareTo(o2.date);
+            }
+        });
+        
         for (FilesByDateDTO filesBy : filesByDate) {
             System.out.println("Train: " + filesBy.train + " date: " + filesBy.date);
-            for(String s : filesBy.files){
+            for (String s : filesBy.files) {
                 System.out.println("\t" + s);
             }
         }
+        
+        System.out.println("Found " + filesByDate.size() + " days of test.");
 
     }
 
