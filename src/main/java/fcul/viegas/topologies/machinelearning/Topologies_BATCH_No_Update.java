@@ -46,19 +46,18 @@ public class Topologies_BATCH_No_Update {
                     }
                 }
             }
+        }
 
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    System.out.println("Directory: " + file.getAbsolutePath());
-                    if (depth < 2) {
-                        findFilesPath(file.listFiles(), featureSetPrefix, file.getAbsolutePath(), filesByDate, depth + 1);
-                    }
+        for (File file : files) {
+            if (file.isDirectory()) {
+                System.out.println("Directory: " + file.getAbsolutePath());
+                if (depth < 2) {
+                    findFilesPath(file.listFiles(), featureSetPrefix, file.getAbsolutePath(), filesByDate, depth + 1);
                 }
             }
         }
-    }
 
-    
+    }
 
     public static void runTopology(
             String path,
@@ -69,8 +68,8 @@ public class Topologies_BATCH_No_Update {
         ArrayList<FilesByDateDTO> filesByDate = new ArrayList();
 
         Topologies_BATCH_No_Update.findFilesPath(files, featureSetPrefix, "", filesByDate, 0);
-        
-        for(FilesByDateDTO filesBy : filesByDate){
+
+        for (FilesByDateDTO filesBy : filesByDate) {
             System.out.println("Train: " + filesBy.train + " date: " + filesBy.date);
         }
 
