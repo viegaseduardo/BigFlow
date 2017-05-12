@@ -139,7 +139,7 @@ public class Topologies_BATCH_No_Update {
 
         String[] options = new String[2];
         options[0] = "-R";
-        options[1] = (dataTrain.numAttributes() - 5) + "-" + (dataTrain.numAttributes() - 2);
+        options[1] = (dataTrain.numAttributes() - 4) + "-" + (dataTrain.numAttributes() - 1);
         Remove remove = new Remove();
         remove.setOptions(options);
         remove.setInputFormat(dataTrain);
