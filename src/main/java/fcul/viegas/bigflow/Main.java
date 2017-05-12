@@ -7,6 +7,7 @@ package fcul.viegas.bigflow;
 
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
+import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
 
 /*
  * @author viegas
@@ -31,6 +32,10 @@ public class Main {
         } else if (args[0].equals("stratification")) {
             Topologies_ARFF_SPLIT_FEATURE_SET.runTopology(
                     args[1], args[2]);
+        } else if (args[0].equals("batchnoupdate")) {
+            Topologies_BATCH_No_Update.runTopology(
+                    args[1],
+                    args[2]);
         }
 
     }
