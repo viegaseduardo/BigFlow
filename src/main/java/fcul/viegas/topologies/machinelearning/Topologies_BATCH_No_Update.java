@@ -174,6 +174,7 @@ public class Topologies_BATCH_No_Update {
         InputMappedClassifier mappedCls = new InputMappedClassifier();
 
         NaiveBayes tree = new NaiveBayes();
+        tree.setUseSupervisedDiscretization(true);
 
         mappedCls.setModelHeader(dataTrain);
         mappedCls.setSuppressMappingReport(false);
