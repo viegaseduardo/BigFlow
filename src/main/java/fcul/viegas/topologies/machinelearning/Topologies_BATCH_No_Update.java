@@ -50,11 +50,15 @@ public class Topologies_BATCH_No_Update {
 
         for (File file : files) {
             if (file.isDirectory()) {
-                System.out.println("Directory: " + file.getAbsolutePath());
-                if (depth == 0 && Integer.valueOf(file.getName()) >= 2000 && Integer.valueOf(file.getName()) < 2020) {
-                    findFilesPath(file.listFiles(), featureSetPrefix, file.getAbsolutePath(), filesByDate, depth + 1);
-                } else if (depth > 0 && depth < 3) {
-                    findFilesPath(file.listFiles(), featureSetPrefix, file.getAbsolutePath(), filesByDate, depth + 1);
+                try {
+                    System.out.println("Directory: " + file.getAbsolutePath());
+                    if (depth == 0 && Integer.valueOf(file.getName()) >= 2000 && Integer.valueOf(file.getName()) < 2020) {
+                        findFilesPath(file.listFiles(), featureSetPrefix, file.getAbsolutePath(), filesByDate, depth + 1);
+                    } else if (depth > 0 && depth < 3) {
+                        findFilesPath(file.listFiles(), featureSetPrefix, file.getAbsolutePath(), filesByDate, depth + 1);
+                    }
+                } catch (NumberFormatException ex) {
+
                 }
             }
         }
