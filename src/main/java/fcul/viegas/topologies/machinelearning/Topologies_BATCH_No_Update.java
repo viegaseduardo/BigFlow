@@ -12,6 +12,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import weka.classifiers.Evaluation;
+import weka.classifiers.misc.InputMappedClassifier;
+import weka.classifiers.trees.J48;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 /**
  *
@@ -79,23 +86,76 @@ public class Topologies_BATCH_No_Update {
 
         Topologies_BATCH_No_Update.findFilesPath(files, featureSetPrefix, "", filesByDate, 0);
 
-        
         Collections.sort(filesByDate, new Comparator<FilesByDateDTO>() {
             @Override
             public int compare(FilesByDateDTO o1, FilesByDateDTO o2) {
                 return o1.date.compareTo(o2.date);
             }
         });
-        
+
         for (FilesByDateDTO filesBy : filesByDate) {
             System.out.println("Train: " + filesBy.train + " date: " + filesBy.date);
             for (String s : filesBy.files) {
                 System.out.println("\t" + s);
             }
         }
-        
+
         System.out.println("Found " + filesByDate.size() + " days of test.");
 
+        System.out.println("Evaluating Classifier overtime...");
+
+        InputMappedClassifier classifier = null;
+
+        for (FilesByDateDTO filesBy : filesByDate) {
+
+            if (classifier == null) {
+                System.out.println("Training classifier");
+                classifier = Topologies_BATCH_No_Update.getClassifer(filesBy.train);
+            }
+            weka.core.Instances testData = Topologies_BATCH_No_Update.loadData(filesBy.train);
+
+            Evaluation eval = new Evaluation(testData);
+            eval.evaluateModel(classifier, testData);
+
+            System.out.println(eval.toSummaryString());
+        }
+    }
+
+    public static weka.core.Instances loadData(String path) throws Exception {
+        ConverterUtils.DataSource trainSource = new ConverterUtils.DataSource(path);
+        weka.core.Instances dataTrain = trainSource.getDataSet();
+        dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
+
+        return dataTrain;
+    }
+
+    public static InputMappedClassifier getClassifer(String path) throws Exception {
+
+        ConverterUtils.DataSource trainSource = new ConverterUtils.DataSource(path);
+        weka.core.Instances dataTrain = trainSource.getDataSet();
+        dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
+
+        Instances instNew;
+
+        String[] options = new String[2];
+        options[0] = "-R";
+        options[1] = (dataTrain.numAttributes() - 5) + "-" + (dataTrain.numAttributes() - 2);
+        Remove remove = new Remove();
+        remove.setOptions(options);
+        remove.setInputFormat(dataTrain);
+        dataTrain = Filter.useFilter(dataTrain, remove);
+
+        InputMappedClassifier mappedCls = new InputMappedClassifier();
+
+        J48 tree = new J48();
+
+        mappedCls.setModelHeader(dataTrain);
+        mappedCls.setSuppressMappingReport(false);
+
+        mappedCls.setClassifier(tree);
+        mappedCls.buildClassifier(dataTrain);
+
+        return mappedCls;
     }
 
 }
