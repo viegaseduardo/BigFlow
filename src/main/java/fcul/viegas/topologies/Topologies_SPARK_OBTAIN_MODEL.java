@@ -6,21 +6,14 @@
 package fcul.viegas.topologies;
 
 import fcul.viegas.bigflow.definitions.Definitions;
-import java.util.Iterator;
-import scala.Tuple2;
+import java.util.HashMap;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.mllib.classification.NaiveBayes;
-import org.apache.spark.mllib.classification.NaiveBayesModel;
 import org.apache.spark.mllib.regression.LabeledPoint;
-import org.apache.spark.mllib.util.MLUtils;
 // $example off$
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.ml.classification.DecisionTreeClassifier;
+import org.apache.spark.ml.tree.DecisionTreeModel;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.tree.DecisionTree;
@@ -29,7 +22,7 @@ import org.apache.spark.mllib.tree.DecisionTree;
  *
  * @author viegas
  */
-public class Topologies_SPARK_ml {
+public class Topologies_SPARK_OBTAIN_MODEL {
 
     public static void runTopology(String path, String featureSet) throws Exception {
 
@@ -84,8 +77,11 @@ public class Topologies_SPARK_ml {
         //JavaRDD<LabeledPoint>[] tmp = inputData.randomSplit(new double[]{0.6, 0.4}, 12345);
         //JavaRDD<LabeledPoint> training = tmp[0]; // training set
         //JavaRDD<LabeledPoint> test = tmp[1]; // test set
-        final NaiveBayesModel model = NaiveBayes.train(inputData.rdd(), 1.0);
-/*
+        //final NaiveBayesModel model = NaiveBayes.train(inputData.rdd(), 1.0);
+        final DecisionTreeModel model = (DecisionTreeModel) DecisionTree.trainClassifier(inputData, 2,
+                new HashMap<>(), "gini", 5, 32);
+        
+        /*
         JavaPairRDD<Double, Double> predictionAndLabel
                 = test.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
@@ -101,9 +97,10 @@ public class Topologies_SPARK_ml {
         }).count() / (double) test.count();
 
         System.out.println("Accuracy: " + accuracy);
-*/
+         */
         // Save and load model
-        model.save(jsc.sc(), path + "_nbmodel");
+        System.out.println(model.toDebugString());
+        model.toOld().save(jsc.sc(), path + "_nbmodel");
         //NaiveBayesModel sameModel = NaiveBayesModel.load(jsc.sc(), "target/tmp/myNaiveBayesModel");
     }
 }
