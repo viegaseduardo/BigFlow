@@ -38,7 +38,7 @@ public class Main {
                     args[1],
                     args[2]);
         } else if (args[0].equals("spark")) {
-            Topologies_SPARK_ml.runTopology(args[1]);
+            Topologies_SPARK_ml.runTopology(args[1], args[2]);
         }
     }
 }

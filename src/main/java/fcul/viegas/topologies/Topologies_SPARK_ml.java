@@ -5,6 +5,7 @@
  */
 package fcul.viegas.topologies;
 
+import fcul.viegas.bigflow.definitions.Definitions;
 import java.util.Iterator;
 import scala.Tuple2;
 import org.apache.spark.api.java.function.Function;
@@ -19,6 +20,10 @@ import org.apache.spark.mllib.util.MLUtils;
 // $example off$
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.ml.classification.DecisionTreeClassifier;
+import org.apache.spark.mllib.linalg.Vector;
+import org.apache.spark.mllib.linalg.Vectors;
+import org.apache.spark.mllib.tree.DecisionTree;
 
 /**
  *
@@ -26,19 +31,61 @@ import org.apache.spark.api.java.function.FlatMapFunction;
  */
 public class Topologies_SPARK_ml {
 
-    public static void runTopology(String featureSetPath) throws Exception {
+    public static void runTopology(String path, String featureSet) throws Exception {
+
+        Definitions.SPARK_FEATURE_SET = featureSet;
 
         SparkConf sparkConf = new SparkConf().setAppName("JavaDecisionTreeClassificationExample");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
-        String path = featureSetPath;
-        JavaRDD<LabeledPoint> inputData = MLUtils.loadLibSVMFile(jsc.sc(), path, 50).toJavaRDD();
+        JavaRDD<String> fileArff = jsc.textFile(path);
 
-        JavaRDD<LabeledPoint>[] tmp = inputData.randomSplit(new double[]{0.6, 0.4}, 12345);
-        JavaRDD<LabeledPoint> training = tmp[0]; // training set
-        JavaRDD<LabeledPoint> test = tmp[1]; // test set
-        final NaiveBayesModel model = NaiveBayes.train(training.rdd(), 1.0);
-        
+        JavaRDD<LabeledPoint> inputData = fileArff.map(new Function<String, LabeledPoint>() {
+            @Override
+            public LabeledPoint call(String line) throws Exception {
+                String[] split = line.split(",");
+                double[] featVec = null;
+                double instClass = 0.0d;
+                if (split[split.length - 1].equals("normal")) {
+                    instClass = 0.0d;
+                } else {
+                    instClass = 1.0d;
+                }
+
+                if (featureSet.equals("MOORE")) {
+                    featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX; i < Definitions.SPARK_MOORE_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                } else if (featureSet.equals("VIEGAS")) {
+                    featVec = new double[Definitions.SPARK_VIEGAS_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX; i < Definitions.SPARK_VIEGAS_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                } else if (featureSet.equals("NIGEL")) {
+                    featVec = new double[Definitions.SPARK_NIGEL_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX; i < Definitions.SPARK_NIGEL_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                } else if (featureSet.equals("ORUNADA")) {
+                    featVec = new double[Definitions.SPARK_ORUNADA_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX; i < Definitions.SPARK_ORUNADA_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                }
+
+                Vector vec = Vectors.dense(featVec);
+                return new LabeledPoint(instClass, vec);
+            }
+        });
+
+        //String path = featureSetPath;
+        //JavaRDD<LabeledPoint> inputData = MLUtils.loadLibSVMFile(jsc.sc(), path, 50).toJavaRDD();
+        //JavaRDD<LabeledPoint>[] tmp = inputData.randomSplit(new double[]{0.6, 0.4}, 12345);
+        //JavaRDD<LabeledPoint> training = tmp[0]; // training set
+        //JavaRDD<LabeledPoint> test = tmp[1]; // test set
+        final NaiveBayesModel model = NaiveBayes.train(inputData.rdd(), 1.0);
+/*
         JavaPairRDD<Double, Double> predictionAndLabel
                 = test.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
@@ -52,11 +99,11 @@ public class Topologies_SPARK_ml {
                 return pl._1().equals(pl._2());
             }
         }).count() / (double) test.count();
-        
-        System.out.println("Accuracy: " + accuracy);
 
+        System.out.println("Accuracy: " + accuracy);
+*/
         // Save and load model
-        model.save(jsc.sc(), featureSetPath + "_nbmodel");
+        model.save(jsc.sc(), path + "_nbmodel");
         //NaiveBayesModel sameModel = NaiveBayesModel.load(jsc.sc(), "target/tmp/myNaiveBayesModel");
     }
 }
