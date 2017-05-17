@@ -5,6 +5,7 @@
  */
 package fcul.viegas.topologies;
 
+import java.util.Iterator;
 import scala.Tuple2;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
@@ -17,6 +18,7 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.util.MLUtils;
 // $example off$
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.function.FlatMapFunction;
 
 /**
  *
@@ -30,8 +32,7 @@ public class Topologies_SPARK_ml {
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         String path = featureSetPath;
-        JavaRDD<LabeledPoint> inputData = MLUtils.loadLibSVMFile(jsc.sc(), path).toJavaRDD();
-        
+        JavaRDD<LabeledPoint> inputData = MLUtils.loadLibSVMFile(jsc.sc(), path, 50).toJavaRDD();
 
         JavaRDD<LabeledPoint>[] tmp = inputData.randomSplit(new double[]{0.6, 0.4}, 12345);
         JavaRDD<LabeledPoint> training = tmp[0]; // training set
