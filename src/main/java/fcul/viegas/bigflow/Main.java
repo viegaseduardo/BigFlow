@@ -7,6 +7,7 @@ package fcul.viegas.bigflow;
 
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
+import fcul.viegas.topologies.Topologies_SPARK_ml;
 import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
 
 /*
@@ -36,7 +37,8 @@ public class Main {
             Topologies_BATCH_No_Update.runTopology(
                     args[1],
                     args[2]);
+        } else if (args[0].equals("spark")) {
+            Topologies_SPARK_ml.runTopology(args[1]);
         }
-
     }
 }
