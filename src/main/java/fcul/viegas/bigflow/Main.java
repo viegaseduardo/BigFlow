@@ -39,6 +39,10 @@ public class Main {
                     args[1],
                     args[2]);
         } else if (args[0].equals("sparktrain")) {
+            /*
+                args[1] = path to train arff
+                args[2] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
+            */
             Topologies_SPARK_OBTAIN_MODEL.runTopology(args[1], args[2]);
         } else if (args[0].equals("sparktest")) {
             Topologies_SPARK_TEST_MODEL.runTopology(args[1], args[2], args[3], args[4]);

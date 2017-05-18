@@ -34,8 +34,19 @@ public class Topologies_SPARK_OBTAIN_MODEL {
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(path);
+        
+        JavaRDD<String> input = fileArff.filter(new Function<String, Boolean>() {
+            @Override
+            public Boolean call(String t1) throws Exception {
+                String[] split = t1.split(",");
+                if(split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("normal")){
+                    return true;
+                }
+                return false;
+            }
+        });
 
-        JavaRDD<LabeledPoint> inputData = fileArff.map(new Function<String, LabeledPoint>() {
+        JavaRDD<LabeledPoint> inputData = input.map(new Function<String, LabeledPoint>() {
             @Override
             public LabeledPoint call(String line) throws Exception {
                 String[] split = line.split(",");
@@ -75,7 +86,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
         });
 
         final RandomForestModel model = RandomForest.trainClassifier(inputData, 2,
-                new HashMap<>(), 100, "auto", "gini", 5, 32,
+                new HashMap<>(), 10, "auto", "gini", 5, 32,
                 12345);
 
         System.out.println(model.toDebugString());

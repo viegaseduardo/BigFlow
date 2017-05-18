@@ -40,8 +40,19 @@ public class Topologies_SPARK_TEST_MODEL {
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(pathTest);
+        
+        JavaRDD<String> input = fileArff.filter(new Function<String, Boolean>() {
+            @Override
+            public Boolean call(String t1) throws Exception {
+                String[] split = t1.split(",");
+                if(split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("normal")){
+                    return true;
+                }
+                return false;
+            }
+        });
 
-        JavaRDD<LabeledPoint> inputData = fileArff.map(new Function<String, LabeledPoint>() {
+        JavaRDD<LabeledPoint> inputData = input.map(new Function<String, LabeledPoint>() {
             @Override
             public LabeledPoint call(String line) throws Exception {
                 String[] split = line.split(",");
@@ -138,7 +149,7 @@ public class Topologies_SPARK_TEST_MODEL {
         String result = pathModel + ";" + pathTest + ";" + featureSet + ";"
                 + inputData.count() + ";" + nNormal + ";" + nAttack + ";"
                 + acc + ";" + tNegativeRate + ";" + tPositiveRate + ";" + fPositiveRate
-                + ";" + fNegativeRate;
+                + ";" + fNegativeRate + "\n";
 
         try {
             Files.write(Paths.get(outputPath), result.getBytes(), StandardOpenOption.APPEND);
