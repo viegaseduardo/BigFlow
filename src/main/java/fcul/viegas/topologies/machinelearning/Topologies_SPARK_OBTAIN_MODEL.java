@@ -52,10 +52,10 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 String[] split = line.split(",");
                 double[] featVec = null;
                 double instClass = 0.0d;
-                if (split[split.length - 1].equals("normal")) {
-                    instClass = 0.0d;
-                } else {
+                if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
+                } else {
+                    instClass = 0.0d;
                 }
 
                 if (featureSet.equals("MOORE")) {

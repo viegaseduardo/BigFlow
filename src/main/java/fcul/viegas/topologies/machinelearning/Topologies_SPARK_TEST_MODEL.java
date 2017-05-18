@@ -40,30 +40,19 @@ public class Topologies_SPARK_TEST_MODEL {
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(pathTest);
-        
-        JavaRDD<String> input = fileArff.filter(new Function<String, Boolean>() {
-            @Override
-            public Boolean call(String t1) throws Exception {
-                String[] split = t1.split(",");
-                if(split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("normal")){
-                    return true;
-                }
-                return false;
-            }
-        });
 
-        JavaRDD<LabeledPoint> inputData = input.map(new Function<String, LabeledPoint>() {
+        JavaRDD<LabeledPoint> inputData = fileArff.map(new Function<String, LabeledPoint>() {
             @Override
             public LabeledPoint call(String line) throws Exception {
                 String[] split = line.split(",");
                 double[] featVec = null;
                 double instClass = 0.0d;
-                if (split[split.length - 1].equals("normal")) {
-                    instClass = 0.0d;
-                } else {
+                if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
-                }
-
+                } else {
+                    instClass = 0.0d;
+                } 
+                
                 if (featureSet.equals("MOORE")) {
                     featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX; i < Definitions.SPARK_MOORE_LAST_FEATURE_INDEX; i++) {
@@ -103,10 +92,10 @@ public class Topologies_SPARK_TEST_MODEL {
         JavaRDD<LabeledPoint> inputDataAttack = inputData.filter(new Function<LabeledPoint, Boolean>() {
             @Override
             public Boolean call(LabeledPoint t1) throws Exception {
-                return t1.label() != 0.0d;
+                return t1.label() == 1.0d;
             }
         });
-
+        
         JavaPairRDD<Double, Double> predictionAndLabelNormal
                 = inputDataNormal.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
@@ -122,7 +111,8 @@ public class Topologies_SPARK_TEST_MODEL {
                         return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
                     }
                 });
-
+        
+        
         double tNegative = predictionAndLabelNormal.filter(new Function<Tuple2<Double, Double>, Boolean>() {
             @Override
             public Boolean call(Tuple2<Double, Double> pl) {
@@ -136,6 +126,7 @@ public class Topologies_SPARK_TEST_MODEL {
                 return pl._1().equals(pl._2());
             }
         }).count();
+        
 
         long nNormal = inputDataNormal.count();
         long nAttack = inputDataAttack.count();
