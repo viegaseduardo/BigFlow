@@ -9,6 +9,7 @@ import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL;
 import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL;
 
 /*
  * @author viegas
@@ -37,8 +38,10 @@ public class Main {
             Topologies_BATCH_No_Update.runTopology(
                     args[1],
                     args[2]);
-        } else if (args[0].equals("spark")) {
+        } else if (args[0].equals("sparktrain")) {
             Topologies_SPARK_OBTAIN_MODEL.runTopology(args[1], args[2]);
+        } else if (args[0].equals("sparktest")) {
+            Topologies_SPARK_TEST_MODEL.runTopology(args[1], args[2], args[3], args[4]);
         }
     }
 }
