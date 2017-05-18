@@ -52,10 +52,8 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 String[] split = line.split(",");
                 double[] featVec = null;
                 double instClass = 0.0d;
-                if (split[split.length - 2].equals("anomalous")) {
+                if (split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("suspicious"))  {
                     instClass = 1.0d;
-                } else if (split[split.length - 2].equals("suspicious")) {
-                    instClass = 2.0d;
                 } else {
                     instClass = 0.0d;
                 }
@@ -88,8 +86,8 @@ public class Topologies_SPARK_OBTAIN_MODEL {
             }
         });
 
-        final RandomForestModel model = RandomForest.trainClassifier(inputData, 3,
-                new HashMap<>(), 10, "auto", "gini", 5, 32,
+        final RandomForestModel model = RandomForest.trainClassifier(inputData, 2,
+                new HashMap<>(), 100, "auto", "gini", 50, 32,
                 12345);
 
         System.out.println(model.toDebugString());
