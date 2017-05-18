@@ -7,7 +7,7 @@ package fcul.viegas.bigflow;
 
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
-import fcul.viegas.topologies.Topologies_SPARK_OBTAIN_MODEL;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL;
 import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
 
 /*

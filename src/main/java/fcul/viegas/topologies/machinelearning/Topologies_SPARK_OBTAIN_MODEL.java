@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fcul.viegas.topologies;
+package fcul.viegas.topologies.machinelearning;
 
 import fcul.viegas.bigflow.definitions.Definitions;
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
         //JavaRDD<LabeledPoint> training = tmp[0]; // training set
         //JavaRDD<LabeledPoint> test = tmp[1]; // test set
         //final NaiveBayesModel model = NaiveBayes.train(inputData.rdd(), 1.0);
-        final DecisionTreeModel model = (DecisionTreeModel) DecisionTree.trainClassifier(inputData, 2,
+        final org.apache.spark.mllib.tree.model.DecisionTreeModel model = DecisionTree.trainClassifier(inputData, 2,
                 new HashMap<>(), "gini", 5, 32);
         
         /*
@@ -100,7 +100,8 @@ public class Topologies_SPARK_OBTAIN_MODEL {
          */
         // Save and load model
         System.out.println(model.toDebugString());
-        model.toOld().save(jsc.sc(), path + "_nbmodel");
+        
+        model.save(jsc.sc(), path + "_nbmodel");
         //NaiveBayesModel sameModel = NaiveBayesModel.load(jsc.sc(), "target/tmp/myNaiveBayesModel");
     }
 }
