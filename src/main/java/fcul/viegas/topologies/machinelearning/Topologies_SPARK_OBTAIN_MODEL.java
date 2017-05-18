@@ -54,9 +54,12 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 double instClass = 0.0d;
                 if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
+                } else if (split[split.length - 2].equals("suspicious")) {
+                    instClass = 2.0d;
                 } else {
                     instClass = 0.0d;
                 }
+
 
                 if (featureSet.equals("MOORE")) {
                     featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
@@ -85,7 +88,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
             }
         });
 
-        final RandomForestModel model = RandomForest.trainClassifier(inputData, 2,
+        final RandomForestModel model = RandomForest.trainClassifier(inputData, 3,
                 new HashMap<>(), 10, "auto", "gini", 5, 32,
                 12345);
 

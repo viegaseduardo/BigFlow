@@ -10,19 +10,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.Iterator;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
-import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import scala.Tuple2;
 
@@ -49,10 +45,12 @@ public class Topologies_SPARK_TEST_MODEL {
                 double instClass = 0.0d;
                 if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
+                } else if (split[split.length - 2].equals("suspicious")) {
+                    instClass = 2.0d;
                 } else {
                     instClass = 0.0d;
-                } 
-                
+                }
+
                 if (featureSet.equals("MOORE")) {
                     featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX; i < Definitions.SPARK_MOORE_LAST_FEATURE_INDEX; i++) {
@@ -89,13 +87,20 @@ public class Topologies_SPARK_TEST_MODEL {
             }
         });
 
-        JavaRDD<LabeledPoint> inputDataAttack = inputData.filter(new Function<LabeledPoint, Boolean>() {
+        JavaRDD<LabeledPoint> inputDataAnomalous = inputData.filter(new Function<LabeledPoint, Boolean>() {
             @Override
             public Boolean call(LabeledPoint t1) throws Exception {
                 return t1.label() == 1.0d;
             }
         });
         
+        JavaRDD<LabeledPoint> inputDataSuspicious = inputData.filter(new Function<LabeledPoint, Boolean>() {
+            @Override
+            public Boolean call(LabeledPoint t1) throws Exception {
+                return t1.label() == 2.0d;
+            }
+        });
+
         JavaPairRDD<Double, Double> predictionAndLabelNormal
                 = inputDataNormal.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
@@ -104,15 +109,22 @@ public class Topologies_SPARK_TEST_MODEL {
                     }
                 });
 
-        JavaPairRDD<Double, Double> predictionAndLabelAttack
-                = inputDataAttack.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
+        JavaPairRDD<Double, Double> predictionAndLabelAnomalous
+                = inputDataAnomalous.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
                     public Tuple2<Double, Double> call(LabeledPoint p) {
                         return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
                     }
                 });
         
-        
+        JavaPairRDD<Double, Double> predictionAndLabelSuspicious
+                = inputDataSuspicious.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
+                    @Override
+                    public Tuple2<Double, Double> call(LabeledPoint p) {
+                        return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
+                    }
+                });
+
         double tNegative = predictionAndLabelNormal.filter(new Function<Tuple2<Double, Double>, Boolean>() {
             @Override
             public Boolean call(Tuple2<Double, Double> pl) {
@@ -120,27 +132,36 @@ public class Topologies_SPARK_TEST_MODEL {
             }
         }).count();
 
-        double tPositive = predictionAndLabelAttack.filter(new Function<Tuple2<Double, Double>, Boolean>() {
+        double tPositiveAnomalous = predictionAndLabelAnomalous.filter(new Function<Tuple2<Double, Double>, Boolean>() {
             @Override
             public Boolean call(Tuple2<Double, Double> pl) {
                 return pl._1().equals(pl._2());
             }
         }).count();
         
+        double tPositiveSupicious = predictionAndLabelSuspicious.filter(new Function<Tuple2<Double, Double>, Boolean>() {
+            @Override
+            public Boolean call(Tuple2<Double, Double> pl) {
+                return pl._1().equals(pl._2());
+            }
+        }).count();
+        
+        
 
         long nNormal = inputDataNormal.count();
-        long nAttack = inputDataAttack.count();
-
+        long nAttack = inputDataAnomalous.count();
+        long nSuspicious = inputDataSuspicious.count();
+        long total = inputData.count();
+        
         double tNegativeRate = tNegative / nNormal;
-        double tPositiveRate = tPositive / nAttack;
-        double fPositiveRate = (nNormal - tNegative) / nNormal;
-        double fNegativeRate = (nAttack - tPositive) / nAttack;
-        double acc = (tNegative + tPositive) / (nNormal + nAttack);
-
+        double tPositiveRateAnomalous = tPositiveAnomalous / nAttack;
+        double tPositiveRateSuspicious = tPositiveSupicious / nSuspicious;
+        
+        double acc = (tNegative + tPositiveAnomalous + tPositiveSupicious) / (total);
+        
         String result = pathModel + ";" + pathTest + ";" + featureSet + ";"
-                + inputData.count() + ";" + nNormal + ";" + nAttack + ";"
-                + acc + ";" + tNegativeRate + ";" + tPositiveRate + ";" + fPositiveRate
-                + ";" + fNegativeRate + "\n";
+                + total + ";" + nNormal + ";" + nAttack + ";" + nSuspicious + ";" + 
+                + acc + ";" + tNegativeRate + ";" + tPositiveRateAnomalous + ";" + tPositiveRateSuspicious + "\n";
 
         try {
             Files.write(Paths.get(outputPath), result.getBytes(), StandardOpenOption.APPEND);
