@@ -6,7 +6,6 @@
 package fcul.viegas.topologies.machinelearning;
 
 import fcul.viegas.bigflow.definitions.Definitions;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -19,7 +18,10 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
-import org.apache.spark.mllib.tree.model.RandomForestModel;
+import org.apache.spark.mllib.tree.GradientBoostedTrees;
+import org.apache.spark.mllib.tree.configuration.BoostingStrategy;
+import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel;
+import org.apache.spark.mllib.util.MLUtils;
 import scala.Tuple2;
 
 /**
@@ -78,7 +80,7 @@ public class Topologies_SPARK_TEST_MODEL {
             }
         });
 
-        final RandomForestModel model = RandomForestModel.load(jsc.sc(), pathModel);
+        GradientBoostedTreesModel model = GradientBoostedTreesModel.load(jsc.sc(), pathModel);
 
         JavaRDD<LabeledPoint> inputDataNormal = inputData.filter(new Function<LabeledPoint, Boolean>() {
             @Override
@@ -93,7 +95,7 @@ public class Topologies_SPARK_TEST_MODEL {
                 return t1.label() == 1.0d;
             }
         });
-        
+
         JavaRDD<LabeledPoint> inputDataSuspicious = inputData.filter(new Function<LabeledPoint, Boolean>() {
             @Override
             public Boolean call(LabeledPoint t1) throws Exception {
@@ -116,7 +118,7 @@ public class Topologies_SPARK_TEST_MODEL {
                         return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
                     }
                 });
-        
+
         JavaPairRDD<Double, Double> predictionAndLabelSuspicious
                 = inputDataSuspicious.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
@@ -138,34 +140,32 @@ public class Topologies_SPARK_TEST_MODEL {
                 return pl._1().equals(pl._2());
             }
         }).count();
-        
+
         double tPositiveSupicious = predictionAndLabelSuspicious.filter(new Function<Tuple2<Double, Double>, Boolean>() {
             @Override
             public Boolean call(Tuple2<Double, Double> pl) {
                 return pl._1().equals(pl._2());
             }
         }).count();
-        
-        
 
         long nNormal = inputDataNormal.count();
         long nAttack = inputDataAnomalous.count();
         long nSuspicious = inputDataSuspicious.count();
         long total = inputData.count();
-        
+
         double tNegativeRate = tNegative / nNormal;
         double tPositiveRateAnomalous = tPositiveAnomalous / nAttack;
         double tPositiveRateSuspicious = tPositiveSupicious / nSuspicious;
-        
+
         double acc = (tNegative + tPositiveAnomalous + tPositiveSupicious) / (total);
-        
+
         String result = pathModel + ";" + pathTest + ";" + featureSet + ";"
-                + total + ";" + nNormal + ";" + nAttack + ";" + nSuspicious + ";" + 
-                + acc + ";" + tNegativeRate + ";" + tPositiveRateAnomalous + ";" + tPositiveRateSuspicious + "\n";
+                + total + ";" + nNormal + ";" + nAttack + ";" + nSuspicious + ";"
+                + +acc + ";" + tNegativeRate + ";" + tPositiveRateAnomalous + ";" + tPositiveRateSuspicious + "\n";
 
         try {
             Files.write(Paths.get(outputPath), result.getBytes(), StandardOpenOption.APPEND);
-        } catch (IOException e) {
+        } catch (Exception e) {
             //exception handling left as an exercise for the reader
         }
 

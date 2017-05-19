@@ -7,6 +7,7 @@ package fcul.viegas.topologies.machinelearning;
 
 import fcul.viegas.bigflow.definitions.Definitions;
 import java.util.HashMap;
+import java.util.Map;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -17,7 +18,10 @@ import org.apache.spark.ml.tree.DecisionTreeModel;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.tree.DecisionTree;
+import org.apache.spark.mllib.tree.GradientBoostedTrees;
 import org.apache.spark.mllib.tree.RandomForest;
+import org.apache.spark.mllib.tree.configuration.BoostingStrategy;
+import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 
 /**
@@ -34,12 +38,12 @@ public class Topologies_SPARK_OBTAIN_MODEL {
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(path);
-        
+
         JavaRDD<String> input = fileArff.filter(new Function<String, Boolean>() {
             @Override
             public Boolean call(String t1) throws Exception {
                 String[] split = t1.split(",");
-                if(split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("normal")){
+                if (split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("normal")) {
                     return true;
                 }
                 return false;
@@ -52,12 +56,11 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 String[] split = line.split(",");
                 double[] featVec = null;
                 double instClass = 0.0d;
-                if (split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("suspicious"))  {
+                if (split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("suspicious")) {
                     instClass = 1.0d;
                 } else {
                     instClass = 0.0d;
                 }
-
 
                 if (featureSet.equals("MOORE")) {
                     featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
@@ -86,12 +89,18 @@ public class Topologies_SPARK_OBTAIN_MODEL {
             }
         });
 
-        final RandomForestModel model = RandomForest.trainClassifier(inputData, 2,
-                new HashMap<>(), 100, "auto", "gini", 50, 32,
-                12345);
+        BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Classification");
+        boostingStrategy.setNumIterations(10); // Note: Use more iterations in practice.
+        boostingStrategy.getTreeStrategy().setNumClasses(2);
+        boostingStrategy.getTreeStrategy().setMaxDepth(10);
+        // Empty categoricalFeaturesInfo indicates all features are continuous.
+        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
+        boostingStrategy.treeStrategy().setCategoricalFeaturesInfo(categoricalFeaturesInfo);
 
-        System.out.println(model.toDebugString());
+        final GradientBoostedTreesModel model
+                = GradientBoostedTrees.train(inputData, boostingStrategy);
 
+        //System.out.println(model.toDebugString());
         model.save(jsc.sc(), path + "_randomtreemodel" + featureSet);
     }
 }
