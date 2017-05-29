@@ -199,7 +199,7 @@ public class Topologies_SPARK_COMPUTE_DISTANCE {
         double increment = 0.0f;
         for (int i = 0; i < 1000; i++) {
             buckets[i] = increment;
-            increment += 0.1;
+            increment += 10;
         }
 
         long[] normalHistogram = vecDoubleNormal.histogram(buckets);
