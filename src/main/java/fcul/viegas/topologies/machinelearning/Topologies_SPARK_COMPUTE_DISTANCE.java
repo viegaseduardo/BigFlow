@@ -210,7 +210,7 @@ public class Topologies_SPARK_COMPUTE_DISTANCE {
 
         PrintWriter writer = new PrintWriter(outputPath, "UTF-8");
 
-        writer.println("Normal " + vecDoubleNormal.mean());
+        writer.println("Normal avg: " + vecDoubleNormal.mean() + " min: " + vecDoubleNormal.min() + " max: " + vecDoubleNormal.max());
 
         for (int i = 0; i < buckets.length - 1; i++) {
             writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], normalHistogram[i]);
