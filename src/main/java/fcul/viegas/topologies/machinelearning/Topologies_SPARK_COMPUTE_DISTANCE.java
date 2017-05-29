@@ -195,34 +195,49 @@ public class Topologies_SPARK_COMPUTE_DISTANCE {
             }
         });
 
-        double[] buckets = new double[1000];
-        double increment = 0.0f;
-        for (int i = 0; i < 1000; i++) {
-            buckets[i] = increment;
-            increment += 10;
-        }
+        double minNormal = vecDoubleNormal.min();
+        double maxNormal = vecDoubleNormal.max();
+        double minSuspicious = vecDoubleSuspicious.min();
+        double maxSuspicious = vecDoubleSuspicious.max();
+        double minAnomalous = vecDoubleAnomalous.min();
+        double maxAnomalous = vecDoubleAnomalous.max();
 
-        long[] normalHistogram = vecDoubleNormal.histogram(buckets);
-        long[] suspiciousHistogram = vecDoubleSuspicious.histogram(buckets);
-        long[] anomalousHistogram = vecDoubleAnomalous.histogram(buckets);
-        
-        
+        double[] buckets = new double[1000];
 
         PrintWriter writer = new PrintWriter(outputPath, "UTF-8");
 
-        writer.println("Normal avg: " + vecDoubleNormal.mean() + " min: " + vecDoubleNormal.min() + " max: " + vecDoubleNormal.max());
+        double increment = minNormal;
+        for (int i = 0; i < 1000; i++) {
+            buckets[i] = increment;
+            increment += (maxNormal - minNormal) / 1000.0f;
+        }
+        long[] normalHistogram = vecDoubleNormal.histogram(buckets);
+
+        writer.println("Normal avg: " + vecDoubleNormal.mean() + " min: " + minNormal + " max: " + maxNormal);
 
         for (int i = 0; i < buckets.length - 1; i++) {
             writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], normalHistogram[i]);
         }
-        
-        writer.println("Suspicious");
+
+        increment = minSuspicious;
+        for (int i = 0; i < 1000; i++) {
+            buckets[i] = increment;
+            increment += (maxSuspicious - minSuspicious) / 1000.0f;
+        }
+        long[] suspiciousHistogram = vecDoubleSuspicious.histogram(buckets);
+        writer.println("Suspicious avg: " + vecDoubleSuspicious.mean() + " min: " + minSuspicious + " max: " + maxSuspicious);
 
         for (int i = 0; i < buckets.length - 1; i++) {
             writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], suspiciousHistogram[i]);
         }
-        
-        writer.println("Anomalous");
+
+        increment = minAnomalous;
+        for (int i = 0; i < 1000; i++) {
+            buckets[i] = increment;
+            increment += (maxAnomalous - minAnomalous) / 1000.0f;
+        }
+        long[] anomalousHistogram = vecDoubleAnomalous.histogram(buckets);
+        writer.println("Normal avg: " + vecDoubleAnomalous.mean() + " min: " + minAnomalous + " max: " + maxAnomalous);
 
         for (int i = 0; i < buckets.length - 1; i++) {
             writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], anomalousHistogram[i]);
