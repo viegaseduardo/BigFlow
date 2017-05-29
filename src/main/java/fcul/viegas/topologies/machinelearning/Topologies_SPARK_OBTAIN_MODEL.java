@@ -34,7 +34,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
 
         Definitions.SPARK_FEATURE_SET = featureSet;
 
-        SparkConf sparkConf = new SparkConf().setAppName("JavaDecisionTreeClassificationExample");
+        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_OBTAIN_MODEL");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(path);

@@ -33,7 +33,7 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
 
         Definitions.SPARK_FEATURE_SET = featureSet;
 
-        SparkConf sparkConf = new SparkConf().setAppName("JavaDecisionTreeClassificationExample");
+        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_CREATE_CLUSTERS");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(pathArff);
