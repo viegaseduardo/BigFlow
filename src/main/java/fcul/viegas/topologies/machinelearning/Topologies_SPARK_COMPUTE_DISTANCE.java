@@ -205,10 +205,12 @@ public class Topologies_SPARK_COMPUTE_DISTANCE {
         long[] normalHistogram = vecDoubleNormal.histogram(buckets);
         long[] suspiciousHistogram = vecDoubleSuspicious.histogram(buckets);
         long[] anomalousHistogram = vecDoubleAnomalous.histogram(buckets);
+        
+        
 
         PrintWriter writer = new PrintWriter(outputPath, "UTF-8");
 
-        writer.println("Normal");
+        writer.println("Normal " + vecDoubleNormal.mean());
 
         for (int i = 0; i < buckets.length - 1; i++) {
             writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], normalHistogram[i]);
