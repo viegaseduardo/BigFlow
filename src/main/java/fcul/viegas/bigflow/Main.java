@@ -9,7 +9,6 @@ import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL;
 import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_COMPUTE_DISTANCE;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_CREATE_CLUSTERS;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL;
 
@@ -47,6 +46,12 @@ public class Main {
              */
             Topologies_SPARK_OBTAIN_MODEL.runTopology(args[1], args[2]);
         } else if (args[0].equals("sparktest")) {
+            /*
+                args[1] = path to model
+                args[2] = path to test arff
+                args[3] = output path
+                args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
+            */
             Topologies_SPARK_TEST_MODEL.runTopology(args[1], args[2], args[3], args[4]);
         } else if (args[0].equals("sparkcluster")) {
             /*
@@ -56,14 +61,6 @@ public class Main {
                 args[4] = featureset
              */
             Topologies_SPARK_CREATE_CLUSTERS.runTopology(args[1], Integer.valueOf(args[2]), args[3], args[4]);
-        } else if (args[0].equals("sparkclusterhisto")) {
-            /*
-                args[1] = path to cluster
-                args[2] = path to Arff
-                args[3] = outputpath
-                args[4] = featureset
-             */
-            Topologies_SPARK_COMPUTE_DISTANCE.runTopology(args[1], args[2], args[3], args[4]);
-        }
+        } 
     }
 }

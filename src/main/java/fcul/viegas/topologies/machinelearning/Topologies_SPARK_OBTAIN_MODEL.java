@@ -39,25 +39,16 @@ public class Topologies_SPARK_OBTAIN_MODEL {
 
         JavaRDD<String> fileArff = jsc.textFile(path);
 
-        JavaRDD<String> input = fileArff.filter(new Function<String, Boolean>() {
-            @Override
-            public Boolean call(String t1) throws Exception {
-                String[] split = t1.split(",");
-                if (split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("normal")) {
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        JavaRDD<LabeledPoint> inputData = input.map(new Function<String, LabeledPoint>() {
+        JavaRDD<LabeledPoint> inputData = fileArff.map(new Function<String, LabeledPoint>() {
             @Override
             public LabeledPoint call(String line) throws Exception {
                 String[] split = line.split(",");
                 double[] featVec = null;
                 double instClass = 0.0d;
-                if (split[split.length - 2].equals("anomalous") || split[split.length - 2].equals("suspicious")) {
+                if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
+                } else if (split[split.length - 2].equals("suspicious")) {
+                    instClass = 2.0d;
                 } else {
                     instClass = 0.0d;
                 }
@@ -91,7 +82,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
 
         BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Classification");
         boostingStrategy.setNumIterations(10); // Note: Use more iterations in practice.
-        boostingStrategy.getTreeStrategy().setNumClasses(2);
+        boostingStrategy.getTreeStrategy().setNumClasses(3);
         boostingStrategy.getTreeStrategy().setMaxDepth(10);
         // Empty categoricalFeaturesInfo indicates all features are continuous.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
