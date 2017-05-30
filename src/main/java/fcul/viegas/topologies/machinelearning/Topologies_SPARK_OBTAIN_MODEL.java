@@ -48,7 +48,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
                 } else if (split[split.length - 2].equals("suspicious")) {
-                    instClass = 2.0d;
+                    instClass = 1.0d;
                 } else {
                     instClass = 0.0d;
                 }
@@ -82,7 +82,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
 
         BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Classification");
         boostingStrategy.setNumIterations(10); // Note: Use more iterations in practice.
-        boostingStrategy.getTreeStrategy().setNumClasses(3);
+        boostingStrategy.getTreeStrategy().setNumClasses(2);
         boostingStrategy.getTreeStrategy().setMaxDepth(10);
         // Empty categoricalFeaturesInfo indicates all features are continuous.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
