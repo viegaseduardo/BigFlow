@@ -232,41 +232,41 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
 
         PrintWriter writer = new PrintWriter(outputPath, "UTF-8");
 
-        double increment = minNormal;
+        double increment = 0;
         for (int i = 0; i < 1000; i++) {
             buckets[i] = increment;
-            increment += (maxNormal - minNormal) / 1000.0f;
+            increment += (maxNormal - 0) / 1000.0f;
         }
         long[] normalHistogram = vecDoubleNormal.histogram(buckets);
 
         writer.println("Normal avg: " + vecDoubleNormal.mean() + " min: " + minNormal + " max: " + maxNormal);
 
         for (int i = 0; i < buckets.length - 1; i++) {
-            writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], normalHistogram[i]);
+            writer.printf("%f;%f;%d\n", buckets[i], buckets[i + 1], normalHistogram[i]);
         }
 
-        increment = minSuspicious;
+        increment = 0;
         for (int i = 0; i < 1000; i++) {
             buckets[i] = increment;
-            increment += (maxSuspicious - minSuspicious) / 1000.0f;
+            increment += (maxSuspicious - 0) / 1000.0f;
         }
         long[] suspiciousHistogram = vecDoubleSuspicious.histogram(buckets);
         writer.println("Suspicious avg: " + vecDoubleSuspicious.mean() + " min: " + minSuspicious + " max: " + maxSuspicious);
 
         for (int i = 0; i < buckets.length - 1; i++) {
-            writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], suspiciousHistogram[i]);
+            writer.printf("%f;%f;%d\n", buckets[i], buckets[i + 1], suspiciousHistogram[i]);
         }
 
-        increment = minAnomalous;
+        increment = 0;
         for (int i = 0; i < 1000; i++) {
             buckets[i] = increment;
-            increment += (maxAnomalous - minAnomalous) / 1000.0f;
+            increment += (maxAnomalous - 0) / 1000.0f;
         }
         long[] anomalousHistogram = vecDoubleAnomalous.histogram(buckets);
         writer.println("Normal avg: " + vecDoubleAnomalous.mean() + " min: " + minAnomalous + " max: " + maxAnomalous);
 
         for (int i = 0; i < buckets.length - 1; i++) {
-            writer.printf("[%f-%f];%d\n", buckets[i], buckets[i + 1], anomalousHistogram[i]);
+            writer.printf("%f;%f;%d\n", buckets[i], buckets[i + 1], anomalousHistogram[i]);
         }
 
         writer.close();
