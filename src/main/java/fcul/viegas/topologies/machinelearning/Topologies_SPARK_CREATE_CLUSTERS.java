@@ -108,11 +108,11 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
                             * 2 - 1;
                 }
 
-                return t1;
+                Vector vec = Vectors.dense(feats);
+                return new LabeledPoint(t1.label(), vec);
             }
         });
 
-        
         JavaRDD<LabeledPoint> inputDataNormal = inputDataNormalized.filter(new Function<LabeledPoint, Boolean>() {
             @Override
             public Boolean call(LabeledPoint t1) throws Exception {
@@ -126,8 +126,7 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
                 return t1.features();
             }
         });
-        
-        
+
         JavaRDD<LabeledPoint> inputDataSuspicious = inputDataNormalized.filter(new Function<LabeledPoint, Boolean>() {
             @Override
             public Boolean call(LabeledPoint t1) throws Exception {
@@ -141,8 +140,7 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
                 return t1.features();
             }
         });
-        
-        
+
         JavaRDD<LabeledPoint> inputDataAnomalous = inputDataNormalized.filter(new Function<LabeledPoint, Boolean>() {
             @Override
             public Boolean call(LabeledPoint t1) throws Exception {
@@ -156,15 +154,13 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
                 return t1.features();
             }
         });
-        
 
         int numClusters = numberOfClusters;
         int numIterations = 20;
         KMeansModel clusters = KMeans.train(vecNormal.rdd(), numClusters, numIterations);
 
         Vector center = clusters.clusterCenters()[0];
-        
-        
+
         JavaRDD<Double> vecDistanceNormal = vecNormal.map(new Function<Vector, Double>() {
             @Override
             public Double call(Vector t1) throws Exception {
@@ -274,8 +270,6 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
         }
 
         writer.close();
-
-        
 
     }
 
