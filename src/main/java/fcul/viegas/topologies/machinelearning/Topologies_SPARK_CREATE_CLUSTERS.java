@@ -63,22 +63,22 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
                     instClass = 0.0d;
                 }
 
-                if (featureSet.equals("MOORE")) {
+                if (featureSet.contains("MOORE")) {
                     featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX; i < Definitions.SPARK_MOORE_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
                     }
-                } else if (featureSet.equals("VIEGAS")) {
+                } else if (featureSet.contains("VIEGAS")) {
                     featVec = new double[Definitions.SPARK_VIEGAS_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX; i < Definitions.SPARK_VIEGAS_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
                     }
-                } else if (featureSet.equals("NIGEL")) {
+                } else if (featureSet.contains("NIGEL")) {
                     featVec = new double[Definitions.SPARK_NIGEL_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX; i < Definitions.SPARK_NIGEL_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
                     }
-                } else if (featureSet.equals("ORUNADA")) {
+                } else if (featureSet.contains("ORUNADA")) {
                     featVec = new double[Definitions.SPARK_ORUNADA_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX; i < Definitions.SPARK_ORUNADA_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
@@ -104,8 +104,12 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
                 double[] feats = t1.features().toArray();
 
                 for (int i = 0; i < feats.length; i++) {
-                    feats[i] = (feats[i] - summary.min().toArray()[i]) / (summary.max().toArray()[i] - summary.min().toArray()[i])
-                            * 2 - 1;
+                    if (summary.max().toArray()[i] - summary.min().toArray()[i] > 0) {
+                        feats[i] = (feats[i] - summary.min().toArray()[i]) / (summary.max().toArray()[i] - summary.min().toArray()[i])
+                                * 2 - 1;
+                    } else {
+                        feats[i] = 0.0d;
+                    }
                 }
 
                 Vector vec = Vectors.dense(feats);
@@ -227,12 +231,12 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
         double maxSuspicious = vecDoubleSuspicious.max();
         double minAnomalous = vecDoubleAnomalous.min();
         double maxAnomalous = vecDoubleAnomalous.max();
-        
+
         double maxall = maxNormal;
-        if(maxall < maxSuspicious){
+        if (maxall < maxSuspicious) {
             maxall = maxSuspicious;
         }
-        if(maxall < maxAnomalous){
+        if (maxall < maxAnomalous) {
             maxall = maxAnomalous;
         }
 
@@ -262,7 +266,7 @@ public class Topologies_SPARK_CREATE_CLUSTERS {
             increment += (maxall - 0) / 1000.0f;
         }
         long[] anomalousHistogram = vecDoubleAnomalous.histogram(bucketsAnomalous);
-        
+
         writer.println("Normal avg: " + vecDoubleNormal.mean() + " min: " + minNormal + " max: " + maxNormal);
         writer.println("Suspicious avg: " + vecDoubleSuspicious.mean() + " min: " + minSuspicious + " max: " + maxSuspicious);
         writer.println("Anomalous avg: " + vecDoubleAnomalous.mean() + " min: " + minAnomalous + " max: " + maxAnomalous);

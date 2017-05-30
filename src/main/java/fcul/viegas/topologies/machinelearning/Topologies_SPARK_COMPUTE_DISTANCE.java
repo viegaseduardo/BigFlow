@@ -66,22 +66,22 @@ public class Topologies_SPARK_COMPUTE_DISTANCE {
                     instClass = 0.0d;
                 }
 
-                if (featureSet.contains("MOORE")) {
+                if (featureSet.equals("MOORE")) {
                     featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX; i < Definitions.SPARK_MOORE_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
                     }
-                } else if (featureSet.contains("VIEGAS")) {
+                } else if (featureSet.equals("VIEGAS")) {
                     featVec = new double[Definitions.SPARK_VIEGAS_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX; i < Definitions.SPARK_VIEGAS_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
                     }
-                } else if (featureSet.contains("NIGEL")) {
+                } else if (featureSet.equals("NIGEL")) {
                     featVec = new double[Definitions.SPARK_NIGEL_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX; i < Definitions.SPARK_NIGEL_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
                     }
-                } else if (featureSet.contains("ORUNADA")) {
+                } else if (featureSet.equals("ORUNADA")) {
                     featVec = new double[Definitions.SPARK_ORUNADA_NUMBER_OF_FEATURES];
                     for (int i = Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX; i < Definitions.SPARK_ORUNADA_LAST_FEATURE_INDEX; i++) {
                         featVec[i - Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
