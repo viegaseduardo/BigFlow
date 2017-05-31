@@ -18,6 +18,7 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
+import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import scala.Tuple2;
 
@@ -77,7 +78,7 @@ public class Topologies_SPARK_TEST_MODEL {
             }
         });
 
-        RandomForestModel model = RandomForestModel.load(jsc.sc(), pathModel);
+        GradientBoostedTreesModel model = GradientBoostedTreesModel.load(jsc.sc(), pathModel);
 
         JavaRDD<LabeledPoint> inputDataNormal = inputData.filter(new Function<LabeledPoint, Boolean>() {
             @Override
@@ -120,7 +121,7 @@ public class Topologies_SPARK_TEST_MODEL {
                 = inputDataSuspicious.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
                     public Tuple2<Double, Double> call(LabeledPoint p) {
-                        return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
+                        return new Tuple2<Double, Double>(model.predict(p.features()), 1.0d);
                     }
                 });
 
