@@ -141,7 +141,7 @@ public class Topologies_SPARK_TEST_MODEL {
                         = inputDataSuspicious.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                             @Override
                             public Tuple2<Double, Double> call(LabeledPoint p) {
-                                return new Tuple2<Double, Double>(model.predict(p.features()), 1.0d);
+                                return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
                             }
                         });
 
