@@ -80,29 +80,29 @@ public class Topologies_SPARK_OBTAIN_MODEL {
             }
         });
 
-//        Integer numClasses = 3;
-//        HashMap<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-//        Integer numTrees = 50; // Use more in practice.
-//        String featureSubsetStrategy = "auto"; // Let the algorithm choose.
-//        String impurity = "gini";
-//        Integer maxDepth = 10;
-//        Integer maxBins = 32;
-//        Integer seed = 12345;
+        Integer numClasses = 3;
+        HashMap<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
+        Integer numTrees = 100; // Use more in practice.
+        String featureSubsetStrategy = "auto"; // Let the algorithm choose.
+        String impurity = "gini";
+        Integer maxDepth = 10;
+        Integer maxBins = 32;
+        Integer seed = 12345;
+
+        final RandomForestModel model = RandomForest.trainClassifier(inputData, numClasses,
+                categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins,
+                seed);
+
+//        BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Classification");
+//        boostingStrategy.setNumIterations(100); // Note: Use more iterations in practice.
+//        boostingStrategy.getTreeStrategy().setNumClasses(2);
+//        boostingStrategy.getTreeStrategy().setMaxDepth(10);
+//        // Empty categoricalFeaturesInfo indicates all features are continuous.
+//        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
+//        boostingStrategy.treeStrategy().setCategoricalFeaturesInfo(categoricalFeaturesInfo);
 //
-//        final RandomForestModel model = RandomForest.trainClassifier(inputData, numClasses,
-//                categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins,
-//                seed);
-
-        BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Classification");
-        boostingStrategy.setNumIterations(100); // Note: Use more iterations in practice.
-        boostingStrategy.getTreeStrategy().setNumClasses(2);
-        boostingStrategy.getTreeStrategy().setMaxDepth(10);
-        // Empty categoricalFeaturesInfo indicates all features are continuous.
-        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-        boostingStrategy.treeStrategy().setCategoricalFeaturesInfo(categoricalFeaturesInfo);
-
-        final GradientBoostedTreesModel model
-                = GradientBoostedTrees.train(inputData, boostingStrategy);
+//        final GradientBoostedTreesModel model
+//                = GradientBoostedTrees.train(inputData, boostingStrategy);
 
         //System.out.println(model.toDebugString());
         model.save(jsc.sc(), path + "_randomtreemodel" + featureSet);
