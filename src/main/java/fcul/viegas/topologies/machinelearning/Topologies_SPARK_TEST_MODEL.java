@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -43,7 +45,16 @@ public class Topologies_SPARK_TEST_MODEL {
 
         String[] directoryContents = directory.list();
 
+        List<String> fileLocations = new ArrayList<String>();
+
         for (String fileName : directoryContents) {
+            File temp = new File(String.valueOf(directory), fileName);
+            fileLocations.add(String.valueOf(temp));
+        }
+        
+        java.util.Collections.sort(fileLocations);
+
+        for (String fileName : fileLocations) {
             File temp = new File(String.valueOf(directory), fileName);
             String file = String.valueOf(temp);
             if (file.contains(".strat")) {
