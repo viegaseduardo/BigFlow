@@ -55,11 +55,9 @@ public class Topologies_SPARK_TEST_MODEL {
         java.util.Collections.sort(fileLocations);
 
         for (String fileName : fileLocations) {
-            File temp = new File(String.valueOf(directory), fileName);
-            String file = String.valueOf(temp);
-            if (file.contains(".strat")) {
+            if (fileName.contains(".strat")) {
 
-                JavaRDD<String> fileArff = jsc.textFile(file);
+                JavaRDD<String> fileArff = jsc.textFile(fileName);
 
                 JavaRDD<LabeledPoint> inputData = fileArff.map(new Function<String, LabeledPoint>() {
                     @Override
@@ -179,7 +177,7 @@ public class Topologies_SPARK_TEST_MODEL {
 
                 double acc = (tNegative + tPositiveAnomalous + tPositiveSupicious) / (total);
 
-                String result = pathModel + ";" + file + ";" + featureSet + ";"
+                String result = pathModel + ";" + fileName + ";" + featureSet + ";"
                         + total + ";" + nNormal + ";" + nAttack + ";" + nSuspicious + ";"
                         + +acc + ";" + tNegativeRate + ";" + tPositiveRateAnomalous + ";" + tPositiveRateSuspicious + "\n";
 
