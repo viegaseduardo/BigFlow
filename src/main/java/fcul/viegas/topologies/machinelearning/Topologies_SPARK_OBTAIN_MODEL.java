@@ -105,6 +105,6 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 = GradientBoostedTrees.train(inputData, boostingStrategy);
 
         //System.out.println(model.toDebugString());
-        model.save(jsc.sc(), path + "_randomtreemodel" + featureSet);
+        model.save(jsc.sc(), path + "_gradient" + featureSet);
     }
 }
