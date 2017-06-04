@@ -41,7 +41,9 @@ public class Topologies_SPARK_TEST_MODEL {
 
         File directory = new File(pathTest);
 
-        RandomForestModel model = RandomForestModel.load(jsc.sc(), pathModel);
+//        RandomForestModel model = RandomForestModel.load(jsc.sc(), pathModel);
+
+        GradientBoostedTreesModel model = GradientBoostedTreesModel.load(jsc.sc(), pathModel);
 
         String[] directoryContents = directory.list();
 
@@ -51,7 +53,7 @@ public class Topologies_SPARK_TEST_MODEL {
             File temp = new File(String.valueOf(directory), fileName);
             fileLocations.add(String.valueOf(temp));
         }
-        
+
         java.util.Collections.sort(fileLocations);
 
         for (String fileName : fileLocations) {
