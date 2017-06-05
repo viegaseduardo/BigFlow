@@ -48,7 +48,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
                 } else if (split[split.length - 2].equals("suspicious")) {
-                    instClass = 1.0d;
+                    instClass = 2.0d;
                 } else {
                     instClass = 0.0d;
                 }
@@ -80,7 +80,7 @@ public class Topologies_SPARK_OBTAIN_MODEL {
             }
         });
 
-        Integer numClasses = 2;
+        Integer numClasses = 3;
         HashMap<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
         Integer numTrees = 100; // Use more in practice.
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
@@ -113,6 +113,6 @@ public class Topologies_SPARK_OBTAIN_MODEL {
         
         
         
-        model.save(jsc.sc(), path + "_gradient" + featureSet);
+        model.save(jsc.sc(), path + "_forest3" + featureSet);
     }
 }
