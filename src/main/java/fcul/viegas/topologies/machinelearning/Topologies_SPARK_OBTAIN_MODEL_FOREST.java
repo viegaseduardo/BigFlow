@@ -15,8 +15,12 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 // $example off$
 import org.apache.spark.SparkConf;
 import org.apache.spark.ml.tree.DecisionTreeModel;
+import org.apache.spark.mllib.classification.SVMModel;
+import org.apache.spark.mllib.classification.SVMWithSGD;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
+import org.apache.spark.mllib.stat.MultivariateStatisticalSummary;
+import org.apache.spark.mllib.stat.Statistics;
 import org.apache.spark.mllib.tree.DecisionTree;
 import org.apache.spark.mllib.tree.GradientBoostedTrees;
 import org.apache.spark.mllib.tree.RandomForest;
@@ -28,7 +32,7 @@ import org.apache.spark.mllib.tree.model.RandomForestModel;
  *
  * @author viegas
  */
-public class Topologies_SPARK_OBTAIN_MODEL {
+public class Topologies_SPARK_OBTAIN_MODEL_FOREST {
 
     public static void runTopology(String path, String featureSet) throws Exception {
 
@@ -93,26 +97,8 @@ public class Topologies_SPARK_OBTAIN_MODEL {
                 categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins,
                 seed);
 
+        
 
-
-//        BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Classification");
-//        boostingStrategy.setNumIterations(100); // Note: Use more iterations in practice.
-//        boostingStrategy.getTreeStrategy().setNumClasses(2);
-//        boostingStrategy.getTreeStrategy().setMaxDepth(10);
-//        // Empty categoricalFeaturesInfo indicates all features are continuous.
-//        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-//        boostingStrategy.treeStrategy().setCategoricalFeaturesInfo(categoricalFeaturesInfo);
-//
-//        final GradientBoostedTreesModel model
-//                = GradientBoostedTrees.train(inputData, boostingStrategy);
-//
-        //System.out.println(model.toDebugString());
-        
-        
-        
-        
-        
-        
         model.save(jsc.sc(), path + "_forest3" + featureSet);
     }
 }

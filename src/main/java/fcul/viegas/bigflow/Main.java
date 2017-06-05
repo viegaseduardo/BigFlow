@@ -7,10 +7,14 @@ package fcul.viegas.bigflow;
 
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_FOREST;
 import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_CREATE_CLUSTERS;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_GRADIENT;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_SVM;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_FOREST;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_GRADIENT;
+import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
 
 /*
  * @author viegas
@@ -39,20 +43,48 @@ public class Main {
             Topologies_BATCH_No_Update.runTopology(
                     args[1],
                     args[2]);
-        } else if (args[0].equals("sparktrain")) {
+        } else if (args[0].equals("sparktrainforest")) {
             /*
                 args[1] = path to train arff
                 args[2] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
              */
-            Topologies_SPARK_OBTAIN_MODEL.runTopology(args[1], args[2]);
-        } else if (args[0].equals("sparktest")) {
+            Topologies_SPARK_OBTAIN_MODEL_FOREST.runTopology(args[1], args[2]);
+        } else if (args[0].equals("sparktestforest")) {
             /*
                 args[1] = path to model
                 args[2] = path to test arff
                 args[3] = output path
                 args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
             */
-            Topologies_SPARK_TEST_MODEL.runTopology(args[1], args[2], args[3], args[4]);
+            Topologies_SPARK_TEST_MODEL_FOREST.runTopology(args[1], args[2], args[3], args[4]);
+        } else if (args[0].equals("sparktraingradient")) {
+            /*
+                args[1] = path to train arff
+                args[2] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
+             */
+            Topologies_SPARK_OBTAIN_MODEL_GRADIENT.runTopology(args[1], args[2]);
+        } else if (args[0].equals("sparktestforest")) {
+            /*
+                args[1] = path to model
+                args[2] = path to test arff
+                args[3] = output path
+                args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
+            */
+            Topologies_SPARK_TEST_MODEL_GRADIENT.runTopology(args[1], args[2], args[3], args[4]);
+        } else if (args[0].equals("sparktrainsvm")) {
+            /*
+                args[1] = path to train arff
+                args[2] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
+             */
+            Topologies_SPARK_OBTAIN_MODEL_SVM.runTopology(args[1], args[2]);
+        } else if (args[0].equals("sparktestsvm")) {
+            /*
+                args[1] = path to model
+                args[2] = path to test arff
+                args[3] = output path
+                args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
+            */
+            Topologies_SPARK_TEST_MODEL_SVM.runTopology(args[1], args[2], args[3], args[4]);
         } else if (args[0].equals("sparkcluster")) {
             /*
                 args[1] = path to arff
