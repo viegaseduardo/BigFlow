@@ -57,7 +57,7 @@ public class Topologies_SPARK_TEST_MODEL {
         java.util.Collections.sort(fileLocations);
 
         for (String fileName : fileLocations) {
-            if (fileName.contains(".strat")) {
+            if (fileName.contains(".strat") || fileName.contains(".propstrat") || fileName.contains(".arff")) {
 
                 JavaRDD<String> fileArff = jsc.textFile(fileName);
 
