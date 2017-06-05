@@ -145,15 +145,15 @@ public class Topologies_SPARK_OBTAIN_MODEL_SVM {
             }
         });
 
-        int numIterations = 100;
+        int numIterations = 1000;
 
-        SVMWithSGD svmAlg = new SVMWithSGD();
-        svmAlg.optimizer()
-                .setNumIterations(200)
-                .setRegParam(5.0)
-                .setUpdater(new L1Updater());
-        final SVMModel model = svmAlg.run(inputDataNormalized.rdd());
-        //final SVMModel model = SVMWithSGD.train(inputDataNormalized.rdd(), numIterations);
+//        SVMWithSGD svmAlg = new SVMWithSGD();
+//        svmAlg.optimizer()
+//                .setNumIterations(1000)
+//                .setRegParam(5.0)
+//                .setUpdater(new L1Updater());
+//        final SVMModel model = svmAlg.run(inputDataNormalized.rdd());
+        final SVMModel model = SVMWithSGD.train(inputDataNormalized.rdd(), numIterations);
 
         model.save(jsc.sc(), path + "_svm3" + featureSet);
     }
