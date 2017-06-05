@@ -150,7 +150,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_SVM {
         SVMWithSGD svmAlg = new SVMWithSGD();
         svmAlg.optimizer()
                 .setNumIterations(1000)
-                .setRegParam(5.0)
+                .setRegParam(0.1)
                 .setUpdater(new L1Updater());
         final SVMModel model = svmAlg.run(inputDataNormalized.rdd());
 //        final SVMModel model = SVMWithSGD.train(inputDataNormalized.rdd(), numIterations);
