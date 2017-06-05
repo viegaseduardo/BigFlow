@@ -14,6 +14,7 @@ import org.apache.spark.mllib.classification.SVMModel;
 import org.apache.spark.mllib.classification.SVMWithSGD;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
+import org.apache.spark.mllib.optimization.L1Updater;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.stat.MultivariateStatisticalSummary;
 import org.apache.spark.mllib.stat.Statistics;
@@ -23,7 +24,7 @@ import org.apache.spark.mllib.stat.Statistics;
  * @author viegas
  */
 public class Topologies_SPARK_OBTAIN_MODEL_SVM {
-    
+
     public static void runTopology(String path, String featureSet) throws Exception {
 
         Definitions.SPARK_FEATURE_SET = featureSet;
@@ -143,14 +144,18 @@ public class Topologies_SPARK_OBTAIN_MODEL_SVM {
                 return new LabeledPoint(t1.label(), vec);
             }
         });
-        
 
         int numIterations = 100;
-        final SVMModel model = SVMWithSGD.train(inputDataNormalized.rdd(), numIterations);
-        
-        
+
+        SVMWithSGD svmAlg = new SVMWithSGD();
+        svmAlg.optimizer()
+                .setNumIterations(200)
+                .setRegParam(5.0)
+                .setUpdater(new L1Updater());
+        final SVMModel model = svmAlg.run(inputDataNormalized.rdd());
+        //final SVMModel model = SVMWithSGD.train(inputDataNormalized.rdd(), numIterations);
 
         model.save(jsc.sc(), path + "_svm3" + featureSet);
     }
-    
+
 }
