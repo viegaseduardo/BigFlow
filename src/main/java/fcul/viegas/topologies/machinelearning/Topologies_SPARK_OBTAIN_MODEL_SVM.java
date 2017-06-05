@@ -85,7 +85,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_SVM {
                 if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
                 } else if (split[split.length - 2].equals("suspicious")) {
-                    instClass = 2.0d;
+                    instClass = 1.0d;
                 } else {
                     instClass = 0.0d;
                 }
