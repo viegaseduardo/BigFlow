@@ -41,9 +41,9 @@ public class Topologies_SPARK_TEST_MODEL {
 
         File directory = new File(pathTest);
 
-//        RandomForestModel model = RandomForestModel.load(jsc.sc(), pathModel);
+        RandomForestModel model = RandomForestModel.load(jsc.sc(), pathModel);
 
-        GradientBoostedTreesModel model = GradientBoostedTreesModel.load(jsc.sc(), pathModel);
+//        GradientBoostedTreesModel model = GradientBoostedTreesModel.load(jsc.sc(), pathModel);
 
         String[] directoryContents = directory.list();
 
