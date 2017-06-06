@@ -221,21 +221,21 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                 double tNegative = predictionAndLabelNormal.filter(new Function<Tuple2<Double, Double>, Boolean>() {
                     @Override
                     public Boolean call(Tuple2<Double, Double> pl) {
-                        return pl._1().equals(pl._2());
+                        return pl._1() <= 0.0d;
                     }
                 }).count();
 
                 double tPositiveAnomalous = predictionAndLabelAnomalous.filter(new Function<Tuple2<Double, Double>, Boolean>() {
                     @Override
                     public Boolean call(Tuple2<Double, Double> pl) {
-                        return pl._1().equals(pl._2());
+                        return pl._1() > 0.0d;
                     }
                 }).count();
 
                 double tPositiveSupicious = predictionAndLabelSuspicious.filter(new Function<Tuple2<Double, Double>, Boolean>() {
                     @Override
                     public Boolean call(Tuple2<Double, Double> pl) {
-                        return pl._1().equals(pl._2());
+                        return pl._1() > 0.0d;
                     }
                 }).count();
 

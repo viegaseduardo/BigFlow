@@ -145,7 +145,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_SVM {
             }
         });
 
-        for (int i = 10; i < 200; i += 10) {
+        for (int i = 10; i < 100; i += 10) {
 
             int numIterations = i;
 
