@@ -234,7 +234,6 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                     double tNegative = predictionAndLabelNormal.filter(new Function<Tuple2<Double, Double>, Boolean>() {
                         @Override
                         public Boolean call(Tuple2<Double, Double> pl) {
-                            System.out.println();
                             return pl._1() <= t;
                         }
                     }).count();
