@@ -216,11 +216,17 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                             }
                         });
 
+                predictionAndLabelNormal.foreach(new VoidFunction<Tuple2<Double, Double>>() {
+                    @Override
+                    public void call(Tuple2<Double, Double> t) throws Exception {
+                        System.out.println("Normal predicted: " + t._1 + "\tclass: " + t._2);
+                    }
+                });
 
                 predictionAndLabelAnomalous.foreach(new VoidFunction<Tuple2<Double, Double>>() {
                     @Override
                     public void call(Tuple2<Double, Double> t) throws Exception {
-                        System.out.println("predicted: " + t._1 + "\tclass: " + t._2);
+                        System.out.println("Anomalous predicted: " + t._1 + "\tclass: " + t._2);
                     }
                 });
                         
