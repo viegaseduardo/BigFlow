@@ -154,7 +154,7 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                     }
                 });
 
-                inputData = inputData.map(new Function<LabeledPoint, LabeledPoint>() {
+                JavaRDD<LabeledPoint> inputDataNew = inputData.map(new Function<LabeledPoint, LabeledPoint>() {
                     @Override
                     public LabeledPoint call(LabeledPoint t1) throws Exception {
                         double[] feats = t1.features().toArray();
@@ -171,21 +171,21 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                     }
                 });
 
-                JavaRDD<LabeledPoint> inputDataNormal = inputData.filter(new Function<LabeledPoint, Boolean>() {
+                JavaRDD<LabeledPoint> inputDataNormal = inputDataNew.filter(new Function<LabeledPoint, Boolean>() {
                     @Override
                     public Boolean call(LabeledPoint t1) throws Exception {
                         return t1.label() == 0.0d;
                     }
                 });
 
-                JavaRDD<LabeledPoint> inputDataAnomalous = inputData.filter(new Function<LabeledPoint, Boolean>() {
+                JavaRDD<LabeledPoint> inputDataAnomalous = inputDataNew.filter(new Function<LabeledPoint, Boolean>() {
                     @Override
                     public Boolean call(LabeledPoint t1) throws Exception {
                         return t1.label() == 1.0d;
                     }
                 });
 
-                JavaRDD<LabeledPoint> inputDataSuspicious = inputData.filter(new Function<LabeledPoint, Boolean>() {
+                JavaRDD<LabeledPoint> inputDataSuspicious = inputDataNew.filter(new Function<LabeledPoint, Boolean>() {
                     @Override
                     public Boolean call(LabeledPoint t1) throws Exception {
                         return t1.label() == 2.0d;
@@ -220,7 +220,7 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                 predictionAndLabelAnomalous.foreach(new VoidFunction<Tuple2<Double, Double>>() {
                     @Override
                     public void call(Tuple2<Double, Double> t) throws Exception {
-                        System.out.println(t._1 + "\t" + t._2);
+                        System.out.println("predicted: " + t._1 + "\tclass: " + t._2);
                     }
                 });
                         
@@ -249,7 +249,7 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                 long nNormal = inputDataNormal.count();
                 long nAttack = inputDataAnomalous.count();
                 long nSuspicious = inputDataSuspicious.count();
-                long total = inputData.count();
+                long total = inputDataNew.count();
 
                 double tNegativeRate = tNegative / nNormal;
                 double tPositiveRateAnomalous = tPositiveAnomalous / nAttack;
