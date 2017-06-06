@@ -147,7 +147,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_SVM {
 
         //for (int i = 10; i < 100; i += 10) {
 
-            int numIterations = 100;
+            int numIterations = 500;
 
 //        SVMWithSGD svmAlg = new SVMWithSGD();
 //        svmAlg.optimizer()
