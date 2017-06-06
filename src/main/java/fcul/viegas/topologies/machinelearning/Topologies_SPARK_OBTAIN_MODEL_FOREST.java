@@ -38,7 +38,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_FOREST {
 
         Definitions.SPARK_FEATURE_SET = featureSet;
 
-        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_OBTAIN_MODEL");
+        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_OBTAIN_MODEL_FOREST");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(path);

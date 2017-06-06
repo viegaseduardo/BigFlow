@@ -38,7 +38,7 @@ public class Topologies_SPARK_TEST_MODEL_GRADIENT {
 
         Definitions.SPARK_FEATURE_SET = featureSet;
 
-        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_TEST_MODEL");
+        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_TEST_MODEL_GRADIENT");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         File directory = new File(pathTest);
