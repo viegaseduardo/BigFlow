@@ -52,12 +52,13 @@ public class Topologies_ARFF_SPLIT_FEATURE_SET {
         while ((line = br.readLine()) != null) {
             int i = 0;
             String[] split = line.split(Definitions.FIELD_DELIM_WEKA);
-            String type = split[split.length - 5];
+            //String type = split[split.length - 5];
+            String type = "unique";
 
             PrintWriter[] prints = map.get(type);
             if (prints == null) {
-                prints = Topologies_ARFF_SPLIT_FEATURE_SET.createFiles(newFeatureSetPath, type);
-                map.put(type, prints);
+                prints = Topologies_ARFF_SPLIT_FEATURE_SET.createFiles(newFeatureSetPath, "unique");
+                map.put("unique", prints);
             }
             writerVIEGAS = prints[0];
             writerORUNADA = prints[1];

@@ -39,6 +39,11 @@ public class Main {
                     args[2],
                     args[3]);
         } else if (args[0].equals("stratification")) {
+            /*
+                args[1] = path to input
+                args[2] = path to output
+             */
+
             Topologies_ARFF_SPLIT_FEATURE_SET.runTopology(
                     args[1], args[2]);
         } else if (args[0].equals("batchnoupdate")) {
@@ -57,7 +62,7 @@ public class Main {
                 args[2] = path to test arff
                 args[3] = output path
                 args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
-            */
+             */
             Topologies_SPARK_TEST_MODEL_FOREST.runTopology(args[1], args[2], args[3], args[4]);
         } else if (args[0].equals("sparktraingradient")) {
             /*
@@ -71,7 +76,7 @@ public class Main {
                 args[2] = path to test arff
                 args[3] = output path
                 args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
-            */
+             */
             Topologies_SPARK_TEST_MODEL_GRADIENT.runTopology(args[1], args[2], args[3], args[4]);
         } else if (args[0].equals("sparktrainsvm")) {
             /*
@@ -85,9 +90,9 @@ public class Main {
                 args[2] = path to test arff
                 args[3] = output path
                 args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
-            */
+             */
             Topologies_SPARK_TEST_MODEL_SVM.runTopology(args[1], args[2], args[3], args[4]);
-        }else if (args[0].equals("sparktrainnaive")) {
+        } else if (args[0].equals("sparktrainnaive")) {
             /*
                 args[1] = path to train arff
                 args[2] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
@@ -99,7 +104,7 @@ public class Main {
                 args[2] = path to test arff
                 args[3] = output path
                 args[4] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
-            */
+             */
             Topologies_SPARK_TEST_MODEL_NAIVE.runTopology(args[1], args[2], args[3], args[4]);
         } else if (args[0].equals("sparkcluster")) {
             /*
@@ -109,6 +114,6 @@ public class Main {
                 args[4] = featureset
              */
             Topologies_SPARK_CREATE_CLUSTERS.runTopology(args[1], Integer.valueOf(args[2]), args[3], args[4]);
-        } 
+        }
     }
 }

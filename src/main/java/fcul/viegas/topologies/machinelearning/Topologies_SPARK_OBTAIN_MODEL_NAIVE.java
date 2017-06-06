@@ -11,6 +11,8 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.ml.classification.MultilayerPerceptronClassificationModel;
+import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
 import org.apache.spark.mllib.classification.NaiveBayes;
 import org.apache.spark.mllib.classification.NaiveBayesModel;
 import org.apache.spark.mllib.linalg.Vector;
@@ -146,10 +148,13 @@ public class Topologies_SPARK_OBTAIN_MODEL_NAIVE {
             }
         });
 
+        // specify layers for the neural network:
+// input layer of size 4 (features), two intermediate of size 5 and 4
+// and output of size 3 (classes)
 
-        final NaiveBayesModel model = NaiveBayes.train(inputDataNew.rdd(), 1.0);
-
-        model.save(jsc.sc(), path + "_naive" + featureSet);
+        
+        //model.save(jsc.sc(), path + "_naive" + featureSet);
+        //model.save(path + "_naive" + featureSet);
 
     }
 
