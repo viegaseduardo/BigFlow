@@ -18,6 +18,7 @@ import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
+import org.apache.spark.ml.feature.*;
 
 /**
  *
@@ -74,7 +75,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_NAIVE {
                 return new LabeledPoint(instClass, vec);
             }
         });
-
+        
         final NaiveBayesModel model = NaiveBayes.train(inputData.rdd(), 1.0);
 
         model.save(jsc.sc(), path + "_naive" + featureSet);
