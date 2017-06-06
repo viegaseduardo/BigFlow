@@ -52,7 +52,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_FOREST {
                 if (split[split.length - 2].equals("anomalous")) {
                     instClass = 1.0d;
                 } else if (split[split.length - 2].equals("suspicious")) {
-                    instClass = 2.0d;
+                    instClass = 1.0d;
                 } else {
                     instClass = 0.0d;
                 }
@@ -84,21 +84,24 @@ public class Topologies_SPARK_OBTAIN_MODEL_FOREST {
             }
         });
 
-        Integer numClasses = 3;
-        HashMap<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-        Integer numTrees = 100; // Use more in practice.
-        String featureSubsetStrategy = "auto"; // Let the algorithm choose.
-        String impurity = "gini";
-        Integer maxDepth = 10;
-        Integer maxBins = 32;
-        Integer seed = 12345;
+        for (int i = 50; i < 500; i += 50) {
 
-        final RandomForestModel model = RandomForest.trainClassifier(inputData, numClasses,
-                categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins,
-                seed);
+            Integer numClasses = 2;
+            HashMap<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
+            Integer numTrees = i; // Use more in practice.
+            String featureSubsetStrategy = "auto"; // Let the algorithm choose.
+            String impurity = "gini";
+            Integer maxDepth = 10;
+            Integer maxBins = 32;
+            Integer seed = 12345;
+
+            final RandomForestModel model = RandomForest.trainClassifier(inputData, numClasses,
+                    categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins,
+                    seed);
+            
+            model.save(jsc.sc(), path + "_forest" + i + featureSet);
+        }
 
         
-
-        model.save(jsc.sc(), path + "_forest3" + featureSet);
     }
 }
