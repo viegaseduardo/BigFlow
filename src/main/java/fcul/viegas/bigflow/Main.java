@@ -65,7 +65,7 @@ public class Main {
                 args[2] = feature set (NIGEL, MOORE, VIEGAS or ORUNADA)
              */
             Topologies_SPARK_OBTAIN_MODEL_GRADIENT.runTopology(args[1], args[2]);
-        } else if (args[0].equals("sparktestforest")) {
+        } else if (args[0].equals("sparktestgradient")) {
             /*
                 args[1] = path to model
                 args[2] = path to test arff

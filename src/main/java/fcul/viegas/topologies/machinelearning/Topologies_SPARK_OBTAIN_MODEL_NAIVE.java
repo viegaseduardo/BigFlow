@@ -29,7 +29,7 @@ public class Topologies_SPARK_OBTAIN_MODEL_NAIVE {
 
         Definitions.SPARK_FEATURE_SET = featureSet;
 
-        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_OBTAIN_MODEL_FOREST");
+        SparkConf sparkConf = new SparkConf().setAppName("Topologies_SPARK_OBTAIN_MODEL_NAIVE");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
         JavaRDD<String> fileArff = jsc.textFile(path);

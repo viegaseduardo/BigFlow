@@ -18,6 +18,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.mllib.classification.SVMModel;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
@@ -31,7 +32,7 @@ import scala.Tuple2;
  * @author viegas
  */
 public class Topologies_SPARK_TEST_MODEL_SVM {
-    
+
     public static void runTopology(String pathModel, String pathTest, String outputPath, String featureSet) throws Exception {
 
         Definitions.SPARK_FEATURE_SET = featureSet;
@@ -42,7 +43,7 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
         File directory = new File(pathTest);
 
         SVMModel model = SVMModel.load(jsc.sc(), pathModel);
-        
+
         model.clearThreshold();
 
         String[] directoryContents = directory.list();
@@ -169,8 +170,6 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                         return new LabeledPoint(t1.label(), vec);
                     }
                 });
-                
-                
 
                 JavaRDD<LabeledPoint> inputDataNormal = inputData.filter(new Function<LabeledPoint, Boolean>() {
                     @Override
@@ -216,8 +215,15 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                                 return new Tuple2<Double, Double>(model.predict(p.features()), 1.0d);
                             }
                         });
-                
 
+
+                predictionAndLabelAnomalous.foreach(new VoidFunction<Tuple2<Double, Double>>() {
+                    @Override
+                    public void call(Tuple2<Double, Double> t) throws Exception {
+                        System.out.println(t._1);
+                    }
+                });
+                        
                 double tNegative = predictionAndLabelNormal.filter(new Function<Tuple2<Double, Double>, Boolean>() {
                     @Override
                     public Boolean call(Tuple2<Double, Double> pl) {
@@ -267,5 +273,5 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
         // Save and load model
         //System.out.println(model.toDebugString());
     }
-    
+
 }
