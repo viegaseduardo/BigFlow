@@ -158,7 +158,7 @@ public class Topologies_SPARK_TEST_MODEL_NAIVE {
                         for (int i = 0; i < feats.length; i++) {
                             if (summary.max().toArray()[i] - summary.min().toArray()[i] > 0) {
                                 feats[i] = (feats[i] - summary.min().toArray()[i]) / (summary.max().toArray()[i] - summary.min().toArray()[i])
-                                        * 1000;
+                                        * 25;
                             } else {
                                 feats[i] = 0.0d;
                             }
