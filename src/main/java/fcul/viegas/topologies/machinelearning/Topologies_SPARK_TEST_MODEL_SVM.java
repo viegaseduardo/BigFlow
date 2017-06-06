@@ -42,6 +42,8 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
         File directory = new File(pathTest);
 
         SVMModel model = SVMModel.load(jsc.sc(), pathModel);
+        
+        model.clearThreshold();
 
         String[] directoryContents = directory.list();
 
@@ -154,9 +156,7 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                 inputData = inputData.map(new Function<LabeledPoint, LabeledPoint>() {
                     @Override
                     public LabeledPoint call(LabeledPoint t1) throws Exception {
-
                         double[] feats = t1.features().toArray();
-
                         for (int i = 0; i < feats.length; i++) {
                             if (summary.max().toArray()[i] - summary.min().toArray()[i] > 0) {
                                 feats[i] = (feats[i] - summary.min().toArray()[i]) / (summary.max().toArray()[i] - summary.min().toArray()[i])
@@ -165,7 +165,6 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                                 feats[i] = 0.0d;
                             }
                         }
-
                         Vector vec = Vectors.dense(feats);
                         return new LabeledPoint(t1.label(), vec);
                     }
@@ -217,10 +216,12 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
                                 return new Tuple2<Double, Double>(model.predict(p.features()), 1.0d);
                             }
                         });
+                
 
                 double tNegative = predictionAndLabelNormal.filter(new Function<Tuple2<Double, Double>, Boolean>() {
                     @Override
                     public Boolean call(Tuple2<Double, Double> pl) {
+                        System.out.println();
                         return pl._1() <= 0.0d;
                     }
                 }).count();
