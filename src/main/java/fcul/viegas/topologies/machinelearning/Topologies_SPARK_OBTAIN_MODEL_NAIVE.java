@@ -19,6 +19,8 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.apache.spark.ml.feature.*;
+import org.apache.spark.mllib.stat.MultivariateStatisticalSummary;
+import org.apache.spark.mllib.stat.Statistics;
 
 /**
  *
@@ -75,8 +77,77 @@ public class Topologies_SPARK_OBTAIN_MODEL_NAIVE {
                 return new LabeledPoint(instClass, vec);
             }
         });
-        
-        final NaiveBayesModel model = NaiveBayes.train(inputData.rdd(), 1.0);
+
+        JavaRDD<String> fileArffTrain = jsc.textFile("/home/projeto/disco/stratprop/1week");
+
+        JavaRDD<LabeledPoint> inputDataTrain = fileArffTrain.map(new Function<String, LabeledPoint>() {
+            @Override
+            public LabeledPoint call(String line) throws Exception {
+                String[] split = line.split(",");
+                double[] featVec = null;
+                double instClass = 0.0d;
+                if (split[split.length - 2].equals("anomalous")) {
+                    instClass = 1.0d;
+                } else if (split[split.length - 2].equals("suspicious")) {
+                    instClass = 2.0d;
+                } else {
+                    instClass = 0.0d;
+                }
+
+                if (featureSet.equals("MOORE")) {
+                    featVec = new double[Definitions.SPARK_MOORE_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX; i < Definitions.SPARK_MOORE_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_MOORE_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                } else if (featureSet.equals("VIEGAS")) {
+                    featVec = new double[Definitions.SPARK_VIEGAS_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX; i < Definitions.SPARK_VIEGAS_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_VIEGAS_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                } else if (featureSet.equals("NIGEL")) {
+                    featVec = new double[Definitions.SPARK_NIGEL_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX; i < Definitions.SPARK_NIGEL_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_NIGEL_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                } else if (featureSet.equals("ORUNADA")) {
+                    featVec = new double[Definitions.SPARK_ORUNADA_NUMBER_OF_FEATURES];
+                    for (int i = Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX; i < Definitions.SPARK_ORUNADA_LAST_FEATURE_INDEX; i++) {
+                        featVec[i - Definitions.SPARK_ORUNADA_FIRST_FEATURE_INDEX] = Double.valueOf(split[i]);
+                    }
+                }
+
+                Vector vec = Vectors.dense(featVec);
+                return new LabeledPoint(instClass, vec);
+            }
+        });
+
+        MultivariateStatisticalSummary summary = Statistics.colStats(inputDataTrain.map(new Function<LabeledPoint, Vector>() {
+            @Override
+            public Vector call(LabeledPoint t1) throws Exception {
+                return t1.features();
+            }
+        }).rdd());
+
+        JavaRDD<LabeledPoint> inputDataNew = inputData.map(new Function<LabeledPoint, LabeledPoint>() {
+            @Override
+            public LabeledPoint call(LabeledPoint t1) throws Exception {
+                double[] feats = t1.features().toArray();
+                for (int i = 0; i < feats.length; i++) {
+                    if (summary.max().toArray()[i] - summary.min().toArray()[i] > 0) {
+                        feats[i] = (feats[i] - summary.min().toArray()[i]) / (summary.max().toArray()[i] - summary.min().toArray()[i])
+                                * 1000;
+                    } else {
+                        feats[i] = 0.0d;
+                    }
+                    feats[i] = Math.floor(feats[i]);
+                }
+                Vector vec = Vectors.dense(feats);
+                return new LabeledPoint(t1.label(), vec);
+            }
+        });
+
+
+        final NaiveBayesModel model = NaiveBayes.train(inputDataNew.rdd(), 1.0);
 
         model.save(jsc.sc(), path + "_naive" + featureSet);
 
