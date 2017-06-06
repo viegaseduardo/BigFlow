@@ -107,7 +107,7 @@ public class Topologies_SPARK_TEST_MODEL_SVM {
             }
         }).rdd());
 
-        for (float threshold = -1.0f; threshold <= 1.0f; threshold += 0.1f) {
+        for (float threshold = -1.0f; threshold <= 3.0f; threshold += 0.1f) {
             for (String fileName : fileLocations) {
                 if (fileName.contains("1week")) {
                     //if (fileName.contains(".strat") || fileName.contains(".propstrat") || fileName.contains(".arff")) {
