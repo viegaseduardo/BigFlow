@@ -17,7 +17,8 @@ import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_FOREST
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_GRADIENT;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_NAIVE;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_RejectionThresholds;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection_Evaluation;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests;
 
 /*
@@ -28,18 +29,21 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         if (args.length == 0) {
-            
+
 //            Topologies_WEKA_Tests topo = new Topologies_WEKA_Tests();
 //
 //            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
 //                    "/home/viegas/Desktop/saida/arffOrunada");
 //            
-            
-            Topologies_WEKA_Rejection topo = new Topologies_WEKA_Rejection();
+//            Topologies_WEKA_RejectionThresholds topo = new Topologies_WEKA_RejectionThresholds();
+//
+//            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
+//                    "/home/viegas/Desktop/saida/arffOrunada");
+            Topologies_WEKA_Rejection_Evaluation topo = new Topologies_WEKA_Rejection_Evaluation();
 
-            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
+            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
                     "/home/viegas/Desktop/saida/arffOrunada");
-            
+
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],

@@ -33,7 +33,7 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  *
  * @author viegas
  */
-public class Topologies_WEKA_Rejection {
+public class Topologies_WEKA_RejectionThresholds {
 
     private ArrayList<String> testFiles = new ArrayList();
 
@@ -284,7 +284,7 @@ public class Topologies_WEKA_Rejection {
         return classifier;
     }
 
-    public float[] evaluateOnDataset(Classifier classifier, Instances instData, float thresholdReject) throws Exception {
+    public float[] evaluateOnDataset(Classifier classifier, Instances instData, float thresholdRejectNormal, float thresholdRejectAttack) throws Exception {
         int nRejected = 0;
         int acceptedCorrectlyClassified = 0;
         int acceptedMissclassified = 0;
@@ -298,23 +298,45 @@ public class Topologies_WEKA_Rejection {
                 prob = predictProb[1];
                 predictedClass = 1.0d;
             }
-            //decides if reject
-            if (prob < thresholdReject) {
-                nRejected++;
-                //missrejected
-                if (inst.classValue() == predictedClass) {
-                    rejectedCorrectlyClassified++;
+            if (predictedClass == 0.0d) {
+                //decides if reject
+                if (prob < thresholdRejectNormal) {
+                    nRejected++;
+                    //missrejected
+                    if (inst.classValue() == predictedClass) {
+                        rejectedCorrectlyClassified++;
+                    } else {
+                        //sucessfully rejected
+                        rejectedMissclassified++;
+                    }
                 } else {
-                    //sucessfully rejected
-                    rejectedMissclassified++;
+                    //correctly accepted
+                    if (inst.classValue() == predictedClass) {
+                        acceptedCorrectlyClassified++;
+                    } else {
+                        //sucessfully rejected
+                        acceptedMissclassified++;
+                    }
                 }
-            } else {
-                //correctly accepted
-                if (inst.classValue() == predictedClass) {
-                    acceptedCorrectlyClassified++;
+            }else{
+                //decides if reject
+                if (prob < thresholdRejectAttack) {
+                    nRejected++;
+                    //missrejected
+                    if (inst.classValue() == predictedClass) {
+                        rejectedCorrectlyClassified++;
+                    } else {
+                        //sucessfully rejected
+                        rejectedMissclassified++;
+                    }
                 } else {
-                    //sucessfully rejected
-                    acceptedMissclassified++;
+                    //correctly accepted
+                    if (inst.classValue() == predictedClass) {
+                        acceptedCorrectlyClassified++;
+                    } else {
+                        //sucessfully rejected
+                        acceptedMissclassified++;
+                    }
                 }
             }
         }
@@ -325,6 +347,24 @@ public class Topologies_WEKA_Rejection {
         ret[2] = acceptedMissclassified;
         ret[3] = rejectedCorrectlyClassified;
         ret[4] = rejectedMissclassified;
+
+        return ret;
+    }
+
+    public String printMeasuresRecognition(float[] measures) {
+        String ret = "";
+
+        float recognitionRate;
+        float errorRate;
+        float rejectionRate;
+        float reliability;
+
+        recognitionRate = measures[1] / (measures[1] + measures[2]);
+        errorRate = measures[2] / (measures[1] + measures[2]);
+        rejectionRate = (measures[3] + measures[4]) / (measures[1] + measures[2] + measures[3] + measures[4]);
+        reliability = recognitionRate / (recognitionRate + errorRate);
+
+        ret = ret + recognitionRate + ";" + errorRate + ";" + rejectionRate + ";" + reliability;
 
         return ret;
     }
@@ -346,29 +386,38 @@ public class Topologies_WEKA_Rejection {
 
         System.out.println("Testing... ");
 
-        String testPath = this.testFiles.get(100);
+        //String testPath = this.testFiles.get(100);
         Set<Double> set = new LinkedHashSet<Double>();
-        Instances dataTest[] = this.openFileForTest(testPath);
+        Instances dataTest[] = this.openFileForTest(pathTrain);
 
         //normal
         for (Instance inst : dataTest[0]) {
             double probs[] = classifier.distributionForInstance(inst);
-            set.add(probs[0]);
-            set.add(probs[1]);
+            if (probs[0] >= probs[1]) {
+                set.add(probs[0]);
+            } else {
+                set.add(probs[1]);
+            }
         }
 
         //suspicious
         for (Instance inst : dataTest[1]) {
             double probs[] = classifier.distributionForInstance(inst);
-            set.add(probs[0]);
-            set.add(probs[1]);
+            if (probs[0] >= probs[1]) {
+                set.add(probs[0]);
+            } else {
+                set.add(probs[1]);
+            }
         }
 
         //anomalous
         for (Instance inst : dataTest[2]) {
             double probs[] = classifier.distributionForInstance(inst);
-            set.add(probs[0]);
-            set.add(probs[1]);
+            if (probs[0] >= probs[1]) {
+                set.add(probs[0]);
+            } else {
+                set.add(probs[1]);
+            }
         }
 
         System.out.println("Unique probabilities: " + set.size());
@@ -376,36 +425,49 @@ public class Topologies_WEKA_Rejection {
         ArrayList<Double> probs = new ArrayList(Arrays.asList(set.toArray()));
         java.util.Collections.sort(probs);
 
-        for (Double prob : probs) {
-            float[] rejectionForNormal = this.evaluateOnDataset(classifier, dataTest[0], prob.floatValue());
-            float[] rejectionForSuspicious = this.evaluateOnDataset(classifier, dataTest[1], prob.floatValue());
-            float[] rejectionForAnomalous = this.evaluateOnDataset(classifier, dataTest[2], prob.floatValue());
+        for (Double probNormal : probs) {
+            for (Double probAttack : probs) {
+                float[] rejectionForNormal = this.evaluateOnDataset(classifier, dataTest[0], probNormal.floatValue(), probAttack.floatValue());
+                float[] rejectionForSuspicious = this.evaluateOnDataset(classifier, dataTest[1], probNormal.floatValue(), probAttack.floatValue());
+                float[] rejectionForAnomalous = this.evaluateOnDataset(classifier, dataTest[2], probNormal.floatValue(), probAttack.floatValue());
 
-            String print = pathTrain + ";" + testPath + ";ORUNADA;"
-                    + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                    + dataTest[0].size() + ";"
-                    + dataTest[2].size() + ";"
-                    + dataTest[1].size() + ";";
-            print = print + rejectionForNormal[0] + ";";
-            print = print + rejectionForNormal[1] + ";";
-            print = print + rejectionForNormal[2] + ";";
-            print = print + rejectionForNormal[3] + ";";
-            print = print + rejectionForNormal[4] + ";";
-            
-            print = print + rejectionForSuspicious[0] + ";";
-            print = print + rejectionForSuspicious[1] + ";";
-            print = print + rejectionForSuspicious[2] + ";";
-            print = print + rejectionForSuspicious[3] + ";";
-            print = print + rejectionForSuspicious[4] + ";";
-            
-            print = print + rejectionForAnomalous[0] + ";";
-            print = print + rejectionForAnomalous[1] + ";";
-            print = print + rejectionForAnomalous[2] + ";";
-            print = print + rejectionForAnomalous[3] + ";";
-            print = print + rejectionForAnomalous[4];
-                    
+                float[] allreject = new float[5];
+                allreject[0] = rejectionForNormal[0] + rejectionForSuspicious[0] + rejectionForAnomalous[0];
+                allreject[1] = rejectionForNormal[1] + rejectionForSuspicious[1] + rejectionForAnomalous[1];
+                allreject[2] = rejectionForNormal[2] + rejectionForSuspicious[2] + rejectionForAnomalous[2];
+                allreject[3] = rejectionForNormal[3] + rejectionForSuspicious[3] + rejectionForAnomalous[3];
+                allreject[4] = rejectionForNormal[4] + rejectionForSuspicious[4] + rejectionForAnomalous[4];
 
-            System.out.println(print.replace(",", "."));
+                String print = pathTrain + ";ORUNADA;" + probNormal + ";" + probAttack + ";"
+                        + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
+                        + dataTest[0].size() + ";"
+                        + dataTest[2].size() + ";"
+                        + dataTest[1].size() + ";";
+                print = print + this.printMeasuresRecognition(allreject) + ";";
+                print = print + this.printMeasuresRecognition(rejectionForNormal) + ";";
+                print = print + this.printMeasuresRecognition(rejectionForSuspicious) + ";";
+                print = print + this.printMeasuresRecognition(rejectionForAnomalous) + ";";
+
+                print = print + rejectionForNormal[0] + ";";
+                print = print + rejectionForNormal[1] + ";";
+                print = print + rejectionForNormal[2] + ";";
+                print = print + rejectionForNormal[3] + ";";
+                print = print + rejectionForNormal[4] + ";";
+
+                print = print + rejectionForSuspicious[0] + ";";
+                print = print + rejectionForSuspicious[1] + ";";
+                print = print + rejectionForSuspicious[2] + ";";
+                print = print + rejectionForSuspicious[3] + ";";
+                print = print + rejectionForSuspicious[4] + ";";
+
+                print = print + rejectionForAnomalous[0] + ";";
+                print = print + rejectionForAnomalous[1] + ";";
+                print = print + rejectionForAnomalous[2] + ";";
+                print = print + rejectionForAnomalous[3] + ";";
+                print = print + rejectionForAnomalous[4];
+
+                System.out.println(print.replace(",", "."));
+            }
         }
 
 //        
