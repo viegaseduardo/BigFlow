@@ -17,6 +17,8 @@ import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_FOREST
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_GRADIENT;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_NAIVE;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests;
 
 /*
  * @author viegas
@@ -26,13 +28,18 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         if (args.length == 0) {
+            
+//            Topologies_WEKA_Tests topo = new Topologies_WEKA_Tests();
+//
+//            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
+//                    "/home/viegas/Desktop/saida/arffOrunada");
+//            
+            
+            Topologies_WEKA_Rejection topo = new Topologies_WEKA_Rejection();
 
-            String param1 = "/home/viegas/Desktop/saida/201601101400.txt";
-            String param2 = "/home/viegas/Desktop/saida/20160110_anomalous_suspicious.csv";
-            String param3 = "/home/viegas/Desktop/saida/20160110.arff";
-
-            Topologies_ARFF_CREATOR.runTopology(
-                    param1, param2, param3);
+            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
+                    "/home/viegas/Desktop/saida/arffOrunada");
+            
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
