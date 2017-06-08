@@ -8,6 +8,9 @@ package fcul.viegas.topologies.machinelearning;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import weka.classifiers.Classifier;
 import weka.classifiers.CostMatrix;
@@ -321,18 +324,25 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless {
 
         int currentModelLife = 1;
 
+        int accNormal = 0;
+        int accSuspicious = 0;
+        int accAnomaly = 0;
+        int totalNormal = 0;
+        int totalSuspicious = 0;
+        int totalAnomaly = 0;
+
         System.out.println("Testing... ");
 
-        for (int i = 0; i < this.testFiles.size(); i++) {
+        for (int i = 7; i < this.testFiles.size(); i++) {
             String testPath = this.testFiles.get(i);
             currentModelLife--;
 
             //must update model
             if (currentModelLife <= 0) {
                 currentModelLife = modelLife;
-                Instances newDataTrainNewMonth = this.openFile(testPath);
+                Instances newDataTrainNewMonth = this.openFile(this.testFiles.get(i - 1));
 
-                for (int j = (i + 1); j < (i + 7); j++) {
+                for (int j = (i - 2); j >= (i - 7); j--) {
                     if (j < this.testFiles.size()) {
                         testPath = this.testFiles.get(j);
                         Instances newDataTrain = this.openFile(testPath);
@@ -342,38 +352,56 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless {
                     }
                 }
 
-                System.out.println(newDataTrainNewMonth.size());
-                //i = i + 6;
-                i = i - 1;
+                //System.out.println(newDataTrainNewMonth.size());
                 classifier = this.trainClassifierTree(newDataTrainNewMonth);
 
-            } else {
-                //test model for the remainder of month
-                Instances[] dataTest = this.openFileForTest(testPath);
-
-                Evaluation evalNormal = new Evaluation(dataTest[0]);
-                evalNormal.evaluateModel(classifier, dataTest[0]);
-
-                Evaluation evalSuspicious = new Evaluation(dataTest[1]);
-                evalSuspicious.evaluateModel(classifier, dataTest[1]);
-
-                Evaluation evalAnomalous = new Evaluation(dataTest[2]);
-                evalAnomalous.evaluateModel(classifier, dataTest[2]);
-
-                String print = modelLife + ";" + testPath + ";ORUNADA;"
-                        + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                        + dataTest[0].size() + ";"
-                        + dataTest[2].size() + ";"
-                        + dataTest[1].size() + ";"
-                        + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
-                                + evalSuspicious.pctCorrect() * dataTest[1].size()
-                                + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
-                        + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
-                        + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
-                        + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
-                //System.out.println(print.replace(",", "."));
-                System.out.println(print.replace(",", "."));
             }
+
+            testPath = this.testFiles.get(i);
+
+            //test model for the remainder of month
+            Instances[] dataTest = this.openFileForTest(testPath);
+
+            Evaluation evalNormal = new Evaluation(dataTest[0]);
+            evalNormal.evaluateModel(classifier, dataTest[0]);
+
+            Evaluation evalSuspicious = new Evaluation(dataTest[1]);
+            evalSuspicious.evaluateModel(classifier, dataTest[1]);
+
+            Evaluation evalAnomalous = new Evaluation(dataTest[2]);
+            evalAnomalous.evaluateModel(classifier, dataTest[2]);
+
+            String print = modelLife + ";" + testPath + ";ORUNADA;"
+                    + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
+                    + dataTest[0].size() + ";"
+                    + dataTest[2].size() + ";"
+                    + dataTest[1].size() + ";"
+                    + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
+                            + evalSuspicious.pctCorrect() * dataTest[1].size()
+                            + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
+                    + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
+                    + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
+                    + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
+            //System.out.println(print.replace(",", "."));
+            System.out.println(print.replace(",", "."));
+
+            accNormal += evalNormal.correct();
+            accSuspicious += evalSuspicious.correct();
+            accAnomaly += evalAnomalous.correct();
+            totalNormal += dataTest[0].size();
+            totalSuspicious += dataTest[2].size();
+            totalAnomaly += dataTest[1].size();
+
+        }
+        String output = modelLife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly +
+                ";" + totalNormal + ";" + totalSuspicious + ";" + totalAnomaly
+                + ";" + (accNormal/(float)totalNormal)
+                + ";" + (accSuspicious/(float)totalSuspicious)
+                + ";" + (accAnomaly/(float)totalAnomaly);
+        try {
+            Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+        } catch (Exception e) {
+            //exception handling left as an exercise for the reader
         }
 
     }

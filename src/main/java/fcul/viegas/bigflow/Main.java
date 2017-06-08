@@ -38,13 +38,10 @@ public class Main {
 //            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
 //                    "/home/viegas/Desktop/saida/arffOrunada");
 
-            for (int i = 10; i < 30; i++) {
-                System.out.println(i);
-                Topologies_WEKA_Tests_WithUpdateThreadless topo = new Topologies_WEKA_Tests_WithUpdateThreadless();
+            Topologies_WEKA_Tests_WithUpdateThreadless topo = new Topologies_WEKA_Tests_WithUpdateThreadless();
 
-                topo.runTopology("/home/projeto/disco/stratweka/arffOrunadaProp",
-                        i);
-            }
+            topo.runTopology("/home/projeto/disco/stratweka/arffOrunadaProp",
+                    Integer.valueOf(args[0]));
 
 //            ArrayList<Topologies_WEKA_Tests_WithUpdate> listThreads = new ArrayList();
 //            for(int i = 1; i <= 12; i++){
