@@ -6,8 +6,10 @@
 package fcul.viegas.topologies.machinelearning;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -21,6 +23,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
+import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
@@ -30,7 +33,7 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  *
  * @author viegas
  */
-public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
+public class Topologies_WEKA_Tests_WithUpdate extends Thread {
 
     private ArrayList<String> testFiles = new ArrayList();
     public ArrayList<String> resultList = new ArrayList();
@@ -43,7 +46,7 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
 
         for (String fileName : directoryContents) {
             File temp = new File(String.valueOf(directory), fileName);
-            if (!String.valueOf(temp).contains("week") && this.getMonthFromTestFile(String.valueOf(temp)) == this.month) {
+            if (temp.isFile() && !String.valueOf(temp).contains("week") && this.getMonthFromTestFile(String.valueOf(temp)) == this.month) {
                 testFiles.add(String.valueOf(temp));
             }
         }
@@ -56,6 +59,7 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
+        
 
         String[] options = new String[2];
         options[0] = "-R";
@@ -297,6 +301,7 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
 
         System.out.println("Path to test directory: " + pathTestDirectory);
         this.findFilesForTest(pathTestDirectory);
+        System.out.println(this.month + " array size:" + this.testFiles.size());
         for (String s : this.testFiles) {
             System.out.println("\t" + s + " month: " + this.month);
         }
@@ -312,7 +317,7 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
 
             //must update model
             if (classifier == null) {
-                Instances newDataTrainNewMonth = new Instances(this.openFile(testPath));
+                Instances newDataTrainNewMonth = this.openFile("/home/projeto/disco/stratweka/arffOrunadaProp/months/" + this.month + "_prop.arff");
 
                 for (int j = (i + 1); j < (i + 7); j++) {
                     testPath = this.testFiles.get(j);
@@ -321,10 +326,13 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
                         newDataTrainNewMonth.add(inst);
                     }
                 }
+                System.out.println(this.month + " " + newDataTrainNewMonth.size());
+                
                 System.out.println(newDataTrainNewMonth.size());
                 i = i + 6;
                 currentMonth = this.getMonthFromTestFile(testPath);
                 classifier = this.trainClassifierTree(newDataTrainNewMonth);
+                
             } else {
                 //test model for the remainder of month
                 Instances[] dataTest = this.openFileForTest(testPath);
@@ -361,7 +369,7 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
         try {
             this.runTopology(this.month, this.pathTestDirectory);
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
     }
 

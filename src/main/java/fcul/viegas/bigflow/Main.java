@@ -39,17 +39,17 @@ public class Main {
 
 
             ArrayList<Topologies_WEKA_Tests_WithUpdate> listThreads = new ArrayList();
-            for(int i = 1; i <= 12; i++){
+            for(int i = 1; i <= 1; i++){
                 Topologies_WEKA_Tests_WithUpdate thread = new Topologies_WEKA_Tests_WithUpdate();
                 thread.month = i;
                 thread.pathTestDirectory = "/home/viegas/Desktop/saida/arffOrunada";
                 thread.start();
                 listThreads.add(thread);
             }
-            for(int i = 0; i < 12; i++){
+            for(int i = 0; i < 1; i++){
                 listThreads.get(i).join();
             }
-            for(int i = 0; i < 12; i++){
+            for(int i = 0; i < 1; i++){
                 for(String s : listThreads.get(i).resultList){
                     System.out.println(s);
                 }
