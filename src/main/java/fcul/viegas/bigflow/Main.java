@@ -20,6 +20,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_RejectionThresholds;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection_Evaluation;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdate;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreadless;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import java.util.ArrayList;
 
@@ -37,25 +38,31 @@ public class Main {
 //            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
 //                    "/home/viegas/Desktop/saida/arffOrunada");
 
-
-            ArrayList<Topologies_WEKA_Tests_WithUpdate> listThreads = new ArrayList();
-            for(int i = 1; i <= 12; i++){
-                Topologies_WEKA_Tests_WithUpdate thread = new Topologies_WEKA_Tests_WithUpdate();
-                thread.month = i;
-                thread.pathTestDirectory = "/home/projeto/disco/stratweka/arffOrunadaProp/months";
-                thread.start();
-                listThreads.add(thread);
-            }
-            for(int i = 0; i < 12; i++){
-                listThreads.get(i).join();
-            }
-            for(int i = 0; i < 12; i++){
-                for(String s : listThreads.get(i).resultList){
-                    System.out.println(s);
-                }
+            for (int i = 10; i < 30; i++) {
                 System.out.println(i);
+                Topologies_WEKA_Tests_WithUpdateThreadless topo = new Topologies_WEKA_Tests_WithUpdateThreadless();
+
+                topo.runTopology("/home/projeto/disco/stratweka/arffOrunadaProp",
+                        i);
             }
-            
+
+//            ArrayList<Topologies_WEKA_Tests_WithUpdate> listThreads = new ArrayList();
+//            for(int i = 1; i <= 12; i++){
+//                Topologies_WEKA_Tests_WithUpdate thread = new Topologies_WEKA_Tests_WithUpdate();
+//                thread.month = i;
+//                thread.pathTestDirectory = "/home/projeto/disco/stratweka/arffOrunadaProp";
+//                thread.start();
+//                listThreads.add(thread);
+//            }
+//            for(int i = 0; i < 12; i++){
+//                listThreads.get(i).join();
+//            }
+//            for(int i = 0; i < 12; i++){
+//                for(String s : listThreads.get(i).resultList){
+//                    System.out.println(s);
+//                }
+//                System.out.println(i);
+//            }
 //            Topologies_WEKA_Tests_WithUpdate topo = new Topologies_WEKA_Tests_WithUpdate();
 //
 //            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
@@ -69,7 +76,6 @@ public class Main {
 //
 //            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
 //                    "/home/viegas/Desktop/saida/arffOrunada");
-
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
