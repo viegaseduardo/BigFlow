@@ -9,10 +9,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
@@ -32,10 +30,12 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  *
  * @author viegas
  */
-public class Topologies_WEKA_Rejection_Evaluation {
-    
-    
+public class Topologies_WEKA_Tests_WithUpdate extends Thread  {
+
     private ArrayList<String> testFiles = new ArrayList();
+    public ArrayList<String> resultList = new ArrayList();
+    public int month;
+    public String pathTestDirectory;
 
     public void findFilesForTest(String pathTestDirectory) {
         File directory = new File(pathTestDirectory);
@@ -43,7 +43,7 @@ public class Topologies_WEKA_Rejection_Evaluation {
 
         for (String fileName : directoryContents) {
             File temp = new File(String.valueOf(directory), fileName);
-            if (!String.valueOf(temp).contains("week")) {
+            if (!String.valueOf(temp).contains("week") && this.getMonthFromTestFile(String.valueOf(temp)) == this.month) {
                 testFiles.add(String.valueOf(temp));
             }
         }
@@ -284,178 +284,85 @@ public class Topologies_WEKA_Rejection_Evaluation {
         return classifier;
     }
 
-    public float[] evaluateOnDataset(Classifier classifier, Instances instData, float thresholdRejectNormal, float thresholdRejectAttack) throws Exception {
-        int nRejected = 0;
-        int acceptedCorrectlyClassified = 0;
-        int acceptedMissclassified = 0;
-        int rejectedCorrectlyClassified = 0;
-        int rejectedMissclassified = 0;
-        for (Instance inst : instData) {
-            double predictProb[] = classifier.distributionForInstance(inst);
-            double prob = predictProb[0];
-            double predictedClass = 0.0d;
-            if (prob < predictProb[1]) {
-                prob = predictProb[1];
-                predictedClass = 1.0d;
-            }
-            if (predictedClass == 0.0d) {
-                //decides if reject
-                if (prob < thresholdRejectNormal) {
-                    nRejected++;
-                    //missrejected
-                    if (inst.classValue() == predictedClass) {
-                        rejectedCorrectlyClassified++;
-                    } else {
-                        //sucessfully rejected
-                        rejectedMissclassified++;
-                    }
-                } else {
-                    //correctly accepted
-                    if (inst.classValue() == predictedClass) {
-                        acceptedCorrectlyClassified++;
-                    } else {
-                        //sucessfully rejected
-                        acceptedMissclassified++;
-                    }
-                }
-            }else{
-                //decides if reject
-                if (prob < thresholdRejectAttack) {
-                    nRejected++;
-                    //missrejected
-                    if (inst.classValue() == predictedClass) {
-                        rejectedCorrectlyClassified++;
-                    } else {
-                        //sucessfully rejected
-                        rejectedMissclassified++;
-                    }
-                } else {
-                    //correctly accepted
-                    if (inst.classValue() == predictedClass) {
-                        acceptedCorrectlyClassified++;
-                    } else {
-                        //sucessfully rejected
-                        acceptedMissclassified++;
-                    }
-                }
-            }
-        }
-
-        float[] ret = new float[5];
-        ret[0] = nRejected;
-        ret[1] = acceptedCorrectlyClassified;
-        ret[2] = acceptedMissclassified;
-        ret[3] = rejectedCorrectlyClassified;
-        ret[4] = rejectedMissclassified;
-
-        return ret;
+    public int getMonthFromTestFile(String testFile) {
+        String file = testFile.replaceAll("\\D+", "");
+        int year = Integer.valueOf(file.substring(0, 4));
+        int month = Integer.valueOf(file.substring(4, 6));
+        int day = Integer.valueOf(file.substring(6, 8));
+        return month;
     }
 
-    public String printMeasuresRecognition(float[] measures) {
-        String ret = "";
-
-        float recognitionRate;
-        float errorRate;
-        float rejectionRate;
-        float reliability;
-
-        recognitionRate = measures[1] / (measures[1] + measures[2]);
-        errorRate = measures[2] / (measures[1] + measures[2]);
-        rejectionRate = (measures[3] + measures[4]) / (measures[1] + measures[2] + measures[3] + measures[4]);
-        reliability = recognitionRate / (recognitionRate + errorRate);
-
-        ret = ret + recognitionRate + ";" + errorRate + ";" + rejectionRate + ";" + reliability;
-
-        return ret;
-    }
-
-    public void runTopology(String pathTrain, String pathTestDirectory) throws Exception {
-        System.out.println("Path to training: " + pathTrain);
+    public void runTopology(int month, String pathTestDirectory) throws Exception {
+        System.out.println("Month to train: " + month);
 
         System.out.println("Path to test directory: " + pathTestDirectory);
         this.findFilesForTest(pathTestDirectory);
         for (String s : this.testFiles) {
-            System.out.println("\t" + s);
+            System.out.println("\t" + s + " month: " + this.month);
         }
 
-        System.out.println("Opening training file....");
-        Instances dataTrain = this.openFile(pathTrain);
+        Classifier classifier = null;
 
-        System.out.println("Training trainClassifierTree....");
-        Classifier classifier = this.trainClassifierTree(dataTrain);
-
-        //String testPath = this.testFiles.get(100);
-        Set<Double> set = new LinkedHashSet<Double>();
-        Instances dataTest[] = this.openFileForTest(pathTrain);
-
-        //normal
-        for (Instance inst : dataTest[0]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
-        }
-
-        //suspicious
-        for (Instance inst : dataTest[1]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
-        }
-
-        //anomalous
-        for (Instance inst : dataTest[2]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
-        }
-
-        System.out.println("Unique probabilities: " + set.size());
-
-        ArrayList<Double> probs = new ArrayList(Arrays.asList(set.toArray()));
-        java.util.Collections.sort(probs);
-        System.out.println("Testing... ");
-        
-        Double probNormal = 0.99d;
-        Double probAttack = 0.51d;
+        int currentMonth = 1;
 
         System.out.println("Testing... ");
-        
-        for (String testPath : this.testFiles) {
-            dataTest = this.openFileForTest(testPath);
-            float[] rejectionForNormal = this.evaluateOnDataset(classifier, dataTest[0], probNormal.floatValue(), probAttack.floatValue());
-            float[] rejectionForSuspicious = this.evaluateOnDataset(classifier, dataTest[1], probNormal.floatValue(), probAttack.floatValue());
-            float[] rejectionForAnomalous = this.evaluateOnDataset(classifier, dataTest[2], probNormal.floatValue(), probAttack.floatValue());
 
-            float[] allreject = new float[5];
-            allreject[0] = rejectionForNormal[0] + rejectionForSuspicious[0] + rejectionForAnomalous[0];
-            allreject[1] = rejectionForNormal[1] + rejectionForSuspicious[1] + rejectionForAnomalous[1];
-            allreject[2] = rejectionForNormal[2] + rejectionForSuspicious[2] + rejectionForAnomalous[2];
-            allreject[3] = rejectionForNormal[3] + rejectionForSuspicious[3] + rejectionForAnomalous[3];
-            allreject[4] = rejectionForNormal[4] + rejectionForSuspicious[4] + rejectionForAnomalous[4];
+        for (int i = 0; i < this.testFiles.size(); i++) {
+            String testPath = this.testFiles.get(i);
 
-            String print = pathTrain + ";" + testPath + ";ORUNADA;" + probNormal + ";" +  probAttack + ";"
-                    + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                    + dataTest[0].size() + ";"
-                    + dataTest[2].size() + ";"
-                    + dataTest[1].size() + ";";
-            print = print + this.printMeasuresRecognition(allreject) + ";";
-            print = print + this.printMeasuresRecognition(rejectionForNormal) + ";";
-            print = print + this.printMeasuresRecognition(rejectionForSuspicious) + ";";
-            print = print + this.printMeasuresRecognition(rejectionForAnomalous) + ";";
+            //must update model
+            if (classifier == null) {
+                Instances newDataTrainNewMonth = new Instances(this.openFile(testPath));
 
-            System.out.println(print.replace(",", "."));
+                for (int j = (i + 1); j < (i + 7); j++) {
+                    testPath = this.testFiles.get(j);
+                    Instances newDataTrain = this.openFile(testPath);
+                    for (Instance inst : newDataTrain) {
+                        newDataTrainNewMonth.add(inst);
+                    }
+                }
+                System.out.println(newDataTrainNewMonth.size());
+                i = i + 6;
+                currentMonth = this.getMonthFromTestFile(testPath);
+                classifier = this.trainClassifierTree(newDataTrainNewMonth);
+            } else {
+                //test model for the remainder of month
+                Instances[] dataTest = this.openFileForTest(testPath);
+
+                Evaluation evalNormal = new Evaluation(dataTest[0]);
+                evalNormal.evaluateModel(classifier, dataTest[0]);
+
+                Evaluation evalSuspicious = new Evaluation(dataTest[1]);
+                evalSuspicious.evaluateModel(classifier, dataTest[1]);
+
+                Evaluation evalAnomalous = new Evaluation(dataTest[2]);
+                evalAnomalous.evaluateModel(classifier, dataTest[2]);
+
+                String print = testPath + ";ORUNADA;"
+                        + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
+                        + dataTest[0].size() + ";"
+                        + dataTest[2].size() + ";"
+                        + dataTest[1].size() + ";"
+                        + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
+                                + evalSuspicious.pctCorrect() * dataTest[1].size()
+                                + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
+                        + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
+                        + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
+                        + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
+                //System.out.println(print.replace(",", "."));
+                this.resultList.add(print.replace(",", "."));
+            }
         }
-
 
     }
-    
+
+    @Override
+    public void run() {
+        try {
+            this.runTopology(this.month, this.pathTestDirectory);
+        } catch (Exception ex) {
+
+        }
+    }
+
 }

@@ -34,7 +34,7 @@ import weka.filters.unsupervised.attribute.Normalize;
  *
  * @author viegas
  */
-public class Topologies_WEKA_Tests {
+public class Topologies_WEKA_Tests_WithoutUpdate {
     
     private ArrayList<String> testFiles = new ArrayList();
     
