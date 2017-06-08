@@ -319,15 +319,15 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
             if (classifier == null) {
                 Instances newDataTrainNewMonth = this.openFile("/home/projeto/disco/stratweka/arffOrunadaProp/months/" + this.month + "_prop.arff");
 
-                for (int j = (i + 1); j < (i + 7); j++) {
-                    testPath = this.testFiles.get(j);
-                    Instances newDataTrain = this.openFile(testPath);
-                    for (Instance inst : newDataTrain) {
-                        newDataTrainNewMonth.add(inst);
-                    }
-                }
-                System.out.println(this.month + " " + newDataTrainNewMonth.size());
-                
+//                for (int j = (i + 1); j < (i + 7); j++) {
+//                    testPath = this.testFiles.get(j);
+//                    Instances newDataTrain = this.openFile(testPath);
+//                    for (Instance inst : newDataTrain) {
+//                        newDataTrainNewMonth.add(inst);
+//                    }
+//                }
+//                System.out.println(this.month + " " + newDataTrainNewMonth.size());
+//                
                 System.out.println(newDataTrainNewMonth.size());
                 i = i + 6;
                 currentMonth = this.getMonthFromTestFile(testPath);
