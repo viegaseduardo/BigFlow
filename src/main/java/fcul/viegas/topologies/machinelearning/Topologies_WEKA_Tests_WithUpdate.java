@@ -330,17 +330,17 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
 
             //must update model
             if (classifier == null) {
-                Instances newDataTrainNewMonth = this.openFile("/home/projeto/disco/stratweka/arffOrunadaProp/months/" + this.month + "_prop.arff");
+                Instances newDataTrainNewMonth = this.openFile(testPath);
 
-//                for (int j = (i + 1); j < (i + 7); j++) {
-//                    testPath = this.testFiles.get(j);
-//                    Instances newDataTrain = this.openFile(testPath);
-//                    for (Instance inst : newDataTrain) {
-//                        newDataTrainNewMonth.add(inst);
-//                    }
-//                }
-//                System.out.println(this.month + " " + newDataTrainNewMonth.size());
-//                
+                for (int j = (i + 1); j < (i + 7); j++) {
+                    testPath = this.testFiles.get(j);
+                    Instances newDataTrain = this.openFile(testPath);
+                    for (Instance inst : newDataTrain) {
+                        newDataTrainNewMonth.add(inst);
+                    }
+                }
+                System.out.println(this.month + " " + newDataTrainNewMonth.size());
+                
                 System.out.println(newDataTrainNewMonth.size());
                 //i = i + 6;
                 i = i-1;
@@ -383,6 +383,7 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         try {
             this.runTopology(this.month, this.pathTestDirectory);
         } catch (Exception ex) {
+            System.out.println("deu pau no mes " + this.month);
             ex.printStackTrace();
         }
     }
