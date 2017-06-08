@@ -12,11 +12,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import weka.classifiers.Classifier;
+import weka.classifiers.CostMatrix;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -241,9 +243,20 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
 
     public Classifier trainClassifierTree(Instances train) throws Exception {
         J48 classifier = new J48();
-
-        classifier.buildClassifier(train);
-
+        
+        weka.classifiers.meta.CostSensitiveClassifier cost = new CostSensitiveClassifier();
+        CostMatrix costMatrix = new CostMatrix(2);
+        
+        costMatrix.setElement(0, 1, 1.0);
+        costMatrix.setElement(1, 0, 2.0);
+        
+        cost.setCostMatrix(costMatrix);
+        cost.setClassifier(classifier);
+        
+        cost.buildClassifier(train);
+        
+        //classifier.buildClassifier(train);
+        
         return classifier;
     }
 
@@ -329,7 +342,8 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
 //                System.out.println(this.month + " " + newDataTrainNewMonth.size());
 //                
                 System.out.println(newDataTrainNewMonth.size());
-                i = i + 6;
+                //i = i + 6;
+                i = i-1;
                 currentMonth = this.getMonthFromTestFile(testPath);
                 classifier = this.trainClassifierTree(newDataTrainNewMonth);
                 

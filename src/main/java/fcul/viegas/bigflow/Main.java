@@ -31,7 +31,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         if (args.length == 0) {
-
+//
 //            Topologies_WEKA_Tests_WithoutUpdate topo = new Topologies_WEKA_Tests_WithoutUpdate();
 //
 //            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 

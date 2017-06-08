@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import java.util.List;
 import org.apache.spark.ml.source.libsvm.LibSVMDataSource;
 import weka.classifiers.Classifier;
+import weka.classifiers.CostMatrix;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.classifiers.Evaluation;
@@ -21,6 +22,7 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 import weka.core.SelectedTag;
@@ -239,7 +241,18 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
     public Classifier trainClassifierTree(Instances train) throws Exception {
         J48 classifier = new J48();
         
-        classifier.buildClassifier(train);
+        weka.classifiers.meta.CostSensitiveClassifier cost = new CostSensitiveClassifier();
+        CostMatrix costMatrix = new CostMatrix(2);
+        
+        costMatrix.setElement(0, 1, 1.0);
+        costMatrix.setElement(1, 0, 2.0);
+        
+        cost.setCostMatrix(costMatrix);
+        cost.setClassifier(classifier);
+        
+        cost.buildClassifier(train);
+        
+        //classifier.buildClassifier(train);
         
         return classifier;
     }
@@ -297,8 +310,8 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         System.out.println("Opening training file....");
         Instances dataTrain = this.openFile(pathTrain);
         
-        System.out.println("Training trainClassifierAdaboostTree....");
-        Classifier classifier = this.trainClassifierAdaboostTree(dataTrain);
+        System.out.println("Training trainClassifierTree....");
+        Classifier classifier = this.trainClassifierTree(dataTrain);
         
         System.out.println("Testing... ");
         for (String testPath : this.testFiles) {
