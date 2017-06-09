@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.CostMatrix;
 import weka.classifiers.Evaluation;
@@ -19,6 +22,7 @@ import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.CostSensitiveClassifier;
+import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -55,19 +59,36 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         java.util.Collections.sort(testFiles);
     }
 
+    public Instances selectFeatures(Instances path) throws Exception {
+
+        AttributeSelection attsel = new AttributeSelection();
+        weka.attributeSelection.InfoGainAttributeEval selector = new InfoGainAttributeEval();
+        weka.attributeSelection.Ranker ranker = new Ranker();
+
+        ranker.setNumToSelect(10);
+        attsel.setEvaluator(selector);
+        attsel.setSearch(ranker);
+        attsel.SelectAttributes(path);
+
+        return attsel.reduceDimensionality(path);
+    }
+
+
     public Instances openFile(String path) throws Exception {
         BufferedReader reader
                 = new BufferedReader(new FileReader(path));
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-        
 
         String[] options = new String[2];
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -99,9 +120,12 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
-
+        
         Remove remove = new Remove();
         remove.setOptions(options);
         //remove.setInvertSelection(true);
@@ -133,10 +157,10 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
 
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
-
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
         remAllButAnomalous.setNominalIndices("1,3");
@@ -153,7 +177,10 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -197,9 +224,9 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
 
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
 
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
@@ -217,7 +244,10 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -242,22 +272,15 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
     }
 
     public Classifier trainClassifierTree(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setModelHeader(train);
+        
         J48 classifier = new J48();
         
-        weka.classifiers.meta.CostSensitiveClassifier cost = new CostSensitiveClassifier();
-        CostMatrix costMatrix = new CostMatrix(2);
-        
-        costMatrix.setElement(0, 1, 1.0);
-        costMatrix.setElement(1, 0, 2.0);
-        
-        cost.setCostMatrix(costMatrix);
-        cost.setClassifier(classifier);
-        
-        cost.buildClassifier(train);
-        
-        //classifier.buildClassifier(train);
-        
-        return classifier;
+        inputMapped.setClassifier(classifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
@@ -322,58 +345,65 @@ public class Topologies_WEKA_Tests_WithUpdate extends Thread {
         Classifier classifier = null;
 
         int currentMonth = 1;
+        int currentModelLife = 1;
 
         System.out.println("Testing... ");
 
-        for (int i = 0; i < this.testFiles.size(); i++) {
+        for (int i = 7; i < this.testFiles.size(); i++) {
             String testPath = this.testFiles.get(i);
 
-            //must update model
-            if (classifier == null) {
-                Instances newDataTrainNewMonth = this.openFile(testPath);
+            currentModelLife--;
 
-                for (int j = (i + 1); j < (i + 7); j++) {
-                    testPath = this.testFiles.get(j);
-                    Instances newDataTrain = this.openFile(testPath);
-                    for (Instance inst : newDataTrain) {
-                        newDataTrainNewMonth.add(inst);
+            //must update model
+            if (currentModelLife <= 0) {
+                currentModelLife = 500;
+                Instances newDataTrainNewMonth = this.openFile(this.testFiles.get(i - 1));
+
+                for (int j = (i - 2); j >= (i - 7); j--) {
+                    if (j < this.testFiles.size()) {
+                        testPath = this.testFiles.get(j);
+                        Instances newDataTrain = this.openFile(testPath);
+                        for (Instance inst : newDataTrain) {
+                            newDataTrainNewMonth.add(inst);
+                        }
                     }
                 }
-                System.out.println(this.month + " " + newDataTrainNewMonth.size());
-                
-                System.out.println(newDataTrainNewMonth.size());
-                //i = i + 6;
-                i = i-1;
-                currentMonth = this.getMonthFromTestFile(testPath);
+
+                newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
+
+                //System.out.println(newDataTrainNewMonth.size());
                 classifier = this.trainClassifierTree(newDataTrainNewMonth);
-                
-            } else {
-                //test model for the remainder of month
-                Instances[] dataTest = this.openFileForTest(testPath);
 
-                Evaluation evalNormal = new Evaluation(dataTest[0]);
-                evalNormal.evaluateModel(classifier, dataTest[0]);
-
-                Evaluation evalSuspicious = new Evaluation(dataTest[1]);
-                evalSuspicious.evaluateModel(classifier, dataTest[1]);
-
-                Evaluation evalAnomalous = new Evaluation(dataTest[2]);
-                evalAnomalous.evaluateModel(classifier, dataTest[2]);
-
-                String print = testPath + ";ORUNADA;"
-                        + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                        + dataTest[0].size() + ";"
-                        + dataTest[2].size() + ";"
-                        + dataTest[1].size() + ";"
-                        + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
-                                + evalSuspicious.pctCorrect() * dataTest[1].size()
-                                + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
-                        + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
-                        + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
-                        + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
-                //System.out.println(print.replace(",", "."));
-                this.resultList.add(print.replace(",", "."));
             }
+
+            testPath = this.testFiles.get(i);
+
+            //test model for the remainder of month
+            Instances[] dataTest = this.openFileForTest(testPath);
+
+            Evaluation evalNormal = new Evaluation(dataTest[0]);
+            evalNormal.evaluateModel(classifier, dataTest[0]);
+
+            Evaluation evalSuspicious = new Evaluation(dataTest[1]);
+            evalSuspicious.evaluateModel(classifier, dataTest[1]);
+
+            Evaluation evalAnomalous = new Evaluation(dataTest[2]);
+            evalAnomalous.evaluateModel(classifier, dataTest[2]);
+
+            String print = testPath + ";ORUNADA;"
+                    + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
+                    + dataTest[0].size() + ";"
+                    + dataTest[2].size() + ";"
+                    + dataTest[1].size() + ";"
+                    + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
+                            + evalSuspicious.pctCorrect() * dataTest[1].size()
+                            + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
+                    + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
+                    + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
+                    + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
+            //System.out.println(print.replace(",", "."));
+            this.resultList.add(print.replace(",", "."));
+
         }
 
     }
