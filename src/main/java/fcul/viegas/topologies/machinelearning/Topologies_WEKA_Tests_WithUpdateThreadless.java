@@ -77,7 +77,10 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -109,9 +112,12 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
-
+        
         Remove remove = new Remove();
         remove.setOptions(options);
         //remove.setInvertSelection(true);
@@ -143,10 +149,10 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless extends Thread {
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
 
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
-
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
         remAllButAnomalous.setNominalIndices("1,3");
@@ -163,7 +169,10 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -207,9 +216,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless extends Thread {
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
 
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
 
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
@@ -227,7 +236,10 @@ public class Topologies_WEKA_Tests_WithUpdateThreadless extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
