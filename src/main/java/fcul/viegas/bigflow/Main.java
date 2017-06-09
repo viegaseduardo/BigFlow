@@ -36,7 +36,7 @@ public class Main {
 
         if (args.length == 1) {
             
-            Main.startTopologies_WEKA_Tests_WithUpdate();
+            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
 //            Main.startTopologies_WEKA_Tests_WithoutUpdate();
 
@@ -211,6 +211,10 @@ public class Main {
                         i = i + modellife;
                     }
                 }
+                
+                thread.end = 278;
+                i = 300;
+                
                 thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
                 thread.start();
                 listThreads.add(thread);
