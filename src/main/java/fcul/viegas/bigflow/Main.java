@@ -199,6 +199,7 @@ public class Main {
             for (int i = 7; i < 278;) {
                 Topologies_WEKA_Tests_WithUpdateThreaded thread = new Topologies_WEKA_Tests_WithUpdateThreaded();
                 thread.start = i;
+                thread.modelLife = modellife;
                 if ((i + modellife) >= 278) {
                     thread.end = 278;
                     i = i + modellife;

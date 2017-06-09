@@ -56,6 +56,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     public int start = 0;
     public int end = 0;
     public String testDirect;
+    public int modelLife = -1;
 
     public void findFilesForTest(String pathTestDirectory) {
         File directory = new File(pathTestDirectory);
@@ -363,7 +364,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
             //must update model
             if (currentModelLife <= 0) {
-                currentModelLife = i;
+                currentModelLife = modelLife;
                 Instances newDataTrainNewMonth = this.openFile(this.testFiles.get(i - 1));
 
                 for (int j = (i - 2); j >= (i - 7); j--) {
