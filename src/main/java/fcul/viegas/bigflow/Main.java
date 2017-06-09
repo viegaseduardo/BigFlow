@@ -36,9 +36,9 @@ public class Main {
 
         if (args.length == 1) {
 
-//            Main.startTopologies_WEKA_Tests_WithoutUpdate();
+            Main.startTopologies_WEKA_Tests_WithoutUpdate();
 
-            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
+ //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
@@ -177,7 +177,7 @@ public class Main {
     public static void startTopologies_WEKA_Tests_WithoutUpdate() {
         try {
             Topologies_WEKA_Tests_WithoutUpdate topo = new Topologies_WEKA_Tests_WithoutUpdate();
-            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada");
+            topo.runTopology("/home/projeto/disco/stratweka/arffs/viegas/");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -199,6 +199,7 @@ public class Main {
                 thread.start = i;
                 if ((i + modellife) >= 278) {
                     thread.end = 278;
+                    i = i + modellife;
                 } else {
                     if (modellife <= 40) {
                         thread.end = (i + 40);

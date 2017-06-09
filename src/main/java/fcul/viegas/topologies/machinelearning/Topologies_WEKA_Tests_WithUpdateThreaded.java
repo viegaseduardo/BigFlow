@@ -14,6 +14,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.CostMatrix;
 import weka.classifiers.Evaluation;
@@ -22,6 +24,7 @@ import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.CostSensitiveClassifier;
+import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -64,6 +67,36 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             }
         }
         java.util.Collections.sort(testFiles);
+    }
+    
+    public Instances selectFeatures(Instances path) throws Exception {
+        
+        weka.attributeSelection.InfoGainAttributeEval selector = new InfoGainAttributeEval();
+        weka.attributeSelection.Ranker ranker = new Ranker();
+        
+        ranker.setNumToSelect(10);
+        
+        int[] fields = ranker.search(selector, path);
+        
+        String[] options = new String[2];
+        options[0] = "-R";
+
+        String optRemove = "";
+        for(int i = 0; i < fields.length; i++){
+            optRemove = optRemove + fields[i] + ";";
+        }
+        optRemove = optRemove + path.classIndex();
+        options[1] = optRemove;
+
+        Remove remove = new Remove();
+        remove.setOptions(options);
+        remove.setInvertSelection(true);
+        remove.setInputFormat(path);
+
+        Instances newdataFeat = Filter.useFilter(path, remove);
+        newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
+        
+        return newdataFeat;
     }
 
     public Instances openFile(String path) throws Exception {
@@ -280,11 +313,16 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 //        //classifier.buildClassifier(train);
 //        
 //        return classifier;
+
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setModelHeader(train);
+        
         J48 classifier = new J48();
+        
+        inputMapped.setClassifier(classifier);
+        inputMapped.buildClassifier(train);
 
-        classifier.buildClassifier(train);
-
-        return classifier;
+        return inputMapped;
     }
 
     public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
@@ -369,6 +407,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
                         }
                     }
                 }
+                
+                newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
 
                 //System.out.println(newDataTrainNewMonth.size());
                 classifier = this.trainClassifierTree(newDataTrainNewMonth);

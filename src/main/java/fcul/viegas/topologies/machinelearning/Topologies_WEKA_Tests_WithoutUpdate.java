@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import org.apache.spark.ml.source.libsvm.LibSVMDataSource;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.CostMatrix;
 import weka.classifiers.trees.J48;
@@ -52,6 +54,36 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
             }
         }
         java.util.Collections.sort(testFiles);
+    }
+    
+    public Instances selectFeatures(Instances path) throws Exception {
+        
+        weka.attributeSelection.InfoGainAttributeEval selector = new InfoGainAttributeEval();
+        weka.attributeSelection.Ranker ranker = new Ranker();
+        
+        ranker.setNumToSelect(10);
+        
+        int[] fields = ranker.search(selector, path);
+        
+        String[] options = new String[2];
+        options[0] = "-R";
+
+        String optRemove = "";
+        for(int i = 0; i < fields.length; i++){
+            optRemove = optRemove + fields[i] + ";";
+        }
+        optRemove = optRemove + path.classIndex();
+        options[1] = optRemove;
+
+        Remove remove = new Remove();
+        remove.setOptions(options);
+        remove.setInvertSelection(true);
+        remove.setInputFormat(path);
+
+        Instances newdataFeat = Filter.useFilter(path, remove);
+        newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
+        
+        return newdataFeat;
     }
     
     public Instances openFile(String path) throws Exception {
@@ -326,6 +358,7 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
                 dataTrain.add(inst);
             }
         }
+        dataTrain = this.selectFeatures(dataTrain);
         
         System.out.println("Training trainClassifierTree....");
         Classifier classifier = this.trainClassifierTree(dataTrain);
