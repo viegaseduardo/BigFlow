@@ -24,6 +24,7 @@ import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.classifiers.trees.RandomForest;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
@@ -64,7 +65,10 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         options[0] = "-R";
         
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
         
         Remove remove = new Remove();
@@ -96,7 +100,10 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         options[0] = "-R";
         
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
         
         Remove remove = new Remove();
@@ -130,9 +137,9 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
         
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
         
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
@@ -150,7 +157,10 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         options[0] = "-R";
         
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
         
         Remove remove = new Remove();
@@ -194,9 +204,9 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
         
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
         
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
@@ -214,7 +224,10 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         options[0] = "-R";
         
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
         
         Remove remove = new Remove();
@@ -298,9 +311,7 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         return classifier;
     }
     
-    public void runTopology(String pathTrain, String pathTestDirectory) throws Exception {
-        System.out.println("Path to training: " + pathTrain);
-        
+    public void runTopology(String pathTestDirectory) throws Exception {        
         System.out.println("Path to test directory: " + pathTestDirectory);
         this.findFilesForTest(pathTestDirectory);
         for (String s : this.testFiles) {
@@ -308,7 +319,13 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         }
         
         System.out.println("Opening training file....");
-        Instances dataTrain = this.openFile(pathTrain);
+        Instances dataTrain = this.openFile(this.testFiles.get(0));
+        for(int i = 1; i < 7; i++){
+            Instances dataTrainInc = this.openFile(this.testFiles.get(i));
+            for(Instance inst:dataTrainInc){
+                dataTrain.add(inst);
+            }
+        }
         
         System.out.println("Training trainClassifierTree....");
         Classifier classifier = this.trainClassifierTree(dataTrain);
@@ -326,7 +343,7 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
             Evaluation evalAnomalous = new Evaluation(dataTest[2]);
             evalAnomalous.evaluateModel(classifier, dataTest[2]);
             
-            String print = pathTrain + ";" + testPath + ";ORUNADA;"
+            String print = testPath + ";"
                     + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
                     + dataTest[0].size() + ";"
                     + dataTest[2].size() + ";"
