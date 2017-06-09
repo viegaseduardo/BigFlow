@@ -35,8 +35,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         if (args.length == 1) {
+            
+            Main.startTopologies_WEKA_Tests_WithUpdate();
 
-            Main.startTopologies_WEKA_Tests_WithoutUpdate();
+//            Main.startTopologies_WEKA_Tests_WithoutUpdate();
 
  //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
@@ -145,7 +147,7 @@ public class Main {
             for (int i = 1; i <= 12; i++) {
                 Topologies_WEKA_Tests_WithUpdate thread = new Topologies_WEKA_Tests_WithUpdate();
                 thread.month = i;
-                thread.pathTestDirectory = "/home/projeto/disco/stratweka/arffOrunadaProp";
+                thread.pathTestDirectory = "/home/projeto/disco/stratweka/arffs/viegas";
                 thread.start();
                 listThreads.add(thread);
             }

@@ -282,23 +282,6 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     }
 
     public Classifier trainClassifierTree(Instances train) throws Exception {
-//        J48 classifier = new J48();
-//        
-//        weka.classifiers.meta.CostSensitiveClassifier cost = new CostSensitiveClassifier();
-//        CostMatrix costMatrix = new CostMatrix(2);
-//        
-//        costMatrix.setElement(0, 1, 1.0);
-//        costMatrix.setElement(1, 0, 2.0);
-//        
-//        cost.setCostMatrix(costMatrix);
-//        cost.setClassifier(classifier);
-//        
-//        cost.buildClassifier(train);
-//        
-//        //classifier.buildClassifier(train);
-//        
-//        return classifier;
-
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setModelHeader(train);
         
