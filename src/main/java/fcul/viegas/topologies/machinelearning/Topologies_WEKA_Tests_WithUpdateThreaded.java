@@ -14,6 +14,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
@@ -70,20 +71,24 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     }
     
     public Instances selectFeatures(Instances path) throws Exception {
-        
+
+        AttributeSelection attsel = new AttributeSelection();
         weka.attributeSelection.InfoGainAttributeEval selector = new InfoGainAttributeEval();
         weka.attributeSelection.Ranker ranker = new Ranker();
-        
+
         ranker.setNumToSelect(10);
-        
-        int[] fields = ranker.search(selector, path);
-        
+        attsel.setEvaluator(selector);
+        attsel.setSearch(ranker);
+        attsel.SelectAttributes(path);
+
+        int[] fields = attsel.selectedAttributes();
+
         String[] options = new String[2];
         options[0] = "-R";
 
         String optRemove = "";
-        for(int i = 0; i < fields.length; i++){
-            optRemove = optRemove + fields[i] + ";";
+        for (int i = 0; i < fields.length; i++) {
+            optRemove = optRemove + fields[i] + ",";
         }
         optRemove = optRemove + path.classIndex();
         options[1] = optRemove;
@@ -95,7 +100,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
         Instances newdataFeat = Filter.useFilter(path, remove);
         newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
-        
+
         return newdataFeat;
     }
 
