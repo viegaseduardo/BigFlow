@@ -22,6 +22,9 @@ import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection_Evaluati
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdate;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreadless;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 
 /*
@@ -38,10 +41,51 @@ public class Main {
 //            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
 //                    "/home/viegas/Desktop/saida/arffOrunada");
 
-            Topologies_WEKA_Tests_WithUpdateThreadless topo = new Topologies_WEKA_Tests_WithUpdateThreadless();
+            int accNormal = 0;
+            int accSuspicious = 0;
+            int accAnomaly = 0;
+            int totalNormal = 0;
+            int totalSuspicious = 0;
+            int totalAnomaly = 0;
 
-            topo.runTopology("/home/projeto/disco/stratweka/arffOrunadaProp",
-                    Integer.valueOf(args[0]));
+            ArrayList<Topologies_WEKA_Tests_WithUpdateThreadless> listThreads = new ArrayList();
+            int modellife = Integer.valueOf(args[0]);
+            for (int i = 7; i < 278;) {
+                Topologies_WEKA_Tests_WithUpdateThreadless thread = new Topologies_WEKA_Tests_WithUpdateThreadless();
+                thread.start = i;
+                if ((i + modellife) >= 278) {
+                    thread.end = 278;
+                } else {
+                    thread.end = (i + modellife);
+                }
+                thread.testDirect = "/home/projeto/disco/stratweka/arffOrunadaProp";
+                thread.start();
+                listThreads.add(thread);
+                i = i + modellife;
+            }
+            for (int i = 0; i < listThreads.size(); i++) {
+                listThreads.get(i).join();
+            }
+            for (int i = 0; i < listThreads.size(); i++) {
+                accNormal += listThreads.get(i).accNormal;
+                accSuspicious += listThreads.get(i).accSuspicious;
+                accAnomaly += listThreads.get(i).accAnomaly;
+                totalNormal += listThreads.get(i).totalNormal;
+                totalSuspicious += listThreads.get(i).totalSuspicious;
+                totalAnomaly += listThreads.get(i).totalAnomaly;
+            }
+
+            String output = modellife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly
+                    + ";" + totalNormal + ";" + totalSuspicious + ";" + totalAnomaly
+                    + ";" + (accNormal / (float) totalNormal)
+                    + ";" + (accSuspicious / (float) totalSuspicious)
+                    + ";" + (accAnomaly / (float) totalAnomaly) + "\n";
+
+            try {
+                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+            } catch (Exception e) {
+                //exception handling left as an exercise for the reader
+            }
 
 //            ArrayList<Topologies_WEKA_Tests_WithUpdate> listThreads = new ArrayList();
 //            for(int i = 1; i <= 12; i++){
