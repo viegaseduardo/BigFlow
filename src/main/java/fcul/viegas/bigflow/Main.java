@@ -20,7 +20,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_RejectionThresholds;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection_Evaluation;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdate;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreadless;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreaded;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -36,86 +36,14 @@ public class Main {
 
         if (args.length == 1) {
 
-//            Topologies_WEKA_Tests_WithoutUpdate topo = new Topologies_WEKA_Tests_WithoutUpdate();
-//
-//            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada");
+//            Main.startTopologies_WEKA_Tests_WithoutUpdate();
 
-            int accNormal = 0;
-            int accSuspicious = 0;
-            int accAnomaly = 0;
-            int totalNormal = 0;
-            int totalSuspicious = 0;
-            int totalAnomaly = 0;
+            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
-            ArrayList<Topologies_WEKA_Tests_WithUpdateThreadless> listThreads = new ArrayList();
-            int modellife = Integer.valueOf(args[0]);
-            for (int i = 7; i < 278;) {
-                Topologies_WEKA_Tests_WithUpdateThreadless thread = new Topologies_WEKA_Tests_WithUpdateThreadless();
-                thread.start = i;
-                if ((i + modellife) >= 278) {
-                    thread.end = 278;
-                } else {
-                    thread.end = (i + modellife);
-                }
-                thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
-                thread.start();
-                listThreads.add(thread);
-                i = i + modellife;
-            }
-            for (int i = 0; i < listThreads.size(); i++) {
-                listThreads.get(i).join();
-            }
-            for (int i = 0; i < listThreads.size(); i++) {
-                accNormal += listThreads.get(i).accNormal;
-                accSuspicious += listThreads.get(i).accSuspicious;
-                accAnomaly += listThreads.get(i).accAnomaly;
-                totalNormal += listThreads.get(i).totalNormal;
-                totalSuspicious += listThreads.get(i).totalSuspicious;
-                totalAnomaly += listThreads.get(i).totalAnomaly;
-            }
-
-            String output = modellife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly
-                    + ";" + totalNormal + ";" + totalSuspicious + ";" + totalAnomaly
-                    + ";" + (accNormal / (float) totalNormal)
-                    + ";" + (accSuspicious / (float) totalSuspicious)
-                    + ";" + (accAnomaly / (float) totalAnomaly) + "\n";
-
-            try {
-                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
-            } catch (Exception e) {
-                //exception handling left as an exercise for the reader
-            }
-
-//            ArrayList<Topologies_WEKA_Tests_WithUpdate> listThreads = new ArrayList();
-//            for(int i = 1; i <= 12; i++){
-//                Topologies_WEKA_Tests_WithUpdate thread = new Topologies_WEKA_Tests_WithUpdate();
-//                thread.month = i;
-//                thread.pathTestDirectory = "/home/projeto/disco/stratweka/arffOrunadaProp";
-//                thread.start();
-//                listThreads.add(thread);
-//            }
-//            for(int i = 0; i < 12; i++){
-//                listThreads.get(i).join();
-//            }
-//            for(int i = 0; i < 12; i++){
-//                for(String s : listThreads.get(i).resultList){
-//                    System.out.println(s);
-//                }
-//                System.out.println(i);
-//            }
-//            Topologies_WEKA_Tests_WithUpdate topo = new Topologies_WEKA_Tests_WithUpdate();
-//
-//            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
-//                    "/home/viegas/Desktop/saida/arffOrunada");
+//            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
-//            Topologies_WEKA_RejectionThresholds topo = new Topologies_WEKA_RejectionThresholds();
-//
-//            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff", 
-//                    "/home/viegas/Desktop/saida/arffOrunada");
-//            Topologies_WEKA_Rejection_Evaluation topo = new Topologies_WEKA_Rejection_Evaluation();
-//
-//            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
-//                    "/home/viegas/Desktop/saida/arffOrunada");
+//            Main.startTopologies_WEKA_RejectionThresholds();
+
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
@@ -199,4 +127,117 @@ public class Main {
             Topologies_SPARK_CREATE_CLUSTERS.runTopology(args[1], Integer.valueOf(args[2]), args[3], args[4]);
         }
     }
+
+    public static void startTopologies_WEKA_RejectionThresholds() {
+        try {
+            Topologies_WEKA_RejectionThresholds topo = new Topologies_WEKA_RejectionThresholds();
+
+            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
+                    "/home/viegas/Desktop/saida/arffOrunada");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void startTopologies_WEKA_Tests_WithUpdate() {
+        try {
+            ArrayList<Topologies_WEKA_Tests_WithUpdate> listThreads = new ArrayList();
+            for (int i = 1; i <= 12; i++) {
+                Topologies_WEKA_Tests_WithUpdate thread = new Topologies_WEKA_Tests_WithUpdate();
+                thread.month = i;
+                thread.pathTestDirectory = "/home/projeto/disco/stratweka/arffOrunadaProp";
+                thread.start();
+                listThreads.add(thread);
+            }
+            for (int i = 0; i < 12; i++) {
+                listThreads.get(i).join();
+            }
+            for (int i = 0; i < 12; i++) {
+                for (String s : listThreads.get(i).resultList) {
+                    System.out.println(s);
+                }
+                System.out.println(i);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void Topologies_WEKA_Rejection_Evaluation() {
+        try {
+            Topologies_WEKA_Rejection_Evaluation topo = new Topologies_WEKA_Rejection_Evaluation();
+
+            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
+                    "/home/viegas/Desktop/saida/arffOrunada");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void startTopologies_WEKA_Tests_WithoutUpdate() {
+        try {
+            Topologies_WEKA_Tests_WithoutUpdate topo = new Topologies_WEKA_Tests_WithoutUpdate();
+            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void startTopologies_WEKA_Tests_WithUpdateThreaded(String arg) {
+        try {
+            int accNormal = 0;
+            int accSuspicious = 0;
+            int accAnomaly = 0;
+            int totalNormal = 0;
+            int totalSuspicious = 0;
+            int totalAnomaly = 0;
+
+            ArrayList<Topologies_WEKA_Tests_WithUpdateThreaded> listThreads = new ArrayList();
+            int modellife = Integer.valueOf(arg);
+            for (int i = 7; i < 278;) {
+                Topologies_WEKA_Tests_WithUpdateThreaded thread = new Topologies_WEKA_Tests_WithUpdateThreaded();
+                thread.start = i;
+                if ((i + modellife) >= 278) {
+                    thread.end = 278;
+                } else {
+                    if (modellife <= 40) {
+                        thread.end = (i + 40);
+                        i = i + 40;
+                    } else {
+                        thread.end = (i + modellife);
+                        i = i + modellife;
+                    }
+                }
+                thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
+                thread.start();
+                listThreads.add(thread);
+            }
+            for (int i = 0; i < listThreads.size(); i++) {
+                listThreads.get(i).join();
+            }
+            for (int i = 0; i < listThreads.size(); i++) {
+                accNormal += listThreads.get(i).accNormal;
+                accSuspicious += listThreads.get(i).accSuspicious;
+                accAnomaly += listThreads.get(i).accAnomaly;
+                totalNormal += listThreads.get(i).totalNormal;
+                totalSuspicious += listThreads.get(i).totalSuspicious;
+                totalAnomaly += listThreads.get(i).totalAnomaly;
+            }
+
+            String output = modellife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly
+                    + ";" + totalNormal + ";" + totalSuspicious + ";" + totalAnomaly
+                    + ";" + (accNormal / (float) totalNormal)
+                    + ";" + (accSuspicious / (float) totalSuspicious)
+                    + ";" + (accAnomaly / (float) totalAnomaly) + "\n";
+
+            try {
+                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+            } catch (Exception e) {
+                //exception handling left as an exercise for the reader
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
 }

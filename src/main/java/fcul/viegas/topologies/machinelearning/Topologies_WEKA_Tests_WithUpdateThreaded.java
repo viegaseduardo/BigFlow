@@ -37,7 +37,7 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  *
  * @author viegas
  */
-public class Topologies_WEKA_Tests_WithUpdateThreadless extends Thread {
+public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
     private ArrayList<String> testFiles = new ArrayList();
     public ArrayList<String> resultList = new ArrayList();
