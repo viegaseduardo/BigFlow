@@ -34,7 +34,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length == 0) {
+        if (args.length == 1) {
 
 //            Topologies_WEKA_Tests_WithoutUpdate topo = new Topologies_WEKA_Tests_WithoutUpdate();
 //
