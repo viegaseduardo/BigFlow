@@ -68,28 +68,6 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         attsel.setSearch(ranker);
         attsel.SelectAttributes(path);
         
-//        attsel.reduceDimensionality(path);
-//
-//        int[] fields = attsel.selectedAttributes();
-//
-//        String[] options = new String[2];
-//        options[0] = "-R";
-//
-//        String optRemove = "";
-//        for (int i = 0; i < fields.length; i++) {
-//            optRemove = optRemove + fields[i] + ",";
-//        }
-//        optRemove = optRemove + path.classIndex();
-//        options[1] = optRemove;
-//
-//        Remove remove = new Remove();
-//        remove.setOptions(options);
-//        remove.setInvertSelection(true);
-//        remove.setInputFormat(path);
-//
-//        Instances newdataFeat = Filter.useFilter(path, remove);
-//        newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
-
         return attsel.reduceDimensionality(path);
     }
 
@@ -366,8 +344,8 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         }
         dataTrain = this.selectFeatures(dataTrain);
 
-        System.out.println("Training trainClassifierTree....");
-        Classifier classifier = this.trainClassifierTree(dataTrain);
+        System.out.println("Training trainClassifierAdaboostTree....");
+        Classifier classifier = this.trainClassifierAdaboostTree(dataTrain);
 
         System.out.println("Testing... ");
         for (String testPath : this.testFiles) {

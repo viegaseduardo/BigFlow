@@ -80,28 +80,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         attsel.setEvaluator(selector);
         attsel.setSearch(ranker);
         attsel.SelectAttributes(path);
-
-        int[] fields = attsel.selectedAttributes();
-
-        String[] options = new String[2];
-        options[0] = "-R";
-
-        String optRemove = "";
-        for (int i = 0; i < fields.length; i++) {
-            optRemove = optRemove + fields[i] + ",";
-        }
-        optRemove = optRemove + path.classIndex();
-        options[1] = optRemove;
-
-        Remove remove = new Remove();
-        remove.setOptions(options);
-        remove.setInvertSelection(true);
-        remove.setInputFormat(path);
-
-        Instances newdataFeat = Filter.useFilter(path, remove);
-        newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
-
-        return newdataFeat;
+        
+        return attsel.reduceDimensionality(path);
     }
 
     public Instances openFile(String path) throws Exception {
