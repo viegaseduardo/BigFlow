@@ -204,17 +204,19 @@ public class Main {
                     thread.end = 278;
                     i = i + modellife;
                 } else {
-                    if (modellife <= 40) {
-                        thread.end = (i + 40);
-                        i = i + 40;
+                    if (modellife <= 30) {
+                        int toJump = 0;
+                        while(toJump < 30){
+                            toJump+=modellife;
+                        }
+                        thread.end = (i + toJump);
+                        i = i + toJump;
                     } else {
                         thread.end = (i + modellife);
                         i = i + modellife;
                     }
                 }
                 
-                thread.end = 278;
-                i = 300;
                 
                 thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
                 thread.start();
