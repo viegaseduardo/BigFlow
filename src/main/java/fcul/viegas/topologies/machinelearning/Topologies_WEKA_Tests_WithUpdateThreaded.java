@@ -84,6 +84,17 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         
         return attsel.reduceDimensionality(path);
     }
+    
+    public Instances makeSuspiciousNormal(Instances data){
+        
+        for(Instance inst:data){
+            if(inst.stringValue(inst.numAttributes() - 1).equals("suspicious")){
+                inst.setClassValue(0.0d);
+            }
+        }
+        
+        return data;
+    }
 
     public Instances openFile(String path) throws Exception {
         BufferedReader reader
@@ -91,6 +102,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
+        
+        dataTrain = this.makeSuspiciousNormal(dataTrain);
 
         String[] options = new String[2];
         options[0] = "-R";
@@ -163,6 +176,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
+        
+        dataTrain = this.makeSuspiciousNormal(dataTrain);
 
         RemoveWithValues remAllButNormal = new RemoveWithValues();
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
@@ -396,7 +411,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
                 newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
                 
                 //System.out.println(newDataTrainNewMonth.size());
-                classifier = this.trainClassifierNaive(newDataTrainNewMonth);
+                classifier = this.trainClassifierTree(newDataTrainNewMonth);
 
             }
 

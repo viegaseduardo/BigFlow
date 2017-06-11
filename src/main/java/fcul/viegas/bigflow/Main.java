@@ -38,7 +38,7 @@ public class Main {
             
             Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
-//            Main.startTopologies_WEKA_Tests_WithoutUpdate();
+           // Main.startTopologies_WEKA_Tests_WithoutUpdate();
 
  //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
