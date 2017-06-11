@@ -419,7 +419,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
                 //newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
                 //System.out.println(newDataTrainNewMonth.size());
-                classifier = this.trainClassifierTree(newDataTrainNewMonth);
+                classifier = this.trainClassifierNaive(newDataTrainNewMonth);
 
             }
 
