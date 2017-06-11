@@ -193,7 +193,11 @@ public class Main {
             int totalNormal = 0;
             int totalSuspicious = 0;
             int totalAnomaly = 0;
-
+            float totalACCNormal = 0;
+            float totalACCSuspicious = 0;
+            float totalACCAnomaly = 0;
+            float toDivide = 0;
+            
             ArrayList<Topologies_WEKA_Tests_WithUpdateThreaded> listThreads = new ArrayList();
             int modellife = Integer.valueOf(arg);
             for (int i = 7; i < 278;) {
@@ -233,13 +237,20 @@ public class Main {
                 totalNormal += listThreads.get(i).totalNormal;
                 totalSuspicious += listThreads.get(i).totalSuspicious;
                 totalAnomaly += listThreads.get(i).totalAnomaly;
+                totalACCNormal += listThreads.get(i).totalACCNormal;
+                totalACCSuspicious += listThreads.get(i).totalACCSuspicious;
+                totalACCAnomaly += listThreads.get(i).totalACCAnomaly;
+                toDivide += (listThreads.get(i).start - listThreads.get(i).end);
             }
 
             String output = modellife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly
                     + ";" + totalNormal + ";" + totalSuspicious + ";" + totalAnomaly
                     + ";" + (accNormal / (float) totalNormal)
                     + ";" + (accSuspicious / (float) totalSuspicious)
-                    + ";" + (accAnomaly / (float) totalAnomaly) + "\n";
+                    + ";" + (accAnomaly / (float) totalAnomaly)
+                    + ";" + (totalACCNormal / toDivide) 
+                    + ";" + (totalACCSuspicious / toDivide) 
+                    + ";" + (totalACCAnomaly / toDivide) + "\n";
 
             try {
                 Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);

@@ -52,6 +52,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     public int totalNormal = 0;
     public int totalSuspicious = 0;
     public int totalAnomaly = 0;
+    public float totalACCNormal = 0;
+    public float totalACCSuspicious = 0;
+    public float totalACCAnomaly = 0;
 
     public int start = 0;
     public int end = 0;
@@ -70,7 +73,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         }
         java.util.Collections.sort(testFiles);
     }
-    
+
     public Instances selectFeatures(Instances path) throws Exception {
 
         AttributeSelection attsel = new AttributeSelection();
@@ -81,26 +84,26 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         attsel.setEvaluator(selector);
         attsel.setSearch(ranker);
         attsel.SelectAttributes(path);
-        
+
         return attsel.reduceDimensionality(path);
     }
-    
-    public Instances makeSuspiciousNormal(Instances data){
-        
-        for(Instance inst:data){
-            if(inst.stringValue(inst.numAttributes() - 1).equals("suspicious")){
+
+    public Instances makeSuspiciousNormal(Instances data) {
+
+        for (Instance inst : data) {
+            if (inst.stringValue(inst.numAttributes() - 1).equals("suspicious")) {
                 inst.setClassValue(0.0d);
             }
         }
-        
+
         return data;
     }
-    
-    public Instances removeParticularAttributes(Instances data){
-        
+
+    public Instances removeParticularAttributes(Instances data) {
+
         data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentDestinations_A").index());
         data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentServices_A").index());
-        
+
         return data;
     }
 
@@ -110,7 +113,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-        
+
         dataTrain = this.makeSuspiciousNormal(dataTrain);
         dataTrain = this.removeParticularAttributes(dataTrain);
 
@@ -118,9 +121,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
                 + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 2) + ","
                 + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
@@ -153,12 +156,12 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
                 + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 2) + ","
                 + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
-        
+
         Remove remove = new Remove();
         remove.setOptions(options);
         //remove.setInvertSelection(true);
@@ -185,7 +188,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-        
+
         dataTrain = this.makeSuspiciousNormal(dataTrain);
         dataTrain = this.removeParticularAttributes(dataTrain);
 
@@ -196,7 +199,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
         remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
         remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
-        
+
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
         remAllButAnomalous.setNominalIndices("1,3");
@@ -213,9 +216,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
                 + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 2) + ","
                 + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
@@ -280,9 +283,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + "," 
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
                 + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + "," 
+                + (dataTrain.numAttributes() - 2) + ","
                 + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
@@ -310,9 +313,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     public Classifier trainClassifierTree(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setModelHeader(train);
-        
+
         J48 classifier = new J48();
-        
+
         inputMapped.setClassifier(classifier);
         inputMapped.buildClassifier(train);
 
@@ -333,23 +336,19 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     public Classifier trainClassifierNaive(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setModelHeader(train);
-        
-        CostSensitiveClassifier costSensitive = new CostSensitiveClassifier();
-        CostMatrix costMatrix = new CostMatrix(2);
-        
-        costMatrix.setElement(0, 1, 3.0);
-        costMatrix.setElement(1, 0, 1.0);
-        
-        costSensitive.setCostMatrix(costMatrix);
-        
-        
+
+        //CostSensitiveClassifier costSensitive = new CostSensitiveClassifier();
+        //CostMatrix costMatrix = new CostMatrix(2);
+//        costMatrix.setElement(0, 1, 3.0);
+//        costMatrix.setElement(1, 0, 1.0);
+//        
+//        costSensitive.setCostMatrix(costMatrix);
         NaiveBayes classifier = new NaiveBayes();
 
         classifier.setUseSupervisedDiscretization(true);
-        
-        costSensitive.setClassifier(classifier);
 
-        inputMapped.setClassifier(costSensitive);
+//        costSensitive.setClassifier(classifier);
+        inputMapped.setClassifier(classifier);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
@@ -417,9 +416,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
                         }
                     }
                 }
-                
-                newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
-                
+
+                //newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
                 //System.out.println(newDataTrainNewMonth.size());
                 classifier = this.trainClassifierTree(newDataTrainNewMonth);
 
@@ -459,6 +457,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             totalNormal += dataTest[0].size();
             totalSuspicious += dataTest[1].size();
             totalAnomaly += dataTest[2].size();
+            totalACCNormal += (evalNormal.pctCorrect() / 100.0f);
+            totalACCSuspicious += (evalSuspicious.pctCorrect() / 100.0f);
+            totalACCAnomaly += (evalAnomalous.pctCorrect() / 100.0f);
 
         }
 
