@@ -95,6 +95,14 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         
         return data;
     }
+    
+    public Instances removeParticularAttributes(Instances data){
+        
+        data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentDestinations_A").index());
+        data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentServices_A").index());
+        
+        return data;
+    }
 
     public Instances openFile(String path) throws Exception {
         BufferedReader reader
@@ -104,6 +112,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
         
         dataTrain = this.makeSuspiciousNormal(dataTrain);
+        dataTrain = this.removeParticularAttributes(dataTrain);
 
         String[] options = new String[2];
         options[0] = "-R";
@@ -178,6 +187,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
         
         dataTrain = this.makeSuspiciousNormal(dataTrain);
+        dataTrain = this.removeParticularAttributes(dataTrain);
 
         RemoveWithValues remAllButNormal = new RemoveWithValues();
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
