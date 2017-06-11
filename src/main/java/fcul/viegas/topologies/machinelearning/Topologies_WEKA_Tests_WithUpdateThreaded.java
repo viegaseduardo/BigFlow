@@ -398,7 +398,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             Evaluation evalAnomalous = new Evaluation(dataTest[2]);
             evalAnomalous.evaluateModel(classifier, dataTest[2]);
 
-            String print = start + ";" + testPath + ";ORUNADA;"
+            String print = this.testFiles.get(start) + ";" + testPath + ";ORUNADA;"
                     + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
                     + dataTest[0].size() + ";"
                     + dataTest[2].size() + ";"
@@ -409,7 +409,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
                     + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
                     + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
                     + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
-            //System.out.println(print.replace(",", "."));
+            System.out.println(print.replace(",", "."));
             //System.out.println(print.replace(",", "."));
 
             accNormal += evalNormal.correct();
