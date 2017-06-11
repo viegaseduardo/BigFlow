@@ -306,12 +306,28 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     }
 
     public Classifier trainClassifierNaive(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setModelHeader(train);
+        
+        CostSensitiveClassifier costSensitive = new CostSensitiveClassifier();
+        CostMatrix costMatrix = new CostMatrix(2);
+        
+        costMatrix.setElement(0, 1, 3.0);
+        costMatrix.setElement(1, 0, 1.0);
+        
+        costSensitive.setCostMatrix(costMatrix);
+        
+        
         NaiveBayes classifier = new NaiveBayes();
 
         classifier.setUseSupervisedDiscretization(true);
-        classifier.buildClassifier(train);
+        
+        costSensitive.setClassifier(classifier);
 
-        return classifier;
+        inputMapped.setClassifier(costSensitive);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierForest(Instances train) throws Exception {
@@ -377,7 +393,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
                     }
                 }
                 
-                //newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
+                newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
                 
                 //System.out.println(newDataTrainNewMonth.size());
                 classifier = this.trainClassifierNaive(newDataTrainNewMonth);
