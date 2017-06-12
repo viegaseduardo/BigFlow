@@ -437,6 +437,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             Instances dataTestAUC = this.openFile(testPath);
             
             Evaluation evalAUC = new Evaluation(dataTestAUC);
+            evalAUC.evaluateModel(classifier, dataTestAUC);
             
             /*
             Evaluation evalNormal = new Evaluation(dataTest[0]);
