@@ -473,12 +473,12 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             totalACCSuspicious += (evalSuspicious.pctCorrect() / 100.0f);
             totalACCAnomaly += (evalAnomalous.pctCorrect() / 100.0f);
 */
-            this.totalAUC += evalAUC.areaUnderROC(0);
+            this.totalAUC += evalAUC.areaUnderROC(1);
             this.totalACC += evalAUC.pctCorrect();
             
             
             System.out.println(this.testFiles.get(start) + "  " + testPath + 
-                    " AUC:" + evalAUC.areaUnderROC(0) + 
+                    " AUC:" + evalAUC.areaUnderROC(1) + 
                     " ACC: " + evalAUC.pctCorrect());
             
         }
