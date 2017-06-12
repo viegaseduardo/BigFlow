@@ -184,18 +184,12 @@ public class Main {
 
     public static void startTopologies_WEKA_Tests_WithUpdateThreaded(String arg) {
         try {
-            int accNormal = 0;
-            int accSuspicious = 0;
-            int accAnomaly = 0;
-            int totalNormal = 0;
-            int totalSuspicious = 0;
-            int totalAnomaly = 0;
-            float totalACCNormal = 0;
-            float totalACCSuspicious = 0;
-            float totalACCAnomaly = 0;
+            float totalFMeasure = 0.0f;
+            float totalAUC = 0;
             float totalACC = 0.0f;
+            float falsePositive = 0.0f;
+            float falseNegative = 0.0f;
             float toDivide = 0;
-            float totalAUC = 0.0f;
 
             ArrayList<Topologies_WEKA_Tests_WithUpdateThreaded> listThreads = new ArrayList();
             int modellife = Integer.valueOf(arg);
@@ -229,36 +223,27 @@ public class Main {
                 listThreads.get(i).join();
             }
             for (int i = 0; i < listThreads.size(); i++) {
-                
-                for(String s: listThreads.get(i).resultList){
+
+                for (String s : listThreads.get(i).resultList) {
                     System.out.println(s);
                 }
-                
-                accNormal += listThreads.get(i).accNormal;
-                accSuspicious += listThreads.get(i).accSuspicious;
-                accAnomaly += listThreads.get(i).accAnomaly;
-                totalNormal += listThreads.get(i).totalNormal;
-                totalSuspicious += listThreads.get(i).totalSuspicious;
-                totalAnomaly += listThreads.get(i).totalAnomaly;
-                totalACCNormal += listThreads.get(i).totalACCNormal;
-                totalACCSuspicious += listThreads.get(i).totalACCSuspicious;
-                totalACCAnomaly += listThreads.get(i).totalACCAnomaly;
+
+
+                falsePositive += listThreads.get(i).falsePositive;
+                falseNegative += listThreads.get(i).falseNegative;
+                totalFMeasure += listThreads.get(i).totalFMeasure;
                 totalAUC += listThreads.get(i).totalAUC;
                 totalACC += listThreads.get(i).totalACC;
                 toDivide += (listThreads.get(i).end - listThreads.get(i).start);
             }
-            /*
-            String output = modellife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly
-                    + ";" + totalNormal + ";" + totalSuspicious + ";" + totalAnomaly
-                    + ";" + (accNormal / (float) totalNormal)
-                    + ";" + (accSuspicious / (float) totalSuspicious)
-                    + ";" + (accAnomaly / (float) totalAnomaly)
-                    + ";" + (totalACCNormal / toDivide) 
-                    + ";" + (totalACCSuspicious / toDivide) 
-                    + ";" + (totalACCAnomaly / toDivide) + "\n";
 
-             */
-            String output = modellife + ";" + totalAUC + ";" + (totalAUC / toDivide) + ";" + (totalACC / toDivide) + "\n";
+            String output = modellife + ";" +
+                    (falsePositive / toDivide) + ";" +
+                    (falseNegative / toDivide) + ";" +
+                    (totalFMeasure / toDivide) + ";" +
+                    (totalAUC / toDivide) + ";" +
+                    (totalACC / toDivide) + ";" +
+                    "\n";
 
             try {
                 Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);

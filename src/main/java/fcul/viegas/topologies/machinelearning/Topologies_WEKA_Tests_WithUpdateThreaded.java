@@ -48,17 +48,11 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     private ArrayList<String> testFiles = new ArrayList();
     public ArrayList<String> resultList = new ArrayList();
 
-    public int accNormal = 0;
-    public int accSuspicious = 0;
-    public int accAnomaly = 0;
-    public int totalNormal = 0;
-    public int totalSuspicious = 0;
-    public int totalAnomaly = 0;
-    public float totalACCNormal = 0;
-    public float totalACCSuspicious = 0;
-    public float totalACCAnomaly = 0;
+    public float totalFMeasure = 0.0f;
     public float totalAUC = 0;
     public float totalACC = 0.0f;
+    public float falsePositive = 0.0f;
+    public float falseNegative = 0.0f;
 
     public int start = 0;
     public int end = 0;
@@ -120,7 +114,6 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
 //        dataTrain = this.makeSuspiciousNormal(dataTrain);
 //        dataTrain = this.removeParticularAttributes(dataTrain);
-
         String[] options = new String[2];
         options[0] = "-R";
 
@@ -195,7 +188,6 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
 //        dataTrain = this.makeSuspiciousNormal(dataTrain);
 //        dataTrain = this.removeParticularAttributes(dataTrain);
-
         RemoveWithValues remAllButNormal = new RemoveWithValues();
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
@@ -316,13 +308,14 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
     public Classifier trainClassifierTree(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
-        
+
         FilteredClassifier filteredClassifier = new FilteredClassifier();
         filteredClassifier.setFilter(new ClassBalancer());
 
         J48 classifier = new J48();
-        
+
         filteredClassifier.setClassifier(classifier);
 
         inputMapped.setClassifier(filteredClassifier);
@@ -344,15 +337,16 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
     public Classifier trainClassifierNaive(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
-        
+
         FilteredClassifier filteredClassifier = new FilteredClassifier();
         filteredClassifier.setFilter(new ClassBalancer());
 
         NaiveBayes classifier = new NaiveBayes();
 
         classifier.setUseSupervisedDiscretization(true);
-        
+
         filteredClassifier.setClassifier(classifier);
 
         inputMapped.setClassifier(filteredClassifier);
@@ -362,13 +356,25 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     }
 
     public Classifier trainClassifierForest(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+        
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+        
         RandomForest classifier = new RandomForest();
 
         classifier.setSeed(12345);
         classifier.setNumIterations(100);
         classifier.buildClassifier(train);
+        
+        filteredClassifier.setClassifier(classifier);
 
-        return classifier;
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierSMO(Instances train) throws Exception {
@@ -433,12 +439,12 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             testPath = this.testFiles.get(i);
 
             //test model for the remainder of month
-            Instances[] dataTest = this.openFileForTest(testPath);
+            //Instances[] dataTest = this.openFileForTest(testPath);
             Instances dataTestAUC = this.openFile(testPath);
-            
+
             Evaluation evalAUC = new Evaluation(dataTestAUC);
             evalAUC.evaluateModel(classifier, dataTestAUC);
-            
+
             /*
             Evaluation evalNormal = new Evaluation(dataTest[0]);
             evalNormal.evaluateModel(classifier, dataTest[0]);
@@ -448,43 +454,32 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
             Evaluation evalAnomalous = new Evaluation(dataTest[2]);
             evalAnomalous.evaluateModel(classifier, dataTest[2]);
-
-            String print = this.testFiles.get(start) + ";" + testPath + ";ORUNADA;"
-                    + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                    + dataTest[0].size() + ";"
-                    + dataTest[2].size() + ";"
-                    + dataTest[1].size() + ";"
-                    + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
-                            + evalSuspicious.pctCorrect() * dataTest[1].size()
-                            + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
-                    + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
-                    + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
-                    + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
-            System.out.println(print.replace(",", "."));
-            //System.out.println(print.replace(",", "."));
-
-            accNormal += evalNormal.correct();
-            accSuspicious += evalSuspicious.correct();
-            accAnomaly += evalAnomalous.correct();
-            totalNormal += dataTest[0].size();
-            totalSuspicious += dataTest[1].size();
-            totalAnomaly += dataTest[2].size();
-            totalACCNormal += (evalNormal.pctCorrect() / 100.0f);
-            totalACCSuspicious += (evalSuspicious.pctCorrect() / 100.0f);
-            totalACCAnomaly += (evalAnomalous.pctCorrect() / 100.0f);
-*/
+             */
             float auc = (float) evalAUC.areaUnderROC(1);
+            float fmeasure = (float) evalAUC.fMeasure(1);
+            float acc = (float) evalAUC.pctCorrect();
+            float fp = (float) evalAUC.falsePositiveRate(1);
+            float fn = (float) evalAUC.falseNegativeRate(1);
+
             this.totalAUC += auc;
-            this.totalACC += evalAUC.pctCorrect();
-            
-            this.resultList.add(this.testFiles.get(start) + "  " + testPath + 
-                    " AUC:" + auc + 
-                    " ACC: " + evalAUC.pctCorrect());
-            
-            System.out.println(this.testFiles.get(start) + "  " + testPath + 
-                    " AUC:" + auc + 
-                    " ACC: " + evalAUC.pctCorrect());
-            
+            this.totalFMeasure += fmeasure;
+            this.totalACC += acc;
+            this.falsePositive += fp;
+            this.falseNegative += fn;
+
+            String print = this.testFiles.get(start) + ";" + testPath
+                    + (dataTestAUC.size()) + ";"
+                    + auc + ";"
+                    + acc + ";"
+                    + fp + ";"
+                    + fn + ";"
+                    + fmeasure;
+            print = print.replace(",", ".");
+
+            this.resultList.add(print);
+
+            System.out.println(print);
+
         }
 
     }
