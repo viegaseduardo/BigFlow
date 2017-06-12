@@ -35,17 +35,14 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         if (args.length == 1) {
-            
+
             Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
-           // Main.startTopologies_WEKA_Tests_WithoutUpdate();
-
- //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
-
+            // Main.startTopologies_WEKA_Tests_WithoutUpdate();
+            //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
 //            Main.startTopologies_WEKA_RejectionThresholds();
-
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
@@ -196,8 +193,10 @@ public class Main {
             float totalACCNormal = 0;
             float totalACCSuspicious = 0;
             float totalACCAnomaly = 0;
+            float totalACC = 0.0f;
             float toDivide = 0;
-            
+            float totalAUC = 0.0f;
+
             ArrayList<Topologies_WEKA_Tests_WithUpdateThreaded> listThreads = new ArrayList();
             int modellife = Integer.valueOf(arg);
             for (int i = 7; i < 278;) {
@@ -210,8 +209,8 @@ public class Main {
                 } else {
                     if (modellife <= 30) {
                         int toJump = 0;
-                        while(toJump < 30){
-                            toJump+=modellife;
+                        while (toJump < 30) {
+                            toJump += modellife;
                         }
                         thread.end = (i + toJump);
                         i = i + toJump;
@@ -220,8 +219,7 @@ public class Main {
                         i = i + modellife;
                     }
                 }
-                
-                
+
                 thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
 //                thread.testDirect = "/home/viegas/arffs/viegas";
                 thread.start();
@@ -240,9 +238,11 @@ public class Main {
                 totalACCNormal += listThreads.get(i).totalACCNormal;
                 totalACCSuspicious += listThreads.get(i).totalACCSuspicious;
                 totalACCAnomaly += listThreads.get(i).totalACCAnomaly;
+                totalAUC += listThreads.get(i).totalAUC;
+                totalACC += listThreads.get(i).totalACC;
                 toDivide += (listThreads.get(i).end - listThreads.get(i).start);
             }
-
+            /*
             String output = modellife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly
                     + ";" + totalNormal + ";" + totalSuspicious + ";" + totalAnomaly
                     + ";" + (accNormal / (float) totalNormal)
@@ -251,6 +251,9 @@ public class Main {
                     + ";" + (totalACCNormal / toDivide) 
                     + ";" + (totalACCSuspicious / toDivide) 
                     + ";" + (totalACCAnomaly / toDivide) + "\n";
+
+             */
+            String output = modellife + ";" + totalAUC + ";" + (totalAUC / toDivide) + ";" + (totalACC / toDivide);
 
             try {
                 Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
