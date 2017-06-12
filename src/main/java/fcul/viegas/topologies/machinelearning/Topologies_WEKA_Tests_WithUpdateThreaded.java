@@ -25,6 +25,7 @@ import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.CostSensitiveClassifier;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
@@ -33,6 +34,7 @@ import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
+import weka.filters.supervised.instance.ClassBalancer;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemoveWithValues;
@@ -313,10 +315,15 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     public Classifier trainClassifierTree(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setModelHeader(train);
+        
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
 
         J48 classifier = new J48();
+        
+        filteredClassifier.setClassifier(classifier);
 
-        inputMapped.setClassifier(classifier);
+        inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
@@ -336,19 +343,17 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     public Classifier trainClassifierNaive(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setModelHeader(train);
+        
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
 
-        //CostSensitiveClassifier costSensitive = new CostSensitiveClassifier();
-        //CostMatrix costMatrix = new CostMatrix(2);
-//        costMatrix.setElement(0, 1, 3.0);
-//        costMatrix.setElement(1, 0, 1.0);
-//        
-//        costSensitive.setCostMatrix(costMatrix);
         NaiveBayes classifier = new NaiveBayes();
 
         classifier.setUseSupervisedDiscretization(true);
+        
+        filteredClassifier.setClassifier(classifier);
 
-//        costSensitive.setClassifier(classifier);
-        inputMapped.setClassifier(classifier);
+        inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
 
         return inputMapped;

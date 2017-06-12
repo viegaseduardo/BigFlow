@@ -240,7 +240,7 @@ public class Main {
                 totalACCNormal += listThreads.get(i).totalACCNormal;
                 totalACCSuspicious += listThreads.get(i).totalACCSuspicious;
                 totalACCAnomaly += listThreads.get(i).totalACCAnomaly;
-                toDivide += (listThreads.get(i).start - listThreads.get(i).end);
+                toDivide += (listThreads.get(i).end - listThreads.get(i).start);
             }
 
             String output = modellife + ";" + accNormal + ";" + accSuspicious + ";" + accAnomaly
