@@ -426,7 +426,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
                 //newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
                 //System.out.println(newDataTrainNewMonth.size());
-                classifier = this.trainClassifierNaive(newDataTrainNewMonth);
+                classifier = this.trainClassifierTree(newDataTrainNewMonth);
 
             }
 
@@ -473,12 +473,16 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             totalACCSuspicious += (evalSuspicious.pctCorrect() / 100.0f);
             totalACCAnomaly += (evalAnomalous.pctCorrect() / 100.0f);
 */
-            this.totalAUC += evalAUC.areaUnderROC(1);
+            float auc = (float) evalAUC.areaUnderROC(1);
+            this.totalAUC += auc;
             this.totalACC += evalAUC.pctCorrect();
             
+            this.resultList.add(this.testFiles.get(start) + "  " + testPath + 
+                    " AUC:" + auc + 
+                    " ACC: " + evalAUC.pctCorrect());
             
             System.out.println(this.testFiles.get(start) + "  " + testPath + 
-                    " AUC:" + evalAUC.areaUnderROC(1) + 
+                    " AUC:" + auc + 
                     " ACC: " + evalAUC.pctCorrect());
             
         }

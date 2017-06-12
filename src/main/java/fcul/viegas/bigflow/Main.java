@@ -229,6 +229,11 @@ public class Main {
                 listThreads.get(i).join();
             }
             for (int i = 0; i < listThreads.size(); i++) {
+                
+                for(String s: listThreads.get(i).resultList){
+                    System.out.println(s);
+                }
+                
                 accNormal += listThreads.get(i).accNormal;
                 accSuspicious += listThreads.get(i).accSuspicious;
                 accAnomaly += listThreads.get(i).accAnomaly;
@@ -253,7 +258,7 @@ public class Main {
                     + ";" + (totalACCAnomaly / toDivide) + "\n";
 
              */
-            String output = modellife + ";" + totalAUC + ";" + (totalAUC / toDivide) + ";" + (totalACC / toDivide);
+            String output = modellife + ";" + totalAUC + ";" + (totalAUC / toDivide) + ";" + (totalACC / toDivide) + "\n";
 
             try {
                 Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
