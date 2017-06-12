@@ -116,8 +116,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
 
-        dataTrain = this.makeSuspiciousNormal(dataTrain);
-        dataTrain = this.removeParticularAttributes(dataTrain);
+//        dataTrain = this.makeSuspiciousNormal(dataTrain);
+//        dataTrain = this.removeParticularAttributes(dataTrain);
 
         String[] options = new String[2];
         options[0] = "-R";
@@ -191,8 +191,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
 
-        dataTrain = this.makeSuspiciousNormal(dataTrain);
-        dataTrain = this.removeParticularAttributes(dataTrain);
+//        dataTrain = this.makeSuspiciousNormal(dataTrain);
+//        dataTrain = this.removeParticularAttributes(dataTrain);
 
         RemoveWithValues remAllButNormal = new RemoveWithValues();
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
