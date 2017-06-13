@@ -54,6 +54,8 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     public float totalACC = 0.0f;
     public float falsePositive = 0.0f;
     public float falseNegative = 0.0f;
+    public float totalrecall = 0.0f;
+    public float totalprecision = 0.0f;
 
     public int start = 0;
     public int end = 0;
@@ -115,7 +117,6 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
 //        dataTrain = this.makeSuspiciousNormal(dataTrain);
 //        dataTrain = this.removeParticularAttributes(dataTrain);
-
         String[] options = new String[2];
         options[0] = "-R";
 
@@ -325,22 +326,18 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
         return inputMapped;
     }
-    
+
     public Classifier trainClassifierEnsemble(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
-        
-        
 
         FilteredClassifier filteredClassifierTree = new FilteredClassifier();
         filteredClassifierTree.setFilter(new ClassBalancer());
 
         J48 classifierTree = new J48();
         filteredClassifierTree.setClassifier(classifierTree);
-        
-        
-        
+
         FilteredClassifier filteredClassifierRandomForest = new FilteredClassifier();
         filteredClassifierRandomForest.setFilter(new ClassBalancer());
 
@@ -351,31 +348,26 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         classifierRandomForest.buildClassifier(train);
 
         filteredClassifierRandomForest.setClassifier(classifierRandomForest);
-        
-        
+
         FilteredClassifier filteredClassifierAdaboost = new FilteredClassifier();
         filteredClassifierAdaboost.setFilter(new ClassBalancer());
-        
+
         AdaBoostM1 classifierAda = new AdaBoostM1();
 
         classifierAda.setClassifier(new J48());
         classifierAda.setNumIterations(10);
 
         filteredClassifierAdaboost.setClassifier(classifierAda);
-        
-        
-        
-        
+
         weka.classifiers.meta.Vote ensemble = new Vote();
         ensemble.setCombinationRule(new SelectedTag(weka.classifiers.meta.Vote.MAJORITY_VOTING_RULE, weka.classifiers.meta.Vote.TAGS_RULES));
-        
+
         ensemble.addPreBuiltClassifier(filteredClassifierTree);
         ensemble.addPreBuiltClassifier(filteredClassifierRandomForest);
         ensemble.addPreBuiltClassifier(filteredClassifierAdaboost);
-        
+
         inputMapped.setClassifier(ensemble);
         inputMapped.buildClassifier(train);
-        
 
         return inputMapped;
     }
@@ -387,7 +379,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
         FilteredClassifier filteredClassifier = new FilteredClassifier();
         filteredClassifier.setFilter(new ClassBalancer());
-        
+
         AdaBoostM1 classifier = new AdaBoostM1();
 
         classifier.setClassifier(new J48());
@@ -524,12 +516,16 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             float acc = (float) evalAUC.pctCorrect();
             float fp = (float) evalAUC.falsePositiveRate(1);
             float fn = (float) evalAUC.falseNegativeRate(1);
+            float recall = (float) evalAUC.recall(1);
+            float precision = (float) evalAUC.precision(1);
 
             this.totalAUC += auc;
             this.totalFMeasure += fmeasure;
             this.totalACC += acc;
             this.falsePositive += fp;
             this.falseNegative += fn;
+            this.totalrecall += recall;
+            this.totalprecision += precision;
 
             String print = this.testFiles.get(start) + ";" + testPath + ";"
                     + (dataTestAUC.size()) + ";"
@@ -537,7 +533,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
                     + acc + ";"
                     + fp + ";"
                     + fn + ";"
-                    + fmeasure;
+                    + fmeasure + ";"
+                    + recall + ";"
+                    + precision;
             print = print.replace(",", ".");
 
             this.resultList.add(print);

@@ -189,6 +189,8 @@ public class Main {
             float totalACC = 0.0f;
             float falsePositive = 0.0f;
             float falseNegative = 0.0f;
+            float totalrecall = 0.0f;
+            float totalprecision = 0.0f;
             float toDivide = 0;
 
             ArrayList<Topologies_WEKA_Tests_WithUpdateThreaded> listThreads = new ArrayList();
@@ -222,32 +224,33 @@ public class Main {
             for (int i = 0; i < listThreads.size(); i++) {
                 listThreads.get(i).join();
             }
+            for (int k = 0; k < 10; k++) {
+                System.out.println();
+            }
             for (int i = 0; i < listThreads.size(); i++) {
-                
-                for(int k = 0; k < 10; k++){
-                    System.out.println();
-                }
-
                 for (String s : listThreads.get(i).resultList) {
                     System.out.println(s);
                 }
-
 
                 falsePositive += listThreads.get(i).falsePositive;
                 falseNegative += listThreads.get(i).falseNegative;
                 totalFMeasure += listThreads.get(i).totalFMeasure;
                 totalAUC += listThreads.get(i).totalAUC;
                 totalACC += listThreads.get(i).totalACC;
+                totalrecall += listThreads.get(i).totalrecall;
+                totalprecision += listThreads.get(i).totalprecision;
                 toDivide += (listThreads.get(i).end - listThreads.get(i).start);
             }
 
-            String output = modellife + ";" +
-                    (falsePositive / toDivide) + ";" +
-                    (falseNegative / toDivide) + ";" +
-                    (totalFMeasure / toDivide) + ";" +
-                    (totalAUC / toDivide) + ";" +
-                    (totalACC / toDivide) + ";" +
-                    "\n";
+            String output = modellife + ";"
+                    + (falsePositive / toDivide) + ";"
+                    + (falseNegative / toDivide) + ";"
+                    + (totalFMeasure / toDivide) + ";"
+                    + (totalAUC / toDivide) + ";"
+                    + (totalACC / toDivide) + ";"
+                    + (totalrecall / toDivide) + ";"
+                    + (totalprecision / toDivide) + ";"
+                    + "\n";
 
             try {
 //                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
