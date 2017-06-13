@@ -26,6 +26,7 @@ import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.meta.Vote;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
@@ -114,6 +115,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
 //        dataTrain = this.makeSuspiciousNormal(dataTrain);
 //        dataTrain = this.removeParticularAttributes(dataTrain);
+
         String[] options = new String[2];
         options[0] = "-R";
 
@@ -323,16 +325,80 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
         return inputMapped;
     }
+    
+    public Classifier trainClassifierEnsemble(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+        
+        
+
+        FilteredClassifier filteredClassifierTree = new FilteredClassifier();
+        filteredClassifierTree.setFilter(new ClassBalancer());
+
+        J48 classifierTree = new J48();
+        filteredClassifierTree.setClassifier(classifierTree);
+        
+        
+        
+        FilteredClassifier filteredClassifierRandomForest = new FilteredClassifier();
+        filteredClassifierRandomForest.setFilter(new ClassBalancer());
+
+        RandomForest classifierRandomForest = new RandomForest();
+
+        classifierRandomForest.setSeed(12345);
+        classifierRandomForest.setNumIterations(10);
+        classifierRandomForest.buildClassifier(train);
+
+        filteredClassifierRandomForest.setClassifier(classifierRandomForest);
+        
+        
+        FilteredClassifier filteredClassifierAdaboost = new FilteredClassifier();
+        filteredClassifierAdaboost.setFilter(new ClassBalancer());
+        
+        AdaBoostM1 classifierAda = new AdaBoostM1();
+
+        classifierAda.setClassifier(new J48());
+        classifierAda.setNumIterations(10);
+
+        filteredClassifierAdaboost.setClassifier(classifierAda);
+        
+        
+        
+        
+        weka.classifiers.meta.Vote ensemble = new Vote();
+        ensemble.setCombinationRule(new SelectedTag(weka.classifiers.meta.Vote.MAJORITY_VOTING_RULE, weka.classifiers.meta.Vote.TAGS_RULES));
+        
+        ensemble.addPreBuiltClassifier(filteredClassifierTree);
+        ensemble.addPreBuiltClassifier(filteredClassifierRandomForest);
+        ensemble.addPreBuiltClassifier(filteredClassifierAdaboost);
+        
+        inputMapped.setClassifier(ensemble);
+        inputMapped.buildClassifier(train);
+        
+
+        return inputMapped;
+    }
 
     public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+        
         AdaBoostM1 classifier = new AdaBoostM1();
 
         classifier.setClassifier(new J48());
-        classifier.setNumIterations(100);
+        classifier.setNumIterations(10);
 
-        classifier.buildClassifier(train);
+        filteredClassifier.setClassifier(classifier);
 
-        return classifier;
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierNaive(Instances train) throws Exception {
@@ -359,16 +425,16 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
-        
+
         FilteredClassifier filteredClassifier = new FilteredClassifier();
         filteredClassifier.setFilter(new ClassBalancer());
-        
+
         RandomForest classifier = new RandomForest();
 
         classifier.setSeed(12345);
-        classifier.setNumIterations(100);
+        classifier.setNumIterations(10);
         classifier.buildClassifier(train);
-        
+
         filteredClassifier.setClassifier(classifier);
 
         inputMapped.setClassifier(filteredClassifier);
@@ -378,14 +444,24 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     }
 
     public Classifier trainClassifierSMO(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         weka.classifiers.functions.SMO classifier = new weka.classifiers.functions.SMO();
 
         classifier.setKernel(new RBFKernel());
         classifier.setFilterType(new SelectedTag(SMO.FILTER_NONE, SMO.TAGS_FILTER));
 
-        classifier.buildClassifier(train);
+        filteredClassifier.setClassifier(classifier);
 
-        return classifier;
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public int getMonthFromTestFile(String testFile) {
@@ -432,29 +508,17 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
                 //newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
                 //System.out.println(newDataTrainNewMonth.size());
-                classifier = this.trainClassifierForest(newDataTrainNewMonth);
+                classifier = this.trainClassifierTree(newDataTrainNewMonth);
 
             }
 
             testPath = this.testFiles.get(i);
 
-            //test model for the remainder of month
-            //Instances[] dataTest = this.openFileForTest(testPath);
             Instances dataTestAUC = this.openFile(testPath);
 
             Evaluation evalAUC = new Evaluation(dataTestAUC);
             evalAUC.evaluateModel(classifier, dataTestAUC);
 
-            /*
-            Evaluation evalNormal = new Evaluation(dataTest[0]);
-            evalNormal.evaluateModel(classifier, dataTest[0]);
-
-            Evaluation evalSuspicious = new Evaluation(dataTest[1]);
-            evalSuspicious.evaluateModel(classifier, dataTest[1]);
-
-            Evaluation evalAnomalous = new Evaluation(dataTest[2]);
-            evalAnomalous.evaluateModel(classifier, dataTest[2]);
-             */
             float auc = (float) evalAUC.areaUnderROC(1);
             float fmeasure = (float) evalAUC.fMeasure(1);
             float acc = (float) evalAUC.pctCorrect();
@@ -467,7 +531,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
             this.falsePositive += fp;
             this.falseNegative += fn;
 
-            String print = this.testFiles.get(start) + ";" + testPath
+            String print = this.testFiles.get(start) + ";" + testPath + ";"
                     + (dataTestAUC.size()) + ";"
                     + auc + ";"
                     + acc + ";"

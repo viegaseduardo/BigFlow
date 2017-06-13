@@ -214,8 +214,8 @@ public class Main {
                     }
                 }
 
-//                thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
-                thread.testDirect = "/home/viegas/arffs/viegas";
+                thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
+//                thread.testDirect = "/home/viegas/arffs/viegas";
                 thread.start();
                 listThreads.add(thread);
             }
@@ -223,6 +223,10 @@ public class Main {
                 listThreads.get(i).join();
             }
             for (int i = 0; i < listThreads.size(); i++) {
+                
+                for(int k = 0; k < 10; k++){
+                    System.out.println();
+                }
 
                 for (String s : listThreads.get(i).resultList) {
                     System.out.println(s);
@@ -246,8 +250,8 @@ public class Main {
                     "\n";
 
             try {
-//                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
-                Files.write(Paths.get("/home/viegas/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+//                Files.write(Paths.get("/home/viegas/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
             } catch (Exception e) {
                 //exception handling left as an exercise for the reader
             }
