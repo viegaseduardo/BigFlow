@@ -36,13 +36,13 @@ public class Main {
 
         if (args.length == 1) {
 
-            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
+//            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
             // Main.startTopologies_WEKA_Tests_WithoutUpdate();
             //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
-//            Main.startTopologies_WEKA_RejectionThresholds();
+            Main.startTopologies_WEKA_RejectionThresholds();
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
@@ -131,8 +131,7 @@ public class Main {
         try {
             Topologies_WEKA_RejectionThresholds topo = new Topologies_WEKA_RejectionThresholds();
 
-            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
-                    "/home/viegas/Desktop/saida/arffOrunada");
+            topo.runTopology("/home/projeto/disco/stratweka/arffs/viegas");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

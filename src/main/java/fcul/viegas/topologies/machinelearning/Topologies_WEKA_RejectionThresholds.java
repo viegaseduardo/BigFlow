@@ -12,12 +12,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.meta.Vote;
+import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -25,6 +31,7 @@ import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
+import weka.filters.supervised.instance.ClassBalancer;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemoveWithValues;
@@ -50,6 +57,39 @@ public class Topologies_WEKA_RejectionThresholds {
         java.util.Collections.sort(testFiles);
     }
 
+    public Instances selectFeatures(Instances path) throws Exception {
+
+        AttributeSelection attsel = new AttributeSelection();
+        weka.attributeSelection.InfoGainAttributeEval selector = new InfoGainAttributeEval();
+        weka.attributeSelection.Ranker ranker = new Ranker();
+
+        ranker.setNumToSelect(10);
+        attsel.setEvaluator(selector);
+        attsel.setSearch(ranker);
+        attsel.SelectAttributes(path);
+
+        return attsel.reduceDimensionality(path);
+    }
+
+    public Instances makeSuspiciousNormal(Instances data) {
+
+        for (Instance inst : data) {
+            if (inst.stringValue(inst.numAttributes() - 1).equals("suspicious")) {
+                inst.setClassValue(0.0d);
+            }
+        }
+
+        return data;
+    }
+
+    public Instances removeParticularAttributes(Instances data) {
+
+        data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentDestinations_A").index());
+        data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentServices_A").index());
+
+        return data;
+    }
+
     public Instances openFile(String path) throws Exception {
         BufferedReader reader
                 = new BufferedReader(new FileReader(path));
@@ -57,11 +97,16 @@ public class Topologies_WEKA_RejectionThresholds {
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
 
+//        dataTrain = this.makeSuspiciousNormal(dataTrain);
+//        dataTrain = this.removeParticularAttributes(dataTrain);
         String[] options = new String[2];
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + ","
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -93,7 +138,10 @@ public class Topologies_WEKA_RejectionThresholds {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + ","
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -123,13 +171,15 @@ public class Topologies_WEKA_RejectionThresholds {
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
 
+//        dataTrain = this.makeSuspiciousNormal(dataTrain);
+//        dataTrain = this.removeParticularAttributes(dataTrain);
         RemoveWithValues remAllButNormal = new RemoveWithValues();
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
 
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
 
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
@@ -147,7 +197,10 @@ public class Topologies_WEKA_RejectionThresholds {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + ","
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -191,9 +244,9 @@ public class Topologies_WEKA_RejectionThresholds {
         RemoveWithValues remAllButSuspicious = new RemoveWithValues();
         RemoveWithValues remAllButAnomalous = new RemoveWithValues();
 
-        remAllButNormal.setAttributeIndex("19");
-        remAllButSuspicious.setAttributeIndex("19");
-        remAllButAnomalous.setAttributeIndex("19");
+        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
+        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
 
         remAllButNormal.setNominalIndices("2,3");
         remAllButSuspicious.setNominalIndices("1,2");
@@ -211,7 +264,10 @@ public class Topologies_WEKA_RejectionThresholds {
         options[0] = "-R";
 
         String optRemove = "";
-        optRemove = optRemove + 16 + "," + 17 + "," + 18 + "," + 19;
+        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
+                + (dataTrain.numAttributes() - 3) + ","
+                + (dataTrain.numAttributes() - 2) + ","
+                + (dataTrain.numAttributes() - 1);
         options[1] = optRemove;
 
         Remove remove = new Remove();
@@ -236,52 +292,158 @@ public class Topologies_WEKA_RejectionThresholds {
     }
 
     public Classifier trainClassifierTree(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         J48 classifier = new J48();
 
-        classifier.buildClassifier(train);
+        filteredClassifier.setClassifier(classifier);
 
-        return classifier;
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
+    }
+
+    public Classifier trainClassifierEnsemble(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifierTree = new FilteredClassifier();
+        filteredClassifierTree.setFilter(new ClassBalancer());
+
+        J48 classifierTree = new J48();
+        filteredClassifierTree.setClassifier(classifierTree);
+
+        FilteredClassifier filteredClassifierRandomForest = new FilteredClassifier();
+        filteredClassifierRandomForest.setFilter(new ClassBalancer());
+
+        RandomForest classifierRandomForest = new RandomForest();
+
+        classifierRandomForest.setSeed(12345);
+        classifierRandomForest.setNumIterations(10);
+        classifierRandomForest.buildClassifier(train);
+
+        filteredClassifierRandomForest.setClassifier(classifierRandomForest);
+
+        FilteredClassifier filteredClassifierAdaboost = new FilteredClassifier();
+        filteredClassifierAdaboost.setFilter(new ClassBalancer());
+
+        AdaBoostM1 classifierAda = new AdaBoostM1();
+
+        classifierAda.setClassifier(new J48());
+        classifierAda.setNumIterations(10);
+
+        filteredClassifierAdaboost.setClassifier(classifierAda);
+
+        weka.classifiers.meta.Vote ensemble = new Vote();
+        ensemble.setCombinationRule(new SelectedTag(weka.classifiers.meta.Vote.MAJORITY_VOTING_RULE, weka.classifiers.meta.Vote.TAGS_RULES));
+
+        ensemble.addPreBuiltClassifier(filteredClassifierTree);
+        ensemble.addPreBuiltClassifier(filteredClassifierRandomForest);
+        ensemble.addPreBuiltClassifier(filteredClassifierAdaboost);
+
+        inputMapped.setClassifier(ensemble);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         AdaBoostM1 classifier = new AdaBoostM1();
 
         classifier.setClassifier(new J48());
-        classifier.setNumIterations(100);
+        classifier.setNumIterations(10);
 
-        classifier.buildClassifier(train);
+        filteredClassifier.setClassifier(classifier);
 
-        return classifier;
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierNaive(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         NaiveBayes classifier = new NaiveBayes();
 
         classifier.setUseSupervisedDiscretization(true);
-        classifier.buildClassifier(train);
 
-        return classifier;
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierForest(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         RandomForest classifier = new RandomForest();
 
         classifier.setSeed(12345);
-        classifier.setNumIterations(100);
+        classifier.setNumIterations(10);
         classifier.buildClassifier(train);
 
-        return classifier;
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierSMO(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         weka.classifiers.functions.SMO classifier = new weka.classifiers.functions.SMO();
 
         classifier.setKernel(new RBFKernel());
         classifier.setFilterType(new SelectedTag(SMO.FILTER_NONE, SMO.TAGS_FILTER));
 
-        classifier.buildClassifier(train);
+        filteredClassifier.setClassifier(classifier);
 
-        return classifier;
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
+    }
+
+    public int getMonthFromTestFile(String testFile) {
+        String file = testFile.replaceAll("\\D+", "");
+        int year = Integer.valueOf(file.substring(0, 4));
+        int month = Integer.valueOf(file.substring(4, 6));
+        int day = Integer.valueOf(file.substring(6, 8));
+        return month;
     }
 
     public float[] evaluateOnDataset(Classifier classifier, Instances instData, float thresholdRejectNormal, float thresholdRejectAttack) throws Exception {
@@ -318,7 +480,7 @@ public class Topologies_WEKA_RejectionThresholds {
                         acceptedMissclassified++;
                     }
                 }
-            }else{
+            } else {
                 //decides if reject
                 if (prob < thresholdRejectAttack) {
                     nRejected++;
@@ -369,9 +531,7 @@ public class Topologies_WEKA_RejectionThresholds {
         return ret;
     }
 
-    public void runTopology(String pathTrain, String pathTestDirectory) throws Exception {
-        System.out.println("Path to training: " + pathTrain);
-
+    public void runTopology(String pathTestDirectory) throws Exception {
         System.out.println("Path to test directory: " + pathTestDirectory);
         this.findFilesForTest(pathTestDirectory);
         for (String s : this.testFiles) {
@@ -379,123 +539,49 @@ public class Topologies_WEKA_RejectionThresholds {
         }
 
         System.out.println("Opening training file....");
-        Instances dataTrain = this.openFile(pathTrain);
+        Instances dataTrain = this.openFile(this.testFiles.get(0));
+
+        for (int j = 1; j <= 6; j++) {
+            if (j < this.testFiles.size()) {
+                Instances newDataTrain = this.openFile(this.testFiles.get(j));
+                for (Instance inst : newDataTrain) {
+                    dataTrain.add(inst);
+                }
+            }
+        }
 
         System.out.println("Training trainClassifierTree....");
         Classifier classifier = this.trainClassifierTree(dataTrain);
 
         System.out.println("Testing... ");
 
-        //String testPath = this.testFiles.get(100);
-        Set<Double> set = new LinkedHashSet<Double>();
-        Instances dataTest[] = this.openFileForTest(pathTrain);
+        ArrayList<Double> probs = new ArrayList();
 
-        //normal
-        for (Instance inst : dataTest[0]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
+        for (Double prob = 0.50d; prob <= 1.0d; prob += 0.01d) {
+            probs.add(prob);
         }
 
-        //suspicious
-        for (Instance inst : dataTest[1]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
-        }
-
-        //anomalous
-        for (Instance inst : dataTest[2]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
-        }
-
-        System.out.println("Unique probabilities: " + set.size());
-
-        ArrayList<Double> probs = new ArrayList(Arrays.asList(set.toArray()));
         java.util.Collections.sort(probs);
 
         for (Double probNormal : probs) {
             for (Double probAttack : probs) {
-                float[] rejectionForNormal = this.evaluateOnDataset(classifier, dataTest[0], probNormal.floatValue(), probAttack.floatValue());
-                float[] rejectionForSuspicious = this.evaluateOnDataset(classifier, dataTest[1], probNormal.floatValue(), probAttack.floatValue());
-                float[] rejectionForAnomalous = this.evaluateOnDataset(classifier, dataTest[2], probNormal.floatValue(), probAttack.floatValue());
-
+                float[] rejection = this.evaluateOnDataset(classifier, dataTrain, probNormal.floatValue(), probAttack.floatValue());
+                
                 float[] allreject = new float[5];
-                allreject[0] = rejectionForNormal[0] + rejectionForSuspicious[0] + rejectionForAnomalous[0];
-                allreject[1] = rejectionForNormal[1] + rejectionForSuspicious[1] + rejectionForAnomalous[1];
-                allreject[2] = rejectionForNormal[2] + rejectionForSuspicious[2] + rejectionForAnomalous[2];
-                allreject[3] = rejectionForNormal[3] + rejectionForSuspicious[3] + rejectionForAnomalous[3];
-                allreject[4] = rejectionForNormal[4] + rejectionForSuspicious[4] + rejectionForAnomalous[4];
+                allreject[0] = rejection[0];
+                allreject[1] = rejection[1];
+                allreject[2] = rejection[2];
+                allreject[3] = rejection[3];
+                allreject[4] = rejection[4];
 
-                String print = pathTrain + ";ORUNADA;" + probNormal + ";" + probAttack + ";"
-                        + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                        + dataTest[0].size() + ";"
-                        + dataTest[2].size() + ";"
-                        + dataTest[1].size() + ";";
+                String print = probNormal + ";" + probAttack + ";"
+                        + dataTrain.size() + ";";
                 print = print + this.printMeasuresRecognition(allreject) + ";";
-                print = print + this.printMeasuresRecognition(rejectionForNormal) + ";";
-                print = print + this.printMeasuresRecognition(rejectionForSuspicious) + ";";
-                print = print + this.printMeasuresRecognition(rejectionForAnomalous) + ";";
 
-                print = print + rejectionForNormal[0] + ";";
-                print = print + rejectionForNormal[1] + ";";
-                print = print + rejectionForNormal[2] + ";";
-                print = print + rejectionForNormal[3] + ";";
-                print = print + rejectionForNormal[4] + ";";
-
-                print = print + rejectionForSuspicious[0] + ";";
-                print = print + rejectionForSuspicious[1] + ";";
-                print = print + rejectionForSuspicious[2] + ";";
-                print = print + rejectionForSuspicious[3] + ";";
-                print = print + rejectionForSuspicious[4] + ";";
-
-                print = print + rejectionForAnomalous[0] + ";";
-                print = print + rejectionForAnomalous[1] + ";";
-                print = print + rejectionForAnomalous[2] + ";";
-                print = print + rejectionForAnomalous[3] + ";";
-                print = print + rejectionForAnomalous[4];
 
                 System.out.println(print.replace(",", "."));
             }
         }
-
-//        
-//        for (String testPath : this.testFiles) {
-//            Instances[] dataTest = this.openFileForTest(testPath);
-//            
-//            Evaluation evalNormal = new Evaluation(dataTest[0]);
-//            evalNormal.evaluateModel(classifier, dataTest[0]);
-//            
-//            Evaluation evalSuspicious = new Evaluation(dataTest[1]);
-//            evalSuspicious.evaluateModel(classifier, dataTest[1]);
-//            
-//            Evaluation evalAnomalous = new Evaluation(dataTest[2]);
-//            evalAnomalous.evaluateModel(classifier, dataTest[2]);
-//            
-//            String print = pathTrain + ";" + testPath + ";ORUNADA;"
-//                    + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-//                    + dataTest[0].size() + ";"
-//                    + dataTest[2].size() + ";"
-//                    + dataTest[1].size() + ";"
-//                    + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
-//                            + evalSuspicious.pctCorrect() * dataTest[1].size()
-//                            + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
-//                    + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
-//                    + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
-//                    + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
-//            System.out.println(print.replace(",", "."));
-//        }
     }
 
 }
