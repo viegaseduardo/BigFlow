@@ -36,13 +36,13 @@ public class Main {
 
         if (args.length == 1) {
 
-//            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
+            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
             // Main.startTopologies_WEKA_Tests_WithoutUpdate();
             //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
-            Main.startTopologies_WEKA_RejectionThresholds();
+//            Main.startTopologies_WEKA_RejectionThresholds();
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
@@ -215,8 +215,8 @@ public class Main {
                     }
                 }
 
-//                thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
-                thread.testDirect = "/home/viegas/arffs/viegas";
+                thread.testDirect = "/home/projeto/disco/stratweka/arffs/viegas";
+//                thread.testDirect = "/home/viegas/arffs/viegas";
                 thread.start();
                 listThreads.add(thread);
             }
@@ -252,8 +252,8 @@ public class Main {
                     + "\n";
 
             try {
-//                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
-                Files.write(Paths.get("/home/viegas/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+//                Files.write(Paths.get("/home/viegas/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
             } catch (Exception e) {
                 //exception handling left as an exercise for the reader
             }
