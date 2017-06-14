@@ -326,7 +326,7 @@ public class Topologies_WEKA_RejectionThresholds {
         RandomForest classifierRandomForest = new RandomForest();
 
         classifierRandomForest.setSeed(12345);
-        classifierRandomForest.setNumIterations(10);
+        classifierRandomForest.setNumIterations(50);
         classifierRandomForest.buildClassifier(train);
 
         filteredClassifierRandomForest.setClassifier(classifierRandomForest);
@@ -337,7 +337,7 @@ public class Topologies_WEKA_RejectionThresholds {
         AdaBoostM1 classifierAda = new AdaBoostM1();
 
         classifierAda.setClassifier(new J48());
-        classifierAda.setNumIterations(10);
+        classifierAda.setNumIterations(50);
 
         filteredClassifierAdaboost.setClassifier(classifierAda);
 
@@ -365,7 +365,7 @@ public class Topologies_WEKA_RejectionThresholds {
         AdaBoostM1 classifier = new AdaBoostM1();
 
         classifier.setClassifier(new J48());
-        classifier.setNumIterations(10);
+        classifier.setNumIterations(50);
 
         filteredClassifier.setClassifier(classifier);
 
@@ -406,7 +406,7 @@ public class Topologies_WEKA_RejectionThresholds {
         RandomForest classifier = new RandomForest();
 
         classifier.setSeed(12345);
-        classifier.setNumIterations(10);
+        classifier.setNumIterations(50);
         classifier.buildClassifier(train);
 
         filteredClassifier.setClassifier(classifier);
@@ -551,7 +551,7 @@ public class Topologies_WEKA_RejectionThresholds {
         }
 
         System.out.println("Training trainClassifierTree....");
-        Classifier classifier = this.trainClassifierTree(dataTrain);
+        Classifier classifier = this.trainClassifierForest(dataTrain);
 
         System.out.println("Testing... ");
 
