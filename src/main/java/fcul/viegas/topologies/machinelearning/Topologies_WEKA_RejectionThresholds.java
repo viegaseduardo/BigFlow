@@ -570,8 +570,8 @@ public class Topologies_WEKA_RejectionThresholds {
             }
         }
 
-        System.out.println("Training trainClassifierForest....");
-        Classifier classifier = this.trainClassifierForest(dataTrain);
+        System.out.println("Training trainClassifierTree....");
+        Classifier classifier = this.trainClassifierTree(dataTrain);
 
         System.out.println("Testing... ");
 
