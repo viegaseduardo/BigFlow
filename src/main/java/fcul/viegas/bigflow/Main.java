@@ -131,7 +131,7 @@ public class Main {
         try {
             Topologies_WEKA_RejectionThresholds topo = new Topologies_WEKA_RejectionThresholds();
 
-            topo.runTopology("/home/projeto/disco/stratweka/arffs/viegas");
+            topo.runTopology("/home/viegas/arffs/viegas");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
