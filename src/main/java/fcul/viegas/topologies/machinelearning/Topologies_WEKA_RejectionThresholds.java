@@ -530,6 +530,26 @@ public class Topologies_WEKA_RejectionThresholds {
 
         return ret;
     }
+    
+    public Instances[] splitNormalAnomaly(Instances data){
+        Instances[] instVect = new Instances[2];
+        instVect[0] = new Instances(data);
+        instVect[1] = new Instances(data);
+        
+        for(Instance inst: instVect[0]){
+            if(inst.classValue() != 0.0d){
+                instVect[0].remove(inst);
+            }
+        }
+        
+        for(Instance inst: instVect[1]){
+            if(inst.classValue() != 1.0d){
+                instVect[0].remove(inst);
+            }
+        }
+        
+        return instVect;
+    }
 
     public void runTopology(String pathTestDirectory) throws Exception {
         System.out.println("Path to test directory: " + pathTestDirectory);
@@ -550,8 +570,8 @@ public class Topologies_WEKA_RejectionThresholds {
             }
         }
 
-        System.out.println("Training trainClassifierForest....");
-        Classifier classifier = this.trainClassifierForest(dataTrain);
+        System.out.println("Training trainClassifierTree....");
+        Classifier classifier = this.trainClassifierTree(dataTrain);
 
         System.out.println("Testing... ");
 
@@ -562,21 +582,26 @@ public class Topologies_WEKA_RejectionThresholds {
         }
 
         java.util.Collections.sort(probs);
+        
+        Instances[] instVect = this.splitNormalAnomaly(dataTrain);
 
         for (Double probNormal : probs) {
             for (Double probAttack : probs) {
-                float[] rejection = this.evaluateOnDataset(classifier, dataTrain, probNormal.floatValue(), probAttack.floatValue());
+                float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue());
+                float[] rejectionAttack = this.evaluateOnDataset(classifier, instVect[1], probNormal.floatValue(), probAttack.floatValue());
                 
                 float[] allreject = new float[5];
-                allreject[0] = rejection[0];
-                allreject[1] = rejection[1];
-                allreject[2] = rejection[2];
-                allreject[3] = rejection[3];
-                allreject[4] = rejection[4];
+                allreject[0] = rejectionNormal[0] + rejectionAttack[0];
+                allreject[1] = rejectionNormal[1] + rejectionAttack[1];
+                allreject[2] = rejectionNormal[2] + rejectionAttack[2];
+                allreject[3] = rejectionNormal[3] + rejectionAttack[3];
+                allreject[4] = rejectionNormal[4] + rejectionAttack[4];
 
                 String print = probNormal + ";" + probAttack + ";"
                         + dataTrain.size() + ";";
                 print = print + this.printMeasuresRecognition(allreject) + ";";
+                print = print + this.printMeasuresRecognition(rejectionNormal) + ";";
+                print = print + this.printMeasuresRecognition(rejectionAttack) + ";";
 
 
                 System.out.println(print.replace(",", "."));
