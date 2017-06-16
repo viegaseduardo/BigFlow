@@ -544,7 +544,7 @@ public class Topologies_WEKA_RejectionThresholds {
         
         for(Instance inst: instVect[1]){
             if(inst.classValue() != 1.0d){
-                instVect[0].remove(inst);
+                instVect[1].remove(inst);
             }
         }
         
@@ -583,8 +583,11 @@ public class Topologies_WEKA_RejectionThresholds {
 
         java.util.Collections.sort(probs);
         
+        System.out.println("Splitting training file...");
         Instances[] instVect = this.splitNormalAnomaly(dataTrain);
 
+        System.out.println("Starting tests...");
+        
         for (Double probNormal : probs) {
             for (Double probAttack : probs) {
                 float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue());
