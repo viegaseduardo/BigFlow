@@ -550,20 +550,19 @@ public class Topologies_WEKA_RejectionThresholds {
         return ret;
     }
     
-    public Instances[] splitNormalAnomaly(Instances data){
+    public Instances[] splitNormalAnomaly(Instances data, String testFile) throws Exception{
         Instances[] instVect = new Instances[2];
-        instVect[0] = new Instances(data);
-        instVect[1] = new Instances(data);
+        instVect[0] = this.openFile(testFile);
+        instVect[1] = this.openFile(testFile);
         
-        for(Instance inst: instVect[0]){
+        instVect[0].delete();
+        instVect[1].delete();
+        
+        for(Instance inst: data){
             if(inst.classValue() != 0.0d){
-                instVect[0].remove(inst);
-            }
-        }
-        
-        for(Instance inst: instVect[1]){
-            if(inst.classValue() != 1.0d){
-                instVect[1].remove(inst);
+                instVect[0].add(inst);
+            }else{
+                instVect[1].add(inst);
             }
         }
         
@@ -603,7 +602,7 @@ public class Topologies_WEKA_RejectionThresholds {
         java.util.Collections.sort(probs);
         
         System.out.println("Splitting training file...");
-        Instances[] instVect = this.splitNormalAnomaly(dataTrain);
+        Instances[] instVect = this.splitNormalAnomaly(dataTrain, this.testFiles.get(0));
 
         System.out.println("Starting tests...");
         
