@@ -469,15 +469,10 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
-
-        FilteredClassifier filteredClassifier = new FilteredClassifier();
-        filteredClassifier.setFilter(new ClassBalancer());
-
+        
         HoeffdingTree classifier = new HoeffdingTree();
 
-        filteredClassifier.setClassifier(classifier);
-
-        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.setClassifier(classifier);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
