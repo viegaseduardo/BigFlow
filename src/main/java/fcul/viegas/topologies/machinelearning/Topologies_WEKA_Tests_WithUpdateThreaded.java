@@ -37,6 +37,7 @@ import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
+import weka.filters.unsupervised.attribute.ClassAssigner;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.Randomize;
@@ -471,14 +472,20 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
 
-        FilteredClassifier filteredClassifier = new FilteredClassifier();
-        filteredClassifier.setFilter(new Randomize());
+        FilteredClassifier filteredClassifierRandom = new FilteredClassifier();
+        filteredClassifierRandom.setFilter(new Randomize());
+        
+        FilteredClassifier filteredClassifierBalancer = new FilteredClassifier();
+        filteredClassifierBalancer.setFilter(new ClassBalancer());
+        
 
         HoeffdingTree classifier = new HoeffdingTree();
 
-        filteredClassifier.setClassifier(classifier);
+        filteredClassifierRandom.setClassifier(classifier);
+        filteredClassifierBalancer.setClassifier(filteredClassifierRandom);
+        
 
-        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.setClassifier(filteredClassifierBalancer);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
