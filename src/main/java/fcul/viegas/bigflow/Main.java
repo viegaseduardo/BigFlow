@@ -252,7 +252,7 @@ public class Main {
                     + "\n";
 
             try {
-                Files.write(Paths.get("/home/projeto/Codigo/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
+                Files.write(Paths.get("result"), output.getBytes(), StandardOpenOption.APPEND);
 //                Files.write(Paths.get("/home/viegas/BigFlow/result"), output.getBytes(), StandardOpenOption.APPEND);
             } catch (Exception e) {
                 //exception handling left as an exercise for the reader
