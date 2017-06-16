@@ -35,6 +35,7 @@ import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.instance.Randomize;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
 /**
@@ -423,13 +424,15 @@ public class Topologies_WEKA_RejectionThresholds {
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
 
-        
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new Randomize());
+
         HoeffdingTree classifier = new HoeffdingTree();
-        
-        for(Instance inst : train){
-            classifier.updateClassifier(inst);
-        }
-                
+
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
 
         return inputMapped;
     }
