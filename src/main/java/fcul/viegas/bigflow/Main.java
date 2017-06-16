@@ -36,13 +36,13 @@ public class Main {
 
         if (args.length == 1) {
 
-//            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
+            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
             // Main.startTopologies_WEKA_Tests_WithoutUpdate();
             //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
-            Main.startTopologies_WEKA_RejectionThresholds();
+//            Main.startTopologies_WEKA_RejectionThresholds();
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],

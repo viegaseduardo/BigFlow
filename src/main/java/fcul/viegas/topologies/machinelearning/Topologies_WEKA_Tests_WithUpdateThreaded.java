@@ -28,6 +28,7 @@ import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.Vote;
 import weka.classifiers.misc.InputMappedClassifier;
+import weka.classifiers.trees.HoeffdingTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -464,6 +465,24 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         return month;
     }
 
+    public Classifier trainClassifierHoeffing(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
+        HoeffdingTree classifier = new HoeffdingTree();
+
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
+    }
+
     public void runTopology(String pathTestDirectory, int start, int end) throws Exception {
         System.out.println("Start: " + start);
 
@@ -500,7 +519,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
                 //newDataTrainNewMonth = this.selectFeatures(newDataTrainNewMonth);
                 //System.out.println(newDataTrainNewMonth.size());
-                classifier = this.trainClassifierAdaboostTree(newDataTrainNewMonth);
+                classifier = this.trainClassifierHoeffing(newDataTrainNewMonth);
 
             }
 
