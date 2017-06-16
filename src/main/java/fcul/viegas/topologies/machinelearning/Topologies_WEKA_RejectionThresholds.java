@@ -559,7 +559,7 @@ public class Topologies_WEKA_RejectionThresholds {
         instVect[1].delete();
         
         for(Instance inst: data){
-            if(inst.classValue() != 0.0d){
+            if(inst.classValue() == 0.0d){
                 instVect[0].add(inst);
             }else{
                 instVect[1].add(inst);
