@@ -423,15 +423,13 @@ public class Topologies_WEKA_RejectionThresholds {
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
 
-        FilteredClassifier filteredClassifier = new FilteredClassifier();
-        filteredClassifier.setFilter(new ClassBalancer());
-
+        
         HoeffdingTree classifier = new HoeffdingTree();
-
-        filteredClassifier.setClassifier(classifier);
-
-        inputMapped.setClassifier(filteredClassifier);
-        inputMapped.buildClassifier(train);
+        
+        for(Instance inst : train){
+            classifier.updateClassifier(inst);
+        }
+                
 
         return inputMapped;
     }

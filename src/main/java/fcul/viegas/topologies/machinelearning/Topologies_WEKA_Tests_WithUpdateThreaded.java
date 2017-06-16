@@ -469,12 +469,13 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
-        
+
         HoeffdingTree classifier = new HoeffdingTree();
-
-        inputMapped.setClassifier(classifier);
-        inputMapped.buildClassifier(train);
-
+        
+        for(Instance inst : train){
+            classifier.updateClassifier(inst);
+        }
+                
         return inputMapped;
     }
 
