@@ -24,6 +24,7 @@ import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.Vote;
 import weka.classifiers.misc.InputMappedClassifier;
+import weka.classifiers.trees.HoeffdingTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -416,6 +417,24 @@ public class Topologies_WEKA_RejectionThresholds {
 
         return inputMapped;
     }
+    
+    public Classifier trainClassifierHoeffing(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
+        HoeffdingTree classifier = new HoeffdingTree();
+
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
+    }
 
     public Classifier trainClassifierSMO(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
@@ -570,8 +589,8 @@ public class Topologies_WEKA_RejectionThresholds {
             }
         }
 
-        System.out.println("Training trainClassifierForest....");
-        Classifier classifier = this.trainClassifierForest(dataTrain);
+        System.out.println("Training trainClassifierHoeffing....");
+        Classifier classifier = this.trainClassifierHoeffing(dataTrain);
 
         System.out.println("Testing... ");
 
