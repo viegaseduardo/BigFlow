@@ -331,10 +331,7 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     }
 
     public Classifier trainClassifierEnsemble(Instances train) throws Exception {
-        InputMappedClassifier inputMapped = new InputMappedClassifier();
-        inputMapped.setSuppressMappingReport(true);
-        inputMapped.setModelHeader(train);
-
+        
         FilteredClassifier filteredClassifierTree = new FilteredClassifier();
         filteredClassifierTree.setFilter(new ClassBalancer());
 
@@ -369,10 +366,9 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
         ensemble.addPreBuiltClassifier(filteredClassifierRandomForest);
         ensemble.addPreBuiltClassifier(filteredClassifierAdaboost);
 
-        inputMapped.setClassifier(ensemble);
-        inputMapped.buildClassifier(train);
-
-        return inputMapped;
+        ensemble.buildClassifier(train);
+        
+        return ensemble;
     }
 
     public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
