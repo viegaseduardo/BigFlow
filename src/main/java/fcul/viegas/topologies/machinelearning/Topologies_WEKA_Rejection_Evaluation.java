@@ -607,7 +607,7 @@ public class Topologies_WEKA_Rejection_Evaluation {
         System.out.println("Testing... ");
 
         for (int i = 0; i < this.testFiles.size(); i++) {
-            Instances[] instVect = this.splitNormalAnomaly(dataTrain, this.testFiles.get(i));
+            Instances[] instVect = this.splitNormalAnomaly(this.openFile(this.testFiles.get(i)), this.testFiles.get(i));
 
             float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue());
             float[] rejectionAttack = this.evaluateOnDataset(classifier, instVect[1], probNormal.floatValue(), probAttack.floatValue());
