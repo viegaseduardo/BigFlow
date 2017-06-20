@@ -331,7 +331,10 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
     }
 
     public Classifier trainClassifierEnsemble(Instances train) throws Exception {
-        
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
         FilteredClassifier filteredClassifierTree = new FilteredClassifier();
         filteredClassifierTree.setFilter(new ClassBalancer());
 
@@ -361,14 +364,20 @@ public class Topologies_WEKA_Tests_WithUpdateThreaded extends Thread {
 
         weka.classifiers.meta.Vote ensemble = new Vote();
         ensemble.setCombinationRule(new SelectedTag(weka.classifiers.meta.Vote.MAJORITY_VOTING_RULE, weka.classifiers.meta.Vote.TAGS_RULES));
+        
+        
+        filteredClassifierTree.buildClassifier(train);
+        filteredClassifierRandomForest.buildClassifier(train);
+        filteredClassifierAdaboost.buildClassifier(train);
 
         ensemble.addPreBuiltClassifier(filteredClassifierTree);
         ensemble.addPreBuiltClassifier(filteredClassifierRandomForest);
         ensemble.addPreBuiltClassifier(filteredClassifierAdaboost);
 
-        ensemble.buildClassifier(train);
-        
-        return ensemble;
+        inputMapped.setClassifier(ensemble);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
