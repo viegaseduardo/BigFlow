@@ -601,8 +601,8 @@ public class Topologies_WEKA_Rejection_Evaluation {
 
         System.out.println(classifier.toString());
         
-        Double probNormal = 0.95d;
-        Double probAttack = 0.5d;
+        Double probNormal = 0.4d;
+        Double probAttack = 0.4d;
 
         System.out.println("Testing... ");
 
