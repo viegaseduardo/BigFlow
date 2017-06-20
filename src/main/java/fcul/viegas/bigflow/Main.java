@@ -42,7 +42,9 @@ public class Main {
             //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
-            Main.startTopologies_WEKA_RejectionThresholds();
+//            Main.startTopologies_WEKA_RejectionThresholds();
+
+                Main.startTopologies_WEKA_Rejection_Evaluation();
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
@@ -161,12 +163,11 @@ public class Main {
         }
     }
 
-    public static void Topologies_WEKA_Rejection_Evaluation() {
+    public static void startTopologies_WEKA_Rejection_Evaluation() {
         try {
             Topologies_WEKA_Rejection_Evaluation topo = new Topologies_WEKA_Rejection_Evaluation();
 
-            topo.runTopology("/home/viegas/Desktop/saida/arffOrunada/1weekprop_ORUNADA.arff",
-                    "/home/viegas/Desktop/saida/arffOrunada");
+            topo.runTopology("/home/viegas/arffs/viegas");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

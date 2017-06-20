@@ -23,6 +23,7 @@ import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.Vote;
 import weka.classifiers.misc.InputMappedClassifier;
+import weka.classifiers.trees.HoeffdingTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -31,8 +32,10 @@ import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
+import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.instance.Randomize;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
 /**
@@ -40,8 +43,7 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  * @author viegas
  */
 public class Topologies_WEKA_Rejection_Evaluation {
-    
-    
+
     private ArrayList<String> testFiles = new ArrayList();
 
     public void findFilesForTest(String pathTestDirectory) {
@@ -326,7 +328,7 @@ public class Topologies_WEKA_Rejection_Evaluation {
         RandomForest classifierRandomForest = new RandomForest();
 
         classifierRandomForest.setSeed(12345);
-        classifierRandomForest.setNumIterations(10);
+        classifierRandomForest.setNumIterations(50);
         classifierRandomForest.buildClassifier(train);
 
         filteredClassifierRandomForest.setClassifier(classifierRandomForest);
@@ -337,7 +339,7 @@ public class Topologies_WEKA_Rejection_Evaluation {
         AdaBoostM1 classifierAda = new AdaBoostM1();
 
         classifierAda.setClassifier(new J48());
-        classifierAda.setNumIterations(10);
+        classifierAda.setNumIterations(50);
 
         filteredClassifierAdaboost.setClassifier(classifierAda);
 
@@ -365,7 +367,7 @@ public class Topologies_WEKA_Rejection_Evaluation {
         AdaBoostM1 classifier = new AdaBoostM1();
 
         classifier.setClassifier(new J48());
-        classifier.setNumIterations(10);
+        classifier.setNumIterations(50);
 
         filteredClassifier.setClassifier(classifier);
 
@@ -406,13 +408,38 @@ public class Topologies_WEKA_Rejection_Evaluation {
         RandomForest classifier = new RandomForest();
 
         classifier.setSeed(12345);
-        classifier.setNumIterations(10);
+        classifier.setNumIterations(50);
         classifier.buildClassifier(train);
 
         filteredClassifier.setClassifier(classifier);
 
         inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
+
+        return inputMapped;
+    }
+
+    public Classifier trainClassifierHoeffing(Instances train) throws Exception {
+
+        Resample resample = new Resample();
+        resample.setBiasToUniformClass(1.0d);
+        resample.setInputFormat(train);
+
+        Instances dataTrain = Filter.useFilter(train, resample);
+
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(dataTrain);
+
+        FilteredClassifier filteredClassifierRandom = new FilteredClassifier();
+        filteredClassifierRandom.setFilter(new Randomize());
+
+        HoeffdingTree classifier = new HoeffdingTree();
+
+        filteredClassifierRandom.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifierRandom);
+        inputMapped.buildClassifier(dataTrain);
 
         return inputMapped;
     }
@@ -480,7 +507,7 @@ public class Topologies_WEKA_Rejection_Evaluation {
                         acceptedMissclassified++;
                     }
                 }
-            }else{
+            } else {
                 //decides if reject
                 if (prob < thresholdRejectAttack) {
                     nRejected++;
@@ -531,9 +558,26 @@ public class Topologies_WEKA_Rejection_Evaluation {
         return ret;
     }
 
-    public void runTopology(String pathTrain, String pathTestDirectory) throws Exception {
-        System.out.println("Path to training: " + pathTrain);
+    public Instances[] splitNormalAnomaly(Instances data, String testFile) throws Exception {
+        Instances[] instVect = new Instances[2];
+        instVect[0] = this.openFile(testFile);
+        instVect[1] = this.openFile(testFile);
 
+        instVect[0].delete();
+        instVect[1].delete();
+
+        for (Instance inst : data) {
+            if (inst.classValue() == 0.0d) {
+                instVect[0].add(inst);
+            } else {
+                instVect[1].add(inst);
+            }
+        }
+
+        return instVect;
+    }
+
+    public void runTopology(String pathTestDirectory) throws Exception {
         System.out.println("Path to test directory: " + pathTestDirectory);
         this.findFilesForTest(pathTestDirectory);
         for (String s : this.testFiles) {
@@ -541,83 +585,49 @@ public class Topologies_WEKA_Rejection_Evaluation {
         }
 
         System.out.println("Opening training file....");
-        Instances dataTrain = this.openFile(pathTrain);
+        Instances dataTrain = this.openFile(this.testFiles.get(0));
 
-        System.out.println("Training trainClassifierTree....");
-        Classifier classifier = this.trainClassifierTree(dataTrain);
-
-        //String testPath = this.testFiles.get(100);
-        Set<Double> set = new LinkedHashSet<Double>();
-        Instances dataTest[] = this.openFileForTest(pathTrain);
-
-        //normal
-        for (Instance inst : dataTest[0]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
+        for (int j = 1; j <= 6; j++) {
+            if (j < this.testFiles.size()) {
+                Instances newDataTrain = this.openFile(this.testFiles.get(j));
+                for (Instance inst : newDataTrain) {
+                    dataTrain.add(inst);
+                }
             }
         }
 
-        //suspicious
-        for (Instance inst : dataTest[1]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
-        }
+        System.out.println("Training trainClassifierHoeffing....");
+        Classifier classifier = this.trainClassifierHoeffing(dataTrain);
 
-        //anomalous
-        for (Instance inst : dataTest[2]) {
-            double probs[] = classifier.distributionForInstance(inst);
-            if (probs[0] >= probs[1]) {
-                set.add(probs[0]);
-            } else {
-                set.add(probs[1]);
-            }
-        }
-
-        System.out.println("Unique probabilities: " + set.size());
-
-        ArrayList<Double> probs = new ArrayList(Arrays.asList(set.toArray()));
-        java.util.Collections.sort(probs);
-        System.out.println("Testing... ");
+        System.out.println(classifier.toString());
         
-        Double probNormal = 0.99d;
-        Double probAttack = 0.51d;
+        Double probNormal = 0.95d;
+        Double probAttack = 0.5d;
 
         System.out.println("Testing... ");
-        
-        for (String testPath : this.testFiles) {
-            dataTest = this.openFileForTest(testPath);
-            float[] rejectionForNormal = this.evaluateOnDataset(classifier, dataTest[0], probNormal.floatValue(), probAttack.floatValue());
-            float[] rejectionForSuspicious = this.evaluateOnDataset(classifier, dataTest[1], probNormal.floatValue(), probAttack.floatValue());
-            float[] rejectionForAnomalous = this.evaluateOnDataset(classifier, dataTest[2], probNormal.floatValue(), probAttack.floatValue());
+
+        for (int i = 0; i < this.testFiles.size(); i++) {
+            Instances[] instVect = this.splitNormalAnomaly(dataTrain, this.testFiles.get(i));
+
+            float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue());
+            float[] rejectionAttack = this.evaluateOnDataset(classifier, instVect[1], probNormal.floatValue(), probAttack.floatValue());
 
             float[] allreject = new float[5];
-            allreject[0] = rejectionForNormal[0] + rejectionForSuspicious[0] + rejectionForAnomalous[0];
-            allreject[1] = rejectionForNormal[1] + rejectionForSuspicious[1] + rejectionForAnomalous[1];
-            allreject[2] = rejectionForNormal[2] + rejectionForSuspicious[2] + rejectionForAnomalous[2];
-            allreject[3] = rejectionForNormal[3] + rejectionForSuspicious[3] + rejectionForAnomalous[3];
-            allreject[4] = rejectionForNormal[4] + rejectionForSuspicious[4] + rejectionForAnomalous[4];
+            allreject[0] = rejectionNormal[0] + rejectionAttack[0];
+            allreject[1] = rejectionNormal[1] + rejectionAttack[1];
+            allreject[2] = rejectionNormal[2] + rejectionAttack[2];
+            allreject[3] = rejectionNormal[3] + rejectionAttack[3];
+            allreject[4] = rejectionNormal[4] + rejectionAttack[4];
 
-            String print = pathTrain + ";" + testPath + ";" + probNormal + ";" +  probAttack + ";"
-                    + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                    + dataTest[0].size() + ";"
-                    + dataTest[2].size() + ";"
-                    + dataTest[1].size() + ";";
+            String print = probNormal + ";" + probAttack + ";"
+                    + dataTrain.size() + ";";
             print = print + this.printMeasuresRecognition(allreject) + ";";
-            print = print + this.printMeasuresRecognition(rejectionForNormal) + ";";
-            print = print + this.printMeasuresRecognition(rejectionForSuspicious) + ";";
-            print = print + this.printMeasuresRecognition(rejectionForAnomalous) + ";";
+            print = print + this.printMeasuresRecognition(rejectionNormal) + ";";
+            print = print + this.printMeasuresRecognition(rejectionAttack) + ";";
 
             System.out.println(print.replace(",", "."));
         }
 
-
     }
-    
+
 }
