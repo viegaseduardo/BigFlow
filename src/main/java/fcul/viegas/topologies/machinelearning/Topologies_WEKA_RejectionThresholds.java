@@ -33,6 +33,7 @@ import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
+import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.Randomize;
@@ -418,27 +419,26 @@ public class Topologies_WEKA_RejectionThresholds {
 
         return inputMapped;
     }
-    
+
     public Classifier trainClassifierHoeffing(Instances train) throws Exception {
+        
+        Resample resample = new Resample();
+        resample.setBiasToUniformClass(1.0d);
+        
+        Instances dataTrain = Filter.useFilter(train, resample);
+        
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
-        inputMapped.setModelHeader(train);
+        inputMapped.setModelHeader(dataTrain);
 
         FilteredClassifier filteredClassifierRandom = new FilteredClassifier();
         filteredClassifierRandom.setFilter(new Randomize());
-        
-        FilteredClassifier filteredClassifierBalancer = new FilteredClassifier();
-        filteredClassifierBalancer.setFilter(new ClassBalancer());
-        
 
         HoeffdingTree classifier = new HoeffdingTree();
 
         filteredClassifierRandom.setClassifier(classifier);
-        filteredClassifierBalancer.setClassifier(filteredClassifierRandom);
-        
 
-        inputMapped.setClassifier(filteredClassifierBalancer);
-        inputMapped.buildClassifier(train);
+        inputMapped.buildClassifier(dataTrain);
 
         return inputMapped;
     }
@@ -556,23 +556,23 @@ public class Topologies_WEKA_RejectionThresholds {
 
         return ret;
     }
-    
-    public Instances[] splitNormalAnomaly(Instances data, String testFile) throws Exception{
+
+    public Instances[] splitNormalAnomaly(Instances data, String testFile) throws Exception {
         Instances[] instVect = new Instances[2];
         instVect[0] = this.openFile(testFile);
         instVect[1] = this.openFile(testFile);
-        
+
         instVect[0].delete();
         instVect[1].delete();
-        
-        for(Instance inst: data){
-            if(inst.classValue() == 0.0d){
+
+        for (Instance inst : data) {
+            if (inst.classValue() == 0.0d) {
                 instVect[0].add(inst);
-            }else{
+            } else {
                 instVect[1].add(inst);
             }
         }
-        
+
         return instVect;
     }
 
@@ -595,8 +595,13 @@ public class Topologies_WEKA_RejectionThresholds {
             }
         }
 
+        System.out.println("Splitting training file...");
+        Instances[] instVect = this.splitNormalAnomaly(dataTrain, this.testFiles.get(0));
+
         System.out.println("Training trainClassifierHoeffing....");
         Classifier classifier = this.trainClassifierHoeffing(dataTrain);
+
+        System.out.println(classifier.toString());
 
         System.out.println("Testing... ");
 
@@ -607,17 +612,14 @@ public class Topologies_WEKA_RejectionThresholds {
         }
 
         java.util.Collections.sort(probs);
-        
-        System.out.println("Splitting training file...");
-        Instances[] instVect = this.splitNormalAnomaly(dataTrain, this.testFiles.get(0));
 
         System.out.println("Starting tests...");
-        
+
         for (Double probNormal : probs) {
             for (Double probAttack : probs) {
                 float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue());
                 float[] rejectionAttack = this.evaluateOnDataset(classifier, instVect[1], probNormal.floatValue(), probAttack.floatValue());
-                
+
                 float[] allreject = new float[5];
                 allreject[0] = rejectionNormal[0] + rejectionAttack[0];
                 allreject[1] = rejectionNormal[1] + rejectionAttack[1];
@@ -630,7 +632,6 @@ public class Topologies_WEKA_RejectionThresholds {
                 print = print + this.printMeasuresRecognition(allreject) + ";";
                 print = print + this.printMeasuresRecognition(rejectionNormal) + ";";
                 print = print + this.printMeasuresRecognition(rejectionAttack) + ";";
-
 
                 System.out.println(print.replace(",", "."));
             }
