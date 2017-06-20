@@ -602,7 +602,7 @@ public class Topologies_WEKA_RejectionThresholds {
 
         ArrayList<Double> probs = new ArrayList();
 
-        for (Double prob = 0.50d; prob <= 1.0d; prob += 0.01d) {
+        for (Double prob = 0.50d; prob <= 1.0d; prob += 0.1d) {
             probs.add(prob);
         }
 
