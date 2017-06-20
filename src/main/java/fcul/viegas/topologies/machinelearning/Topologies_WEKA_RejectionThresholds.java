@@ -424,6 +424,7 @@ public class Topologies_WEKA_RejectionThresholds {
         
         Resample resample = new Resample();
         resample.setBiasToUniformClass(1.0d);
+        resample.setInputFormat(train);
         
         Instances dataTrain = Filter.useFilter(train, resample);
         
