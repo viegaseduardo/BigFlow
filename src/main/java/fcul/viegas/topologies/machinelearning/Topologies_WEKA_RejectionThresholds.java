@@ -597,9 +597,6 @@ public class Topologies_WEKA_RejectionThresholds {
             }
         }
 
-        System.out.println("Splitting training file...");
-        Instances[] instVect = this.splitNormalAnomaly(dataTrain, this.testFiles.get(0));
-
         System.out.println("Training trainClassifierHoeffing....");
         Classifier classifier = this.trainClassifierHoeffing(dataTrain);
 
@@ -609,16 +606,30 @@ public class Topologies_WEKA_RejectionThresholds {
 
         ArrayList<Double> probs = new ArrayList();
 
-        for (Double prob = 0.50d; prob <= 1.0d; prob += 0.1d) {
+        for (Double prob = 0.50d; prob <= 1.0d; prob += 0.05d) {
             probs.add(prob);
         }
 
         java.util.Collections.sort(probs);
 
         System.out.println("Starting tests...");
+        
+        dataTrain = this.openFile(this.testFiles.get(13));
 
-        for (Double probNormal : probs) {
-            for (Double probAttack : probs) {
+        for (int j = 12; j >= 7; j--) {
+            if (j < this.testFiles.size()) {
+                Instances newDataTrain = this.openFile(this.testFiles.get(j));
+                for (Instance inst : newDataTrain) {
+                    dataTrain.add(inst);
+                }
+            }
+        }
+
+        System.out.println("Splitting training file...");
+        Instances[] instVect = this.splitNormalAnomaly(dataTrain, this.testFiles.get(0));
+
+        for (Double probAttack : probs) {
+            for (Double probNormal : probs) {
                 float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue());
                 float[] rejectionAttack = this.evaluateOnDataset(classifier, instVect[1], probNormal.floatValue(), probAttack.floatValue());
 
