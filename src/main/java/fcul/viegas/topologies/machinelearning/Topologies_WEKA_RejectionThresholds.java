@@ -439,6 +439,7 @@ public class Topologies_WEKA_RejectionThresholds {
 
         filteredClassifierRandom.setClassifier(classifier);
 
+        inputMapped.setClassifier(filteredClassifierRandom);
         inputMapped.buildClassifier(dataTrain);
 
         return inputMapped;
