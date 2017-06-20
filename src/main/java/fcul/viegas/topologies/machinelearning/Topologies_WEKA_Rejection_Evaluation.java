@@ -619,7 +619,7 @@ public class Topologies_WEKA_Rejection_Evaluation {
             allreject[3] = rejectionNormal[3] + rejectionAttack[3];
             allreject[4] = rejectionNormal[4] + rejectionAttack[4];
 
-            String print = probNormal + ";" + probAttack + ";"
+            String print = probNormal + ";" + probAttack + ";" + this.testFiles.get(i) + ";"
                     + (instVect[0].size() + instVect[1].size()) + ";";
             print = print + this.printMeasuresRecognition(allreject) + ";";
             print = print + this.printMeasuresRecognition(rejectionNormal) + ";";
