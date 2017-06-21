@@ -627,7 +627,7 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
 
                 Randomize random = new Randomize();
                 random.setInputFormat(dataTrain);
-                dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], random);
+                dataUpdate = Filter.useFilter(dataUpdate, random);
 
                 InputMappedClassifier inputMapped = ((InputMappedClassifier) classifier);
                 HoeffdingTree tree = (HoeffdingTree) ((FilteredClassifier) inputMapped.getClassifier()).getClassifier();
