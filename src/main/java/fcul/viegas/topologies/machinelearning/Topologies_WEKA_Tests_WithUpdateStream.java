@@ -610,7 +610,7 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         System.out.println(classifier.toString());
 
         Double probNormal = 0.95d;
-        Double probAttack = 0.50d;
+        Double probAttack = 0.90d;
 
         System.out.println("Testing... ");
 
@@ -619,16 +619,16 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         for (int i = 0; i < this.testFiles.size(); i++) {
 
             if (i >= delayDays) {
-//                Resample resample = new Resample();
-//                resample.setBiasToUniformClass(1.0d);
-//                resample.setInputFormat(this.updateInstances[i - delayDays]);
-//
-//                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], resample);
+                Resample resample = new Resample();
+                resample.setBiasToUniformClass(1.0d);
+                resample.setInputFormat(this.updateInstances[i - delayDays]);
+
+                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], resample);
 
 
                 Randomize random = new Randomize();
                 random.setInputFormat(dataTrain);
-                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], random);
+                dataUpdate = Filter.useFilter(dataUpdate, random);
 
                 InputMappedClassifier inputMapped = ((InputMappedClassifier) classifier);
                 HoeffdingTree tree = (HoeffdingTree) ((FilteredClassifier) inputMapped.getClassifier()).getClassifier();
