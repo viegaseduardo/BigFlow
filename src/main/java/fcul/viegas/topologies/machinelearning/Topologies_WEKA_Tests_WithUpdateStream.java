@@ -620,11 +620,13 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         for (int i = 0; i < this.testFiles.size(); i++) {
             
             if(i >= delayDays){
-                HoeffdingTree tree = (HoeffdingTree) classifier;
+                HoeffdingTree tree = (HoeffdingTree) ((InputMappedClassifier) classifier).getClassifier();
                 
                 for(Instance inst: this.updateInstances[i-delayDays]){
                     tree.updateClassifier(inst);
                 }
+                
+                ((InputMappedClassifier) classifier).setClassifier(tree);
             }
             
             Instances[] instVect = this.splitNormalAnomaly(this.openFile(this.testFiles.get(i)), this.testFiles.get(i));
