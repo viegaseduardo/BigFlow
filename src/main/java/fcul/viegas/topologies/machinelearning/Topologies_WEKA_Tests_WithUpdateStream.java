@@ -42,7 +42,8 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
 public class Topologies_WEKA_Tests_WithUpdateStream {
 
     private ArrayList<String> testFiles = new ArrayList();
-    private Instances[] updateInstances;
+    private Instances[] updateInstancesAtk;
+    private Instances[] updateInstancesNorm;
 
     public void findFilesForTest(String pathTestDirectory) {
         File directory = new File(pathTestDirectory);
@@ -471,7 +472,8 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         return month;
     }
 
-    public float[] evaluateOnDataset(Classifier classifier, Instances instData, float thresholdRejectNormal, float thresholdRejectAttack, int index) throws Exception {
+    public float[] evaluateOnDataset(Classifier classifier, Instances instData,
+            float thresholdRejectNormal, float thresholdRejectAttack, int index) throws Exception {
         int nRejected = 0;
         int acceptedCorrectlyClassified = 0;
         int acceptedMissclassified = 0;
@@ -496,8 +498,11 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
                         //sucessfully rejected
                         rejectedMissclassified++;
                     }
-
-                    this.updateInstances[index].add(inst);
+                    if (inst.classValue() == 0.0d) {
+                        this.updateInstancesNorm[index].add(inst);
+                    } else {
+                        this.updateInstancesAtk[index].add(inst);
+                    }
                 } else {
                     //correctly accepted
                     if (inst.classValue() == predictedClass) {
@@ -519,7 +524,11 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
                         rejectedMissclassified++;
                     }
 
-                    this.updateInstances[index].add(inst);
+                    if (inst.classValue() == 0.0d) {
+                        this.updateInstancesNorm[index].add(inst);
+                    } else {
+                        this.updateInstancesAtk[index].add(inst);
+                    }
                 } else {
                     //correctly accepted
                     if (inst.classValue() == predictedClass) {
@@ -589,10 +598,16 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         System.out.println("Opening training file....");
         Instances dataTrain = this.openFile(this.testFiles.get(0));
 
-        this.updateInstances = new Instances[this.testFiles.size()];
+        this.updateInstancesAtk = new Instances[this.testFiles.size()];
         for (int i = 0; i < this.testFiles.size(); i++) {
-            this.updateInstances[i] = new Instances(dataTrain, 0, 1);
-            this.updateInstances[i].delete();
+            this.updateInstancesAtk[i] = new Instances(dataTrain, 0, 1);
+            this.updateInstancesAtk[i].delete();
+        }
+
+        this.updateInstancesNorm = new Instances[this.testFiles.size()];
+        for (int i = 0; i < this.testFiles.size(); i++) {
+            this.updateInstancesNorm[i] = new Instances(dataTrain, 0, 1);
+            this.updateInstancesNorm[i].delete();
         }
 
         for (int j = 1; j <= 6; j++) {
@@ -625,10 +640,22 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
 //
 //                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], resample);
 //
+                Instances toUpdate = null;
+                if(this.updateInstancesAtk[i - delayDays].size() > this.updateInstancesNorm[i - delayDays].size()){
+                    toUpdate = new Instances(this.updateInstancesAtk[i - delayDays], 0, this.updateInstancesNorm[i - delayDays].size());
+                    for(Instance inst : this.updateInstancesNorm[i - delayDays]){
+                        toUpdate.add(inst);
+                    }
+                }else{
+                    toUpdate = new Instances(this.updateInstancesNorm[i - delayDays], 0, this.updateInstancesAtk[i - delayDays].size());
+                    for(Instance inst : this.updateInstancesAtk[i - delayDays]){
+                        toUpdate.add(inst);
+                    }
+                }
 
                 Randomize random = new Randomize();
                 random.setInputFormat(dataTrain);
-                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], random);
+                Instances dataUpdate = Filter.useFilter(toUpdate, random);
 
                 InputMappedClassifier inputMapped = ((InputMappedClassifier) classifier);
                 HoeffdingTree tree = (HoeffdingTree) ((FilteredClassifier) inputMapped.getClassifier()).getClassifier();
@@ -644,8 +671,6 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
             Instances[] instVect = this.splitNormalAnomaly(this.openFile(this.testFiles.get(i)), this.testFiles.get(i));
 
             float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue(), i);
-            this.updateInstances[i].delete();
-            
             float[] rejectionAttack = this.evaluateOnDataset(classifier, instVect[1], probNormal.floatValue(), probAttack.floatValue(), i);
 
             float[] allreject = new float[5];
