@@ -203,9 +203,9 @@ public class Main {
                     thread.end = 278;
                     i = i + modellife;
                 } else {
-                    if (modellife <= 30) {
+                    if (modellife <= 25) {
                         int toJump = 0;
-                        while (toJump < 30) {
+                        while (toJump < 25) {
                             toJump += modellife;
                         }
                         thread.end = (i + toJump);
