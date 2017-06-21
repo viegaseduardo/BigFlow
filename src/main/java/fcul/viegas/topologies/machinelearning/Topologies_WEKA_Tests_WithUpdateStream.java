@@ -619,16 +619,16 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         for (int i = 0; i < this.testFiles.size(); i++) {
 
             if (i >= delayDays) {
-                Resample resample = new Resample();
-                resample.setBiasToUniformClass(1.0d);
-                resample.setInputFormat(this.updateInstances[i - delayDays]);
-
-                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], resample);
-
+//                Resample resample = new Resample();
+//                resample.setBiasToUniformClass(1.0d);
+//                resample.setInputFormat(this.updateInstances[i - delayDays]);
+//
+//                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], resample);
+//
 
                 Randomize random = new Randomize();
                 random.setInputFormat(dataTrain);
-                dataUpdate = Filter.useFilter(dataUpdate, random);
+                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], random);
 
                 InputMappedClassifier inputMapped = ((InputMappedClassifier) classifier);
                 HoeffdingTree tree = (HoeffdingTree) ((FilteredClassifier) inputMapped.getClassifier()).getClassifier();
@@ -644,6 +644,8 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
             Instances[] instVect = this.splitNormalAnomaly(this.openFile(this.testFiles.get(i)), this.testFiles.get(i));
 
             float[] rejectionNormal = this.evaluateOnDataset(classifier, instVect[0], probNormal.floatValue(), probAttack.floatValue(), i);
+            this.updateInstances[i].delete();
+            
             float[] rejectionAttack = this.evaluateOnDataset(classifier, instVect[1], probNormal.floatValue(), probAttack.floatValue(), i);
 
             float[] allreject = new float[5];
