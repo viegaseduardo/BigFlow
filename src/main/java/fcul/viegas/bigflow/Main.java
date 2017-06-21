@@ -20,6 +20,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_RejectionThresholds;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection_Evaluation;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdate;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateStream;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreaded;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import java.nio.file.Files;
@@ -35,8 +36,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         if (args.length == 1) {
+            
+            Main.startTopologies_WEKA_Tests_WithUpdateStream();
 
-            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
+//            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
             // Main.startTopologies_WEKA_Tests_WithoutUpdate();
             //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
@@ -132,6 +135,16 @@ public class Main {
     public static void startTopologies_WEKA_RejectionThresholds() {
         try {
             Topologies_WEKA_RejectionThresholds topo = new Topologies_WEKA_RejectionThresholds();
+
+            topo.runTopology("/home/viegas/arffs/viegas");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public static void startTopologies_WEKA_Tests_WithUpdateStream() {
+        try {
+            Topologies_WEKA_Tests_WithUpdateStream topo = new Topologies_WEKA_Tests_WithUpdateStream();
 
             topo.runTopology("/home/viegas/arffs/viegas");
         } catch (Exception ex) {
