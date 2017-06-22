@@ -624,7 +624,7 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
 
         //System.out.println(classifier.toString());
         Double probNormal = 0.95d;
-        Double probAttack = 0.90d;
+        Double probAttack = 0.50d;
 
         //System.out.println("Testing... ");
         int delayDays = 5;
@@ -645,11 +645,11 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
                         toUpdate.add(inst);
                     }
                 } else {
-//                    if (this.updateInstancesNorm[i - delayDays].size() >= (this.updateInstancesAtk[i - delayDays].size() * 2)) {
-//                        toUpdate = new Instances(this.updateInstancesNorm[i - delayDays], 0, this.updateInstancesAtk[i - delayDays].size() * 2);
-//                    } else {
+                    if (this.updateInstancesNorm[i - delayDays].size() >= (this.updateInstancesAtk[i - delayDays].size() * 3)) {
+                        toUpdate = new Instances(this.updateInstancesNorm[i - delayDays], 0, this.updateInstancesAtk[i - delayDays].size() * 3);
+                    } else {
                     toUpdate = new Instances(this.updateInstancesNorm[i - delayDays], 0, this.updateInstancesAtk[i - delayDays].size());
-//                    }
+                    }
                     for (Instance inst : this.updateInstancesAtk[i - delayDays]) {
                         toUpdate.add(inst);
                     }
