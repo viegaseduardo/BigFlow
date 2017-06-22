@@ -625,7 +625,7 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         System.out.println(classifier.toString());
 
         Double probNormal = 0.95d;
-        Double probAttack = 0.90d;
+        Double probAttack = 0.50d;
 
         System.out.println("Testing... ");
 
