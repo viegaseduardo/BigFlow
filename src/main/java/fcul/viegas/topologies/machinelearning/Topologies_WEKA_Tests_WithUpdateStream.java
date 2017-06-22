@@ -592,7 +592,7 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
         System.out.println("Path to test directory: " + pathTestDirectory);
         this.findFilesForTest(pathTestDirectory);
         for (String s : this.testFiles) {
-            System.out.println("\t" + s);
+            //System.out.println("\t" + s);
         }
 
         System.out.println("Opening training file....");
@@ -619,16 +619,14 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
             }
         }
 
-        System.out.println("Training trainClassifierHoeffing....");
+        //System.out.println("Training trainClassifierHoeffing....");
         Classifier classifier = this.trainClassifierHoeffing(dataTrain);
 
-        System.out.println(classifier.toString());
-
+        //System.out.println(classifier.toString());
         Double probNormal = 0.95d;
         Double probAttack = 0.50d;
 
-        System.out.println("Testing... ");
-
+        //System.out.println("Testing... ");
         int delayDays = 5;
 
         for (int i = 0; i < this.testFiles.size(); i++) {
@@ -641,14 +639,18 @@ public class Topologies_WEKA_Tests_WithUpdateStream {
 //                Instances dataUpdate = Filter.useFilter(this.updateInstances[i - delayDays], resample);
 //
                 Instances toUpdate = null;
-                if(this.updateInstancesAtk[i - delayDays].size() > this.updateInstancesNorm[i - delayDays].size()){
+                if (this.updateInstancesAtk[i - delayDays].size() > this.updateInstancesNorm[i - delayDays].size()) {
                     toUpdate = new Instances(this.updateInstancesAtk[i - delayDays], 0, this.updateInstancesNorm[i - delayDays].size());
-                    for(Instance inst : this.updateInstancesNorm[i - delayDays]){
+                    for (Instance inst : this.updateInstancesNorm[i - delayDays]) {
                         toUpdate.add(inst);
                     }
-                }else{
-                    toUpdate = new Instances(this.updateInstancesNorm[i - delayDays], 0, this.updateInstancesAtk[i - delayDays].size());
-                    for(Instance inst : this.updateInstancesAtk[i - delayDays]){
+                } else {
+                    if (this.updateInstancesNorm[i - delayDays].size() >= (this.updateInstancesAtk[i - delayDays].size() * 2)) {
+                        toUpdate = new Instances(this.updateInstancesNorm[i - delayDays], 0, this.updateInstancesAtk[i - delayDays].size() * 2);
+                    } else {
+                        toUpdate = new Instances(this.updateInstancesNorm[i - delayDays], 0, this.updateInstancesAtk[i - delayDays].size());
+                    }
+                    for (Instance inst : this.updateInstancesAtk[i - delayDays]) {
                         toUpdate.add(inst);
                     }
                 }
