@@ -13,6 +13,7 @@ import fcul.viegas.bigflow.dto.NetworkPacketDTO;
 import fcul.viegas.bigflow.parser.NetworkPacketParserMapFunction;
 import fcul.viegas.bigflow.timestamp.NetworkPacketTimestampAssigner;
 import fcul.viegas.bigflow.windows.feature.extractor.FeatureClassAssigner;
+import fcul.viegas.bigflow.windows.feature.extractor.FeatureToString;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindowJoiner;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A;
 import fcul.viegas.bigflow.windows.feature.extractor.NetworkPacketWindow_A_B;
@@ -42,8 +43,6 @@ public class Topologies_ARFF_CREATOR {
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         
-
-        env.setParallelism(5);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
         //read file
@@ -107,8 +106,9 @@ public class Topologies_ARFF_CREATOR {
         }).window(TumblingEventTimeWindows.of(Time.milliseconds(Definitions.TIME_WINDOW_NETWORK_PACKET_FEATURE_EXTRACTOR_A)))
                 .apply(new NetworkPacketWindowJoiner());
 
-        SingleOutputStreamOperator<Features_DTO> networkFeaturesAssingedClass
-                = networkFeatures.map(new FeatureClassAssigner(networkClassDescriptionPath));
+        SingleOutputStreamOperator<String> networkFeaturesAssingedClass
+                = networkFeatures.map(new FeatureClassAssigner(networkClassDescriptionPath))
+                .map(new FeatureToString());
 
         networkFeaturesAssingedClass.writeAsText(networkArffPath, WriteMode.OVERWRITE).setParallelism(1);
 
