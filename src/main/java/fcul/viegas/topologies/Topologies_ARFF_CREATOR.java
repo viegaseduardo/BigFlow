@@ -107,7 +107,7 @@ public class Topologies_ARFF_CREATOR {
                 .apply(new NetworkPacketWindowJoiner());
 
         SingleOutputStreamOperator<String> networkFeaturesAssingedClass
-                = networkFeatures.map(new FeatureClassAssigner(networkClassDescriptionPath))
+                = networkFeatures.map(new FeatureClassAssigner(networkClassDescriptionPath)).shuffle()
                 .map(new FeatureToString());
 
         networkFeaturesAssingedClass.writeAsText(networkArffPath, WriteMode.OVERWRITE).setParallelism(1);
