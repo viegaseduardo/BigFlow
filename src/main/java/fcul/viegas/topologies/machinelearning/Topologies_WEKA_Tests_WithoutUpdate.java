@@ -304,12 +304,23 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
     }
 
     public Classifier trainClassifierNaive(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         NaiveBayes classifier = new NaiveBayes();
 
         classifier.setUseSupervisedDiscretization(true);
-        classifier.buildClassifier(train);
 
-        return classifier;
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierForest(Instances train) throws Exception {
@@ -352,8 +363,8 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         }
         //dataTrain = this.selectFeatures(dataTrain);
 
-        System.out.println("Training trainClassifierTree....");
-        Classifier classifier = this.trainClassifierTree(dataTrain);
+        System.out.println("Training trainClassifierNaive....");
+        Classifier classifier = this.trainClassifierNaive(dataTrain);
 
         System.out.println("Testing... ");
         for (String testPath : this.testFiles) {
