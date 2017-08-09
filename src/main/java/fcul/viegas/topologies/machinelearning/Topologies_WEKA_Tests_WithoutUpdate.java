@@ -44,6 +44,8 @@ import weka.filters.unsupervised.attribute.Normalize;
 public class Topologies_WEKA_Tests_WithoutUpdate {
 
     private ArrayList<String> testFiles = new ArrayList();
+    public String folderPath;
+    public String featureSET;
 
     public void findFilesForTest(String pathTestDirectory) {
         File directory = new File(pathTestDirectory);
@@ -51,11 +53,12 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
 
         for (String fileName : directoryContents) {
             File temp = new File(String.valueOf(directory), fileName);
-            if (!String.valueOf(temp).contains("week")) {
+            if (temp.isDirectory()) {
+                this.findFilesForTest(fileName);
+            } else if (String.valueOf(temp).contains("_" + this.featureSET + ".arff")) {
                 testFiles.add(String.valueOf(temp));
             }
         }
-        java.util.Collections.sort(testFiles);
     }
 
     public Instances selectFeatures(Instances path) throws Exception {
@@ -68,7 +71,7 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         attsel.setEvaluator(selector);
         attsel.setSearch(ranker);
         attsel.SelectAttributes(path);
-        
+
         return attsel.reduceDimensionality(path);
     }
 
@@ -272,9 +275,9 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
     public Classifier trainClassifierTree(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setModelHeader(train);
-        
+
         J48 classifier = new J48();
-        
+
         inputMapped.setClassifier(classifier);
         inputMapped.buildClassifier(train);
 
@@ -322,9 +325,11 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         return classifier;
     }
 
-    public void runTopology(String pathTestDirectory) throws Exception {
-        System.out.println("Path to test directory: " + pathTestDirectory);
-        this.findFilesForTest(pathTestDirectory);
+    public void runTopology() throws Exception {
+        System.out.println("Path to test directory: " + this.folderPath + " searching for feature set: " + this.featureSET);
+        this.findFilesForTest(this.folderPath);
+        java.util.Collections.sort(testFiles);
+
         for (String s : this.testFiles) {
             System.out.println("\t" + s);
         }
@@ -337,7 +342,7 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
                 dataTrain.add(inst);
             }
         }
-        dataTrain = this.selectFeatures(dataTrain);
+        //dataTrain = this.selectFeatures(dataTrain);
 
         System.out.println("Training trainClassifierTree....");
         Classifier classifier = this.trainClassifierTree(dataTrain);

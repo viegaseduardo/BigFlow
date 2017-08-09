@@ -41,13 +41,21 @@ public class Main {
 
 //            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 
-            // Main.startTopologies_WEKA_Tests_WithoutUpdate();
+            // 
             //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
 //            Main.startTopologies_WEKA_RejectionThresholds();
 
 //                Main.startTopologies_WEKA_Rejection_Evaluation();
+        } else if (args[0].equals("testwithoutupdate")) {
+            /*
+                args[1] = path to folder
+                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+             */
+            Main.startTopologies_WEKA_Tests_WithoutUpdate(
+                    args[1], 
+                    args[2]);
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
@@ -186,10 +194,12 @@ public class Main {
         }
     }
 
-    public static void startTopologies_WEKA_Tests_WithoutUpdate() {
+    public static void startTopologies_WEKA_Tests_WithoutUpdate(String folderPath, String featureSet) {
         try {
             Topologies_WEKA_Tests_WithoutUpdate topo = new Topologies_WEKA_Tests_WithoutUpdate();
-            topo.runTopology("/home/projeto/disco/stratweka/arffs/viegas/");
+            topo.folderPath = folderPath;
+            topo.featureSET = featureSet;
+            topo.runTopology();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
