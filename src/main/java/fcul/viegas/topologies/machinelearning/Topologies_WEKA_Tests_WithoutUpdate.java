@@ -26,6 +26,7 @@ import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.CostSensitiveClassifier;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -33,6 +34,7 @@ import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
+import weka.filters.supervised.instance.ClassBalancer;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 import weka.filters.unsupervised.attribute.Normalize;
@@ -54,7 +56,7 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         for (String fileName : directoryContents) {
             File temp = new File(String.valueOf(directory), fileName);
             if (temp.isDirectory()) {
-                this.findFilesForTest(fileName);
+                this.findFilesForTest(String.valueOf(temp));
             } else if (String.valueOf(temp).contains("_" + this.featureSET + ".arff")) {
                 testFiles.add(String.valueOf(temp));
             }
@@ -274,11 +276,17 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
 
     public Classifier trainClassifierTree(Instances train) throws Exception {
         InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
 
         J48 classifier = new J48();
 
-        inputMapped.setClassifier(classifier);
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
