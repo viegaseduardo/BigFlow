@@ -11,6 +11,7 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
@@ -63,14 +64,17 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
             public String map(String path) throws Exception {
                 return mlModelBuilder.evaluateClassifier(path, classifier);
             }
-        }).setParallelism(env.getParallelism()).
-                sortPartition(0, Order.ASCENDING).
-                setParallelism(1).
+        }).setParallelism(env.getParallelism()).sortPartition(new KeySelector<String, String>() {
+            @Override
+            public String getKey(String in) throws Exception {
+                return in;
+            }
+        }, Order.ASCENDING).
                 writeAsText(outputPath + "_raw_output").
                 setParallelism(1);
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
-        
+
         ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output", outputPath + "_summarized_weekly.csv");
 
     }
