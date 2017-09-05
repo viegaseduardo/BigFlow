@@ -8,6 +8,7 @@ package fcul.viegas.topologies.machinelearning;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -35,7 +36,7 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  *
  * @author viegas
  */
-public class MachineLearningModelBuilders {
+public class MachineLearningModelBuilders implements Serializable {
 
     public void findFilesForTest(String pathTestDirectory, String featureSet, ArrayList<String> testFiles) {
         File directory = new File(pathTestDirectory);
