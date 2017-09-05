@@ -26,6 +26,9 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
     public void run(String pathArffs, String featureSet, String outputPath) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
         ArrayList<String> testFiles = new ArrayList();
+        
+        this.folderPath = pathArffs;
+        this.featureSET = featureSet;
 
         System.out.println("Path to test directory: " + this.folderPath + " searching for feature set: " + this.featureSET);
         mlModelBuilder.findFilesForTest(this.folderPath, featureSET, testFiles);
