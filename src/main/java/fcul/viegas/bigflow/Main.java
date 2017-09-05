@@ -52,6 +52,7 @@ public class Main {
             /*
                 args[1] = path to folder
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[3] = number of threads
              */
             Main.startTopologies_WEKA_Tests_WithoutUpdate(
                     args[1], 

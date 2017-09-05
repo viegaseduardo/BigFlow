@@ -49,304 +49,13 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
     public String folderPath;
     public String featureSET;
 
-    public void findFilesForTest(String pathTestDirectory) {
-        File directory = new File(pathTestDirectory);
-        String[] directoryContents = directory.list();
-
-        for (String fileName : directoryContents) {
-            File temp = new File(String.valueOf(directory), fileName);
-            if (temp.isDirectory()) {
-                this.findFilesForTest(String.valueOf(temp));
-            } else if (String.valueOf(temp).contains("_" + this.featureSET + ".arff")) {
-                testFiles.add(String.valueOf(temp));
-            }
-        }
-    }
-
-    public Instances selectFeatures(Instances path) throws Exception {
-
-        AttributeSelection attsel = new AttributeSelection();
-        weka.attributeSelection.InfoGainAttributeEval selector = new InfoGainAttributeEval();
-        weka.attributeSelection.Ranker ranker = new Ranker();
-
-        ranker.setNumToSelect(10);
-        attsel.setEvaluator(selector);
-        attsel.setSearch(ranker);
-        attsel.SelectAttributes(path);
-
-        return attsel.reduceDimensionality(path);
-    }
-
-    public Instances openFile(String path) throws Exception {
-        BufferedReader reader
-                = new BufferedReader(new FileReader(path));
-        ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
-        Instances dataTrain = arff.getData();
-        dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-
-        String[] options = new String[2];
-        options[0] = "-R";
-
-        String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
-                + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + ","
-                + (dataTrain.numAttributes() - 1);
-        options[1] = optRemove;
-
-        Remove remove = new Remove();
-        remove.setOptions(options);
-        //remove.setInvertSelection(true);
-        remove.setInputFormat(dataTrain);
-
-        Instances newdataFeat = Filter.useFilter(dataTrain, remove);
-        newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
-
-//        Enumeration<Attribute> e = newdataFeat.enumerateAttributes();
-//        
-//        while (e.hasMoreElements()) {
-//            Attribute param = e.nextElement();
-//            System.out.println(param.name());
-//        }
-//        System.out.println(newdataFeat.classAttribute().name());
-        return newdataFeat;
-    }
-
-    public Instances openFileNormalized(String path) throws Exception {
-        BufferedReader reader
-                = new BufferedReader(new FileReader(path));
-        ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
-        Instances dataTrain = arff.getData();
-        dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-
-        String[] options = new String[2];
-        options[0] = "-R";
-
-        String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
-                + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + ","
-                + (dataTrain.numAttributes() - 1);
-        options[1] = optRemove;
-
-        Remove remove = new Remove();
-        remove.setOptions(options);
-        //remove.setInvertSelection(true);
-        remove.setInputFormat(dataTrain);
-
-        Instances newdataFeat = Filter.useFilter(dataTrain, remove);
-        newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
-
-        Normalize norm = new Normalize();
-
-        norm.setInputFormat(newdataFeat);
-        norm.setScale(2.0d);
-        norm.setTranslation(-1.0d);
-
-        Instances normData = Filter.useFilter(dataTrain, norm);
-        normData.setClassIndex(normData.numAttributes() - 1);
-
-        return newdataFeat;
-    }
-
-    public Instances[] openFileForTest(String path) throws Exception {
-        BufferedReader reader
-                = new BufferedReader(new FileReader(path));
-        ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
-        Instances dataTrain = arff.getData();
-        dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-
-        RemoveWithValues remAllButNormal = new RemoveWithValues();
-        RemoveWithValues remAllButSuspicious = new RemoveWithValues();
-        RemoveWithValues remAllButAnomalous = new RemoveWithValues();
-
-        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
-        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
-        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
-
-        remAllButNormal.setNominalIndices("2,3");
-        remAllButSuspicious.setNominalIndices("1,2");
-        remAllButAnomalous.setNominalIndices("1,3");
-
-        remAllButNormal.setInputFormat(dataTrain);
-        remAllButSuspicious.setInputFormat(dataTrain);
-        remAllButAnomalous.setInputFormat(dataTrain);
-
-        Instances dataTrainNormal = Filter.useFilter(dataTrain, remAllButNormal);
-        Instances dataTrainSuspicious = Filter.useFilter(dataTrain, remAllButSuspicious);
-        Instances dataTrainAnomalous = Filter.useFilter(dataTrain, remAllButAnomalous);
-
-        String[] options = new String[2];
-        options[0] = "-R";
-
-        String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
-                + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + ","
-                + (dataTrain.numAttributes() - 1);
-        options[1] = optRemove;
-
-        Remove remove = new Remove();
-        remove.setOptions(options);
-        //remove.setInvertSelection(true);
-        remove.setInputFormat(dataTrain);
-
-        Instances newdataNormal = Filter.useFilter(dataTrainNormal, remove);
-        Instances newdataSuspicious = Filter.useFilter(dataTrainSuspicious, remove);
-        Instances newdataAnomalous = Filter.useFilter(dataTrainAnomalous, remove);
-
-        newdataNormal.setClassIndex(newdataNormal.numAttributes() - 1);
-        newdataSuspicious.setClassIndex(newdataSuspicious.numAttributes() - 1);
-        newdataAnomalous.setClassIndex(newdataAnomalous.numAttributes() - 1);
-
-        Instances[] ret = new Instances[3];
-        ret[0] = newdataNormal;
-        ret[1] = newdataSuspicious;
-        ret[2] = newdataAnomalous;
-
-        return ret;
-    }
-
-    public Instances[] openFileForTestNormalized(String path) throws Exception {
-        BufferedReader reader
-                = new BufferedReader(new FileReader(path));
-        ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
-        Instances dataTrain = arff.getData();
-        dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-
-        Normalize norm = new Normalize();
-
-        norm.setInputFormat(dataTrain);
-        norm.setScale(2.0d);
-        norm.setTranslation(-1.0d);
-
-        dataTrain = Filter.useFilter(dataTrain, norm);
-        dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-
-        RemoveWithValues remAllButNormal = new RemoveWithValues();
-        RemoveWithValues remAllButSuspicious = new RemoveWithValues();
-        RemoveWithValues remAllButAnomalous = new RemoveWithValues();
-
-        remAllButNormal.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
-        remAllButSuspicious.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
-        remAllButAnomalous.setAttributeIndex("" + (dataTrain.numAttributes() - 1));
-
-        remAllButNormal.setNominalIndices("2,3");
-        remAllButSuspicious.setNominalIndices("1,2");
-        remAllButAnomalous.setNominalIndices("1,3");
-
-        remAllButNormal.setInputFormat(dataTrain);
-        remAllButSuspicious.setInputFormat(dataTrain);
-        remAllButAnomalous.setInputFormat(dataTrain);
-
-        Instances dataTrainNormal = Filter.useFilter(dataTrain, remAllButNormal);
-        Instances dataTrainSuspicious = Filter.useFilter(dataTrain, remAllButSuspicious);
-        Instances dataTrainAnomalous = Filter.useFilter(dataTrain, remAllButAnomalous);
-
-        String[] options = new String[2];
-        options[0] = "-R";
-
-        String optRemove = "";
-        optRemove = optRemove + (dataTrain.numAttributes() - 4) + ","
-                + (dataTrain.numAttributes() - 3) + ","
-                + (dataTrain.numAttributes() - 2) + ","
-                + (dataTrain.numAttributes() - 1);
-        options[1] = optRemove;
-
-        Remove remove = new Remove();
-        remove.setOptions(options);
-        //remove.setInvertSelection(true);
-        remove.setInputFormat(dataTrain);
-
-        Instances newdataNormal = Filter.useFilter(dataTrainNormal, remove);
-        Instances newdataSuspicious = Filter.useFilter(dataTrainSuspicious, remove);
-        Instances newdataAnomalous = Filter.useFilter(dataTrainAnomalous, remove);
-
-        newdataNormal.setClassIndex(newdataNormal.numAttributes() - 1);
-        newdataSuspicious.setClassIndex(newdataSuspicious.numAttributes() - 1);
-        newdataAnomalous.setClassIndex(newdataAnomalous.numAttributes() - 1);
-
-        Instances[] ret = new Instances[3];
-        ret[0] = newdataNormal;
-        ret[1] = newdataSuspicious;
-        ret[2] = newdataAnomalous;
-
-        return ret;
-    }
-
-    public Classifier trainClassifierTree(Instances train) throws Exception {
-        InputMappedClassifier inputMapped = new InputMappedClassifier();
-        inputMapped.setSuppressMappingReport(true);
-        inputMapped.setModelHeader(train);
-
-        FilteredClassifier filteredClassifier = new FilteredClassifier();
-        filteredClassifier.setFilter(new ClassBalancer());
-
-        J48 classifier = new J48();
-
-        filteredClassifier.setClassifier(classifier);
-
-        inputMapped.setClassifier(filteredClassifier);
-        inputMapped.buildClassifier(train);
-
-        return inputMapped;
-    }
-
-    public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
-        AdaBoostM1 classifier = new AdaBoostM1();
-
-        classifier.setClassifier(new J48());
-        classifier.setNumIterations(100);
-
-        classifier.buildClassifier(train);
-
-        return classifier;
-    }
-
-    public Classifier trainClassifierNaive(Instances train) throws Exception {
-        InputMappedClassifier inputMapped = new InputMappedClassifier();
-        inputMapped.setSuppressMappingReport(true);
-        inputMapped.setModelHeader(train);
-
-        FilteredClassifier filteredClassifier = new FilteredClassifier();
-        filteredClassifier.setFilter(new ClassBalancer());
-
-        NaiveBayes classifier = new NaiveBayes();
-
-        classifier.setUseSupervisedDiscretization(true);
-
-        filteredClassifier.setClassifier(classifier);
-
-        inputMapped.setClassifier(filteredClassifier);
-        inputMapped.buildClassifier(train);
-
-        return inputMapped;
-    }
-
-    public Classifier trainClassifierForest(Instances train) throws Exception {
-        RandomForest classifier = new RandomForest();
-
-        classifier.setSeed(12345);
-        classifier.setNumIterations(100);
-        classifier.buildClassifier(train);
-
-        return classifier;
-    }
-
-    public Classifier trainClassifierSMO(Instances train) throws Exception {
-        weka.classifiers.functions.SMO classifier = new weka.classifiers.functions.SMO();
-
-        classifier.setKernel(new RBFKernel());
-        classifier.setFilterType(new SelectedTag(SMO.FILTER_NONE, SMO.TAGS_FILTER));
-
-        classifier.buildClassifier(train);
-
-        return classifier;
-    }
-
+    
     public void runTopology() throws Exception {
+        
+        MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
+        
         System.out.println("Path to test directory: " + this.folderPath + " searching for feature set: " + this.featureSET);
-        this.findFilesForTest(this.folderPath);
+        mlModelBuilder.findFilesForTest(this.folderPath, featureSET, testFiles);
         java.util.Collections.sort(testFiles);
 
         for (String s : this.testFiles) {
@@ -354,9 +63,9 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         }
 
         System.out.println("Opening training file....");
-        Instances dataTrain = this.openFile(this.testFiles.get(0));
+        Instances dataTrain = mlModelBuilder.openFile(this.testFiles.get(0));
         for (int i = 1; i < 7; i++) {
-            Instances dataTrainInc = this.openFile(this.testFiles.get(i));
+            Instances dataTrainInc = mlModelBuilder.openFile(this.testFiles.get(i));
             for (Instance inst : dataTrainInc) {
                 dataTrain.add(inst);
             }
@@ -364,11 +73,11 @@ public class Topologies_WEKA_Tests_WithoutUpdate {
         //dataTrain = this.selectFeatures(dataTrain);
 
         System.out.println("Training trainClassifierNaive....");
-        Classifier classifier = this.trainClassifierNaive(dataTrain);
+        Classifier classifier = mlModelBuilder.trainClassifierNaive(dataTrain);
 
         System.out.println("Testing... ");
         for (String testPath : this.testFiles) {
-            Instances[] dataTest = this.openFileForTest(testPath);
+            Instances[] dataTest = mlModelBuilder.openFileForTest(testPath);
 
             Evaluation evalNormal = new Evaluation(dataTest[0]);
             evalNormal.evaluateModel(classifier, dataTest[0]);
