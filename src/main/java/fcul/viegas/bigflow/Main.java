@@ -9,6 +9,7 @@ import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_FOREST;
 import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
+import fcul.viegas.topologies.machinelearning.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_CREATE_CLUSTERS;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_GRADIENT;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_NAIVE;
@@ -57,6 +58,16 @@ public class Main {
             Main.startTopologies_WEKA_Tests_WithoutUpdate(
                     args[1], 
                     args[2]);
+        }else if (args[0].equals("testwithoutupdatedistributed")) {
+            /*
+                args[1] = path to folder
+                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[3] = output
+             */
+            new Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate().run(
+                    args[1], 
+                    args[2],
+                    args[3]);
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
