@@ -5,8 +5,10 @@
  */
 package fcul.viegas.topologies.machinelearning;
 
+import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import java.util.ArrayList;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -19,14 +21,14 @@ import weka.core.Instances;
  * @author viegas
  */
 public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
-    
+
     public String folderPath;
     public String featureSET;
 
-    public void run(String pathArffs, String featureSet, String outputPath) throws Exception {
+    public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
         ArrayList<String> testFiles = new ArrayList();
-        
+
         this.folderPath = pathArffs;
         this.featureSET = featureSet;
 
@@ -48,24 +50,29 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         }
         //dataTrain = this.selectFeatures(dataTrain);
 
-        System.out.println("Training trainClassifierNaive....");
-        Classifier classifier = mlModelBuilder.trainClassifierNaive(dataTrain);
-        
+        final Classifier classifier = classifierToBuild.equals("naive")
+                ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
+                ? mlModelBuilder.trainClassifierTree(dataTrain) : null;
+
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-        
+
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
-        
-        
+
         testFilesDataset.map(new MapFunction<String, String>() {
             @Override
             public String map(String path) throws Exception {
                 return mlModelBuilder.evaluateClassifier(path, classifier);
             }
-        }).setParallelism(env.getParallelism()).writeAsText(outputPath).setParallelism(1);
-        
+        }).setParallelism(env.getParallelism()).
+                sortPartition(0, Order.ASCENDING).
+                setParallelism(1).
+                writeAsText(outputPath + "_raw_output").
+                setParallelism(1);
+
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
         
-        
+        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output", outputPath + "_summarized_weekly.csv");
+
     }
 
 }

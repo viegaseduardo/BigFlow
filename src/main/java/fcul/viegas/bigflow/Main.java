@@ -63,11 +63,13 @@ public class Main {
                 args[1] = path to folder
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
                 args[3] = output
+                args[4] = classifier {naive, tree}
              */
             new Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate().run(
                     args[1], 
                     args[2],
-                    args[3]);
+                    args[3],
+                    args[4]);
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],
