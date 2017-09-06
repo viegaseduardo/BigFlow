@@ -59,18 +59,25 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
-
+                
         testFilesDataset.rebalance().map(new MapFunction<String, String>() {
             @Override
             public String map(String path) throws Exception {
                 return mlModelBuilder.evaluateClassifier(path, classifier);
             }
-        }).writeAsText("file://" + outputPath + "_raw_output", FileSystem.WriteMode.OVERWRITE).
+        }).setParallelism(env.getParallelism()).sortPartition(new KeySelector<String, String>() {
+            @Override
+            public String getKey(String in) throws Exception {
+                return in;
+            }
+        }, Order.ASCENDING).setParallelism(1).
+                writeAsText(outputPath + "_raw_output", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
-        //ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output", outputPath + "_summarized_weekly.csv");
+        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output", outputPath + "_summarized_weekly.csv");
+
     }
 
 }
