@@ -313,11 +313,23 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public Classifier trainClassifierForest(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         RandomForest classifier = new RandomForest();
 
         classifier.setSeed(12345);
         classifier.setNumIterations(100);
         classifier.buildClassifier(train);
+
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
 
         return classifier;
     }

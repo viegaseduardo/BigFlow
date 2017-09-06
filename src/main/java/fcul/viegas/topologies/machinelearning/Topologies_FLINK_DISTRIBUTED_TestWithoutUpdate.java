@@ -54,7 +54,8 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         final Classifier classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
-                ? mlModelBuilder.trainClassifierTree(dataTrain) : null;
+                ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
+                ? mlModelBuilder.trainClassifierForest(dataTrain) : null;
 
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
