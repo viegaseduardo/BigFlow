@@ -36,18 +36,17 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+
         if (args.length == 1) {
-            
+
             Main.startTopologies_WEKA_Tests_WithUpdateStream();
 
 //            Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
-
             // 
             //           Main.startTopologies_WEKA_Tests_WithUpdateThreaded(args[0]);
 //            Main.startTopologies_WEKA_Tests_WithUpdate();
 //            
 //            Main.startTopologies_WEKA_RejectionThresholds();
-
 //                Main.startTopologies_WEKA_Rejection_Evaluation();
         } else if (args[0].equals("testwithoutupdate")) {
             /*
@@ -56,9 +55,9 @@ public class Main {
                 args[3] = number of threads
              */
             Main.startTopologies_WEKA_Tests_WithoutUpdate(
-                    args[1], 
+                    args[1],
                     args[2]);
-        }else if (args[0].equals("testwithoutupdatedistributed")) {
+        } else if (args[0].equals("testwithoutupdatedistributed")) {
             /*
                 args[1] = path to folder
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
@@ -67,7 +66,7 @@ public class Main {
                 args[5] = days to use for training
              */
             new Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate().run(
-                    args[1], 
+                    args[1],
                     args[2],
                     args[3],
                     args[4],
@@ -165,7 +164,7 @@ public class Main {
             ex.printStackTrace();
         }
     }
-    
+
     public static void startTopologies_WEKA_Tests_WithUpdateStream() {
         try {
             Topologies_WEKA_Tests_WithUpdateStream topo = new Topologies_WEKA_Tests_WithUpdateStream();
