@@ -64,12 +64,14 @@ public class Main {
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
                 args[3] = output
                 args[4] = classifier {naive, tree}
+                args[5] = days to use for training
              */
             new Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate().run(
                     args[1], 
                     args[2],
                     args[3],
-                    args[4]);
+                    args[4],
+                    Integer.valueOf(args[5]));
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],

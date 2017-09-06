@@ -27,7 +27,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
     public String folderPath;
     public String featureSET;
 
-    public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild) throws Exception {
+    public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
         ArrayList<String> testFiles = new ArrayList();
 
@@ -44,7 +44,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         System.out.println("Opening training file....");
         Instances dataTrain = mlModelBuilder.openFile(testFiles.get(0));
-        for (int i = 1; i < 7; i++) {
+        for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             for (Instance inst : dataTrainInc) {
                 dataTrain.add(inst);
