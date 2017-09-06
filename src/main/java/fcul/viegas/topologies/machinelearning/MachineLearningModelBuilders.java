@@ -322,6 +322,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         RandomForest classifier = new RandomForest();
 
+        classifier.setNumExecutionSlots(20);
         classifier.setSeed(12345);
         classifier.setNumIterations(100);
         classifier.buildClassifier(train);
