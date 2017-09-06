@@ -60,18 +60,15 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
-                
-        testFilesDataset.rebalance().map(new MapFunction<String, String>() {
-            @Override
-            public String map(String path) throws Exception {
-                return mlModelBuilder.evaluateClassifier(path, classifier);
-            }
-        }).setParallelism(env.getParallelism()).sortPartition(new KeySelector<String, String>() {
-            @Override
-            public String getKey(String in) throws Exception {
-                return in;
-            }
-        }, Order.ASCENDING).setParallelism(1).
+
+        testFilesDataset.rebalance().map(new Topologies_FLINK_MapFunction_EvaluateClassifier(classifier, mlModelBuilder))
+                .setParallelism(env.getParallelism())
+                .sortPartition(new KeySelector<String, String>() {
+                    @Override
+                    public String getKey(String in) throws Exception {
+                        return in;
+                    }
+                }, Order.ASCENDING).setParallelism(1).
                 writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
@@ -79,11 +76,10 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_monthly.csv",
                 ParseRawOutputFlinkNoUpdate.MonthRange);
-        
+
         ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_yearly.csv",
                 ParseRawOutputFlinkNoUpdate.YearRange);
-        
-        
+
     }
 
 }
