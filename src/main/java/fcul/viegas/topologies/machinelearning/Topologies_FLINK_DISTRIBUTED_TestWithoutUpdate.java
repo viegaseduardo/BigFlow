@@ -76,8 +76,13 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_weekly.csv");
-
+        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_monthly.csv",
+                ParseRawOutputFlinkNoUpdate.MonthRange);
+        
+        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_yearly.csv",
+                ParseRawOutputFlinkNoUpdate.YearRange);
+        
+        
     }
 
 }

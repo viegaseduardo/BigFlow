@@ -9,8 +9,12 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -21,8 +25,11 @@ import java.util.TreeMap;
  * @author viegas
  */
 public class ParseRawOutputFlinkNoUpdate {
+    
+    public static int MonthRange = 6;
+    public static int YearRange = 4;
 
-    public static void generateSummaryFile(String rawFile, String outputFile) throws Exception {
+    public static void generateSummaryFile(String rawFile, String outputFile, int range) throws Exception {
         HashMap<String, ValuesDTO> hashMap = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(rawFile))) {
             String line;
@@ -30,7 +37,8 @@ public class ParseRawOutputFlinkNoUpdate {
                 String split[] = line.split(";");
                 if (split.length > 4 && !line.contains("NaN")) {
                     String month = split[0].split("/")[split[0].split("/").length - 1];
-                    month = month.substring(0, 6);
+                    month = month.substring(0, range);
+                    
                     //System.out.println(month);
                     if (!hashMap.containsKey(month)) {
                         hashMap.put(month, new ValuesDTO());
@@ -57,9 +65,9 @@ public class ParseRawOutputFlinkNoUpdate {
         TreeMap<String, ValuesDTO> sorted = new TreeMap<>(hashMap);
         Set<Entry<String, ValuesDTO>> mappings = sorted.entrySet();
         Iterator it = mappings.iterator();
-        
+
         PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
-        
+
         writer.println("month;nNormal;nAnomalous;nSusp;ACC;accnormal;accallatk;accanomalous;accsusp");
 
         while (it.hasNext()) {
@@ -75,8 +83,6 @@ public class ParseRawOutputFlinkNoUpdate {
                     + acc + ";" + accNormal + ";" + accAllATK + ";" + accAnomalous + ";" + accSuspicious);
         }
         writer.close();
-        
-        
 
     }
 
