@@ -71,12 +71,12 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 return in;
             }
         }, Order.ASCENDING).setParallelism(1).
-                writeAsText(outputPath + "_raw_output", FileSystem.WriteMode.OVERWRITE).
+                writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output", outputPath + "_summarized_weekly.csv");
+        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_weekly.csv");
 
     }
 
