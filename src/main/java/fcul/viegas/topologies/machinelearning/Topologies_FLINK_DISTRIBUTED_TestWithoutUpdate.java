@@ -65,7 +65,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
             public String map(String path) throws Exception {
                 return mlModelBuilder.evaluateClassifier(path, classifier);
             }
-        }).writeAsText(outputPath + "_raw_output", FileSystem.WriteMode.OVERWRITE).
+        }).writeAsText("file://" + outputPath + "_raw_output", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
