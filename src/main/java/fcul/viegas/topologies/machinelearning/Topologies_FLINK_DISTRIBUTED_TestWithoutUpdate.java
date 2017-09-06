@@ -50,7 +50,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 dataTrain.add(inst);
             }
         }
-        dataTrain = mlModelBuilder.selectFeatures(dataTrain);
+        //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
 
         final Classifier classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
@@ -61,14 +61,17 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
-        testFilesDataset.rebalance().map(new Topologies_FLINK_MapFunction_EvaluateClassifier(classifier, mlModelBuilder))
-                .setParallelism(env.getParallelism())
-                .sortPartition(new KeySelector<String, String>() {
-                    @Override
-                    public String getKey(String in) throws Exception {
-                        return in;
-                    }
-                }, Order.ASCENDING).setParallelism(1).
+        testFilesDataset.rebalance().map(new MapFunction<String, String>() {
+            @Override
+            public String map(String path) throws Exception {
+                return mlModelBuilder.evaluateClassifier(path, classifier);
+            }
+        }).setParallelism(env.getParallelism()).sortPartition(new KeySelector<String, String>() {
+            @Override
+            public String getKey(String in) throws Exception {
+                return in;
+            }
+        }, Order.ASCENDING).setParallelism(1).
                 writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
