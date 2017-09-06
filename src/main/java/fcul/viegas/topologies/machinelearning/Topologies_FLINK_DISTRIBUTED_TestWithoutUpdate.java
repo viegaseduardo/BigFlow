@@ -12,6 +12,7 @@ import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
@@ -57,7 +58,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
                 
         testFilesDataset.rebalance().map(new MapFunction<String, String>() {
             @Override
@@ -70,12 +71,12 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 return in;
             }
         }, Order.ASCENDING).setParallelism(1).
-                writeAsText(outputPath + "_raw_output").
+                writeAsText(outputPath + "_raw_output", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output", outputPath + "_summarized_weekly.csv");
+        //ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output", outputPath + "_summarized_weekly.csv");
 
     }
 
