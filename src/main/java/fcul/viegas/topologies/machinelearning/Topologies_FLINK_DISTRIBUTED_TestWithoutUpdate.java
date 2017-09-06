@@ -58,7 +58,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
                 
         testFilesDataset.rebalance().map(new MapFunction<String, String>() {
             @Override
