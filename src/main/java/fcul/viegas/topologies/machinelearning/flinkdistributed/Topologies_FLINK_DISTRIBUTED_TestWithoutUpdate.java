@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fcul.viegas.topologies.machinelearning;
+package fcul.viegas.topologies.machinelearning.flinkdistributed;
 
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
+import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
@@ -15,6 +18,7 @@ import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import weka.classifiers.Classifier;
+import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -26,6 +30,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
     public String folderPath;
     public String featureSET;
+    public static String PathToModel = "/home/viegas/testes/model.model";
 
     public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
@@ -57,21 +62,24 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
                 ? mlModelBuilder.trainClassifierForest(dataTrain) : null;
 
+        ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
+        oos.writeObject(classifier);
+        oos.flush();
+        oos.close();
+
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
-        testFilesDataset.rebalance().map(new MapFunction<String, String>() {
-            @Override
-            public String map(String path) throws Exception {
-                return mlModelBuilder.evaluateClassifier(path, classifier);
-            }
-        }).setParallelism(env.getParallelism()).sortPartition(new KeySelector<String, String>() {
-            @Override
-            public String getKey(String in) throws Exception {
-                return in;
-            }
-        }, Order.ASCENDING).setParallelism(1).
+        testFilesDataset.rebalance().map(new EvaluateClassiferMapFunction(mlModelBuilder))
+                .setParallelism(env.getParallelism())
+                .sortPartition(new KeySelector<String, String>() {
+                    @Override
+                    public String getKey(String in) throws Exception {
+                        return in;
+                    }
+                }, Order.ASCENDING).setParallelism(1).
                 writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 

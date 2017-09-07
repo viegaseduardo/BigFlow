@@ -352,7 +352,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
             Evaluation evalNormal = new Evaluation(dataTest[0]);
             evalNormal.evaluateModel(classifier, dataTest[0]);
-
+                        
             Evaluation evalSuspicious = new Evaluation(dataTest[1]);
             evalSuspicious.evaluateModel(classifier, dataTest[1]);
 

@@ -9,7 +9,7 @@ import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_FOREST;
 import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
-import fcul.viegas.topologies.machinelearning.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
+import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_CREATE_CLUSTERS;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_GRADIENT;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_NAIVE;
