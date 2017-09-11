@@ -97,13 +97,14 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
 
                 ObjectOutputStream oos = new ObjectOutputStream(
                         new FileOutputStream(
-                                Topologies_FLINK_DISTRIBUTED_TestWithUpdate.PathToModel + "model_" + getRuntimeContext().getIndexOfThisSubtask()));
+                                Topologies_FLINK_DISTRIBUTED_TestWithUpdate.PathToModel + "model_" + in));
                 oos.writeObject(classifier);
                 oos.flush();
                 oos.close();
                 out.collect(in);
             }
         }).withBroadcastSet(testFilesDataset, "testFilesDataset")
+                .setParallelism(env.getParallelism())
                 .print();
 
         env.execute(pathArffs + "_GENERATING_MODELS");
