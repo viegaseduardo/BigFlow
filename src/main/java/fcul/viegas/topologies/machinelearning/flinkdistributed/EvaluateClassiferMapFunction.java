@@ -32,6 +32,8 @@ public class EvaluateClassiferMapFunction extends RichMapFunction<String, String
                     new FileInputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
             this.classifier = (Classifier) ois.readObject();
             ois.close();
+            System.out.println("EvaluateClassifierMapFunction - Just loaded model: " + 
+                    getRuntimeContext().getIndexOfThisSubtask());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

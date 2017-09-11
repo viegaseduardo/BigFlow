@@ -16,7 +16,6 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.core.fs.FileSystem;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import weka.classifiers.Classifier;
 import weka.classifiers.trees.J48;
 import weka.core.Instance;
@@ -61,7 +60,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
                 ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
                 ? mlModelBuilder.trainClassifierForest(dataTrain) : null;
-
+        
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
         oos.writeObject(classifier);

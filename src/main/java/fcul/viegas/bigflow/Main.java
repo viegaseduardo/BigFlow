@@ -24,6 +24,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdate;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateStream;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreaded;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
+import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -71,6 +72,22 @@ public class Main {
                     args[3],
                     args[4],
                     Integer.valueOf(args[5]));
+        } else if (args[0].equals("testwithupdatedistributed")) {
+            /*
+                args[1] = path to folder
+                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[3] = output
+                args[4] = classifier {naive, tree, forest, extratrees, adaboost}
+                args[5] = days to use for training
+                args[6] = days model life
+             */
+            new Topologies_FLINK_DISTRIBUTED_TestWithUpdate().run(
+                    args[1],
+                    args[2],
+                    args[3],
+                    args[4],
+                    Integer.valueOf(args[5]),
+                    Integer.valueOf(args[6]));
         } else if (args[0].equals("extractor")) {
             Topologies_ARFF_CREATOR.runTopology(
                     args[1],

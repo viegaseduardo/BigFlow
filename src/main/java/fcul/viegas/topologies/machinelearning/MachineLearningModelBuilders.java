@@ -19,8 +19,11 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.meta.RandomCommittee;
 import weka.classifiers.misc.InputMappedClassifier;
+import weka.classifiers.trees.ExtraTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
@@ -282,14 +285,25 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public Classifier trainClassifierAdaboostTree(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
         AdaBoostM1 classifier = new AdaBoostM1();
 
         classifier.setClassifier(new J48());
-        classifier.setNumIterations(100);
-
+        classifier.setNumIterations(20);
         classifier.buildClassifier(train);
 
-        return classifier;
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return inputMapped;
     }
 
     public Classifier trainClassifierNaive(Instances train) throws Exception {
@@ -323,8 +337,53 @@ public class MachineLearningModelBuilders implements Serializable {
         RandomForest classifier = new RandomForest();
 
         classifier.setNumExecutionSlots(20);
-        classifier.setSeed(12345);
-        classifier.setNumIterations(100);
+        classifier.setNumIterations(20);
+        classifier.buildClassifier(train);
+
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return classifier;
+    }
+    
+    public Classifier trainClassifierExtraTrees(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
+        RandomCommittee classifier = new RandomCommittee();
+
+        classifier.setNumExecutionSlots(20);
+        classifier.setNumIterations(20);
+        classifier.setClassifier(new ExtraTree());
+        classifier.buildClassifier(train);
+
+        filteredClassifier.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifier);
+        inputMapped.buildClassifier(train);
+
+        return classifier;
+    }
+
+    public Classifier trainClassifierBagging(Instances train) throws Exception {
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(train);
+
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
+
+        Bagging classifier = new Bagging();
+
+        classifier.setClassifier(new J48());
+        classifier.setNumExecutionSlots(20);
+        classifier.setNumIterations(20);
         classifier.buildClassifier(train);
 
         filteredClassifier.setClassifier(classifier);
@@ -352,7 +411,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
             Evaluation evalNormal = new Evaluation(dataTest[0]);
             evalNormal.evaluateModel(classifier, dataTest[0]);
-                        
+
             Evaluation evalSuspicious = new Evaluation(dataTest[1]);
             evalSuspicious.evaluateModel(classifier, dataTest[1]);
 
