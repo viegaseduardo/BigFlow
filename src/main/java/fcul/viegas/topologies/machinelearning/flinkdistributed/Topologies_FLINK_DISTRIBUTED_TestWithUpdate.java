@@ -109,7 +109,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                 .setParallelism(env.getParallelism())
                 .print();
 
-        env.execute(pathArffs + "_GENERATING_MODELS");
+        //env.execute(pathArffs + "_GENERATING_MODELS");
 
         env = ExecutionEnvironment.getExecutionEnvironment();
         testFilesDataset = env.fromCollection(testFiles);
