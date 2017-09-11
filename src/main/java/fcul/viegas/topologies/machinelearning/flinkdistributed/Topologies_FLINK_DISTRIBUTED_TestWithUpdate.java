@@ -110,12 +110,14 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                 .print();
 
         //env.execute(pathArffs + "_GENERATING_MODELS");
-
         env = ExecutionEnvironment.getExecutionEnvironment();
         testFilesDataset = env.fromCollection(testFiles);
         indexForTrainingDataset = env.fromCollection(indexForTraining);
 
         testFilesDataset.map(new RichMapFunction<String, String>() {
+            int lastIndex = -1;
+            Classifier classifier = null;
+
             @Override
             public String map(String in) throws Exception {
                 int index = testFiles.indexOf(in);
@@ -125,12 +127,16 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                     indexModel += daysModelLife;
                 }
 
-                ObjectInputStream ois = new ObjectInputStream(
-                        new FileInputStream(Topologies_FLINK_DISTRIBUTED_TestWithUpdate.PathToModel + "model_" + indexModel));
-                Classifier classifier = (Classifier) ois.readObject();
-                ois.close();
+                if (lastIndex != indexModel) {
+                    lastIndex = indexModel;
 
-                return mlModelBuilder.evaluateClassifier(in, classifier);
+                    ObjectInputStream ois = new ObjectInputStream(
+                            new FileInputStream(Topologies_FLINK_DISTRIBUTED_TestWithUpdate.PathToModel + "model_" + indexModel));
+                    this.classifier = (Classifier) ois.readObject();
+                    ois.close();
+                }
+
+                return mlModelBuilder.evaluateClassifier(in, this.classifier);
             }
         }).setParallelism(env.getParallelism())
                 .sortPartition(new KeySelector<String, String>() {
