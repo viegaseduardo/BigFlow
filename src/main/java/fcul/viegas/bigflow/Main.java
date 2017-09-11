@@ -37,7 +37,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-
         if (args.length == 1) {
 
             Main.startTopologies_WEKA_Tests_WithUpdateStream();
@@ -60,6 +59,9 @@ public class Main {
                     args[2]);
         } else if (args[0].equals("testwithoutupdatedistributed")) {
             /*
+            note that this version is way faster than "testwithupdatedistributed" 
+                due to the need to load from disk the models
+            
                 args[1] = path to folder
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
                 args[3] = output

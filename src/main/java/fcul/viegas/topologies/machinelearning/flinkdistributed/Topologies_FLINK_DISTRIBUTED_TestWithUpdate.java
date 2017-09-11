@@ -7,7 +7,9 @@ package fcul.viegas.topologies.machinelearning.flinkdistributed;
 
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,7 +71,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
         DataSet<Integer> indexForTrainingDataset = env.fromCollection(indexForTraining);
 
-        indexForTrainingDataset.flatMap(new RichFlatMapFunction<Integer, Integer>() {
+        indexForTrainingDataset.rebalance().flatMap(new RichFlatMapFunction<Integer, Integer>() {
 
             private Collection<String> broadcastSet;
 
@@ -109,13 +111,44 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
 
         env.execute(pathArffs + "_GENERATING_MODELS");
 
-        /*env = ExecutionEnvironment.getExecutionEnvironment();
+        env = ExecutionEnvironment.getExecutionEnvironment();
+        testFilesDataset = env.fromCollection(testFiles);
+        indexForTrainingDataset = env.fromCollection(indexForTraining);
+
+        testFilesDataset.map(new RichMapFunction<String, String>() {
+            @Override
+            public String map(String in) throws Exception {
+                int index = testFiles.indexOf(in);
+                int indexModel = 0;
+
+                while (index > (indexModel + daysModelLife)) {
+                    indexModel += daysModelLife;
+                }
+
+                ObjectInputStream ois = new ObjectInputStream(
+                        new FileInputStream(Topologies_FLINK_DISTRIBUTED_TestWithUpdate.PathToModel + "model_" + indexModel));
+                Classifier classifier = (Classifier) ois.readObject();
+                ois.close();
+
+                return mlModelBuilder.evaluateClassifier(in, classifier);
+            }
+        }).setParallelism(env.getParallelism())
+                .sortPartition(new KeySelector<String, String>() {
+                    @Override
+                    public String getKey(String in) throws Exception {
+                        return in;
+                    }
+                }, Order.ASCENDING).setParallelism(1).
+                writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
+                setParallelism(1);
+
+        env.execute(pathArffs + "_DISTRIBUTED_WITH_UPDATE");
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_monthly.csv",
                 ParseRawOutputFlinkNoUpdate.MonthRange);
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFile(outputPath + "_raw_output.csv", outputPath + "_summarized_yearly.csv",
                 ParseRawOutputFlinkNoUpdate.YearRange);
-*/
+
     }
 }
