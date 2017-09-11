@@ -29,7 +29,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
     public String folderPath;
     public String featureSET;
-    public static String PathToModel = "/home/viegas/testes/model.model";
+    public static String PathToModel = "/home/viegas/testes/model/model.model";
 
     public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();

@@ -119,7 +119,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
             @Override
             public String map(String in) throws Exception {
                 int index = testFiles.indexOf(in);
-                int indexModel = 0;
+                int indexModel = daysToUseForTraining - 1;
 
                 while (index > (indexModel + daysModelLife)) {
                     indexModel += daysModelLife;
