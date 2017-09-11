@@ -101,8 +101,10 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                 oos.writeObject(classifier);
                 oos.flush();
                 oos.close();
+                out.collect(in);
             }
-        }).withBroadcastSet(testFilesDataset, "testFilesDataset");
+        }).withBroadcastSet(testFilesDataset, "testFilesDataset")
+                .print();
 
         env.execute(pathArffs + "_GENERATING_MODELS");
 
