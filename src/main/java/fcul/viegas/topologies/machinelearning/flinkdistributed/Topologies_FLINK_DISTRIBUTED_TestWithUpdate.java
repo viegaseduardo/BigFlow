@@ -110,6 +110,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                 dataTrain = null;
                 classifier = null;
                 System.gc();
+                Thread.sleep(1000);
             }
         }).withBroadcastSet(testFilesDataset, "testFilesDataset")
                 .setParallelism(env.getParallelism())
