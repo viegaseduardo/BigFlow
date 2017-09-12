@@ -34,7 +34,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
 
     public String folderPath;
     public String featureSET;
-    public static String PathToModel = "/home/viegas/testes/model/";
+    public static String PathToModel = "/home/viegas/Bases2/model/";
 
     public void run(String pathArffs,
             String featureSet,
@@ -104,8 +104,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                 oos.flush();
                 oos.close();
                 out.collect(in);
-                
-                
+
                 oos = null;
                 dataTrain = null;
                 classifier = null;
@@ -133,6 +132,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                 while (index > (indexModel + daysModelLife)) {
                     indexModel += daysModelLife;
                 }
+                
 
                 if (lastIndex != indexModel) {
                     lastIndex = indexModel;
