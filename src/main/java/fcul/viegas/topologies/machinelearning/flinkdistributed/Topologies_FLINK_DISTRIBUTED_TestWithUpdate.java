@@ -89,7 +89,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                         dataTrain.add(inst);
                     }
                 }
-                final Classifier classifier = classifierToBuild.equals("naive")
+                Classifier classifier = classifierToBuild.equals("naive")
                         ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
                         ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
                         ? mlModelBuilder.trainClassifierForest(dataTrain) : classifierToBuild.equals("bagging")
@@ -104,6 +104,11 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithUpdate {
                 oos.flush();
                 oos.close();
                 out.collect(in);
+                
+                
+                oos = null;
+                dataTrain = null;
+                classifier = null;
             }
         }).withBroadcastSet(testFilesDataset, "testFilesDataset")
                 .setParallelism(env.getParallelism())
