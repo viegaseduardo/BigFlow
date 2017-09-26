@@ -345,7 +345,7 @@ public class MachineLearningModelBuilders implements Serializable {
         inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
 
-        return classifier;
+        return inputMapped;
     }
     
     public Classifier trainClassifierExtraTrees(Instances train) throws Exception {
@@ -368,7 +368,7 @@ public class MachineLearningModelBuilders implements Serializable {
         inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
 
-        return classifier;
+        return inputMapped;
     }
 
     public Classifier trainClassifierBagging(Instances train) throws Exception {
@@ -391,7 +391,7 @@ public class MachineLearningModelBuilders implements Serializable {
         inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
 
-        return classifier;
+        return inputMapped;
     }
 
     public Classifier trainClassifierSMO(Instances train) throws Exception {
