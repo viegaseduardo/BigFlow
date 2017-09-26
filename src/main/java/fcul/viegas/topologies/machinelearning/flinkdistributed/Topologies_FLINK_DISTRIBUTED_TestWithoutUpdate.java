@@ -29,7 +29,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
     public String folderPath;
     public String featureSET;
-    public static String PathToModel = "/home/viegas/testes/model/model.model";
+    public static String PathToModel = "/home/viegas/Bases2/model/model";
 
     public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
@@ -57,9 +57,12 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
 
         final Classifier classifier = classifierToBuild.equals("naive")
-                ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
-                ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
-                ? mlModelBuilder.trainClassifierForest(dataTrain) : null;
+                        ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
+                        ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
+                        ? mlModelBuilder.trainClassifierForest(dataTrain) : classifierToBuild.equals("bagging")
+                        ? mlModelBuilder.trainClassifierBagging(dataTrain) : classifierToBuild.equals("extratrees")
+                        ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
+                        ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : null;
         
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
