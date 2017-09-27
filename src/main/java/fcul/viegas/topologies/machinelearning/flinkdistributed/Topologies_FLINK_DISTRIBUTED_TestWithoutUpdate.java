@@ -10,6 +10,7 @@ import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
@@ -72,6 +73,8 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
+        Collections.shuffle(testFiles);
+        
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
         testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder))
