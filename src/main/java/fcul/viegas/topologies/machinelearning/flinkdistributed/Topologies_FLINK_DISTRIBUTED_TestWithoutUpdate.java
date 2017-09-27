@@ -58,13 +58,14 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
 
         final Classifier classifier = classifierToBuild.equals("naive")
-                        ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
-                        ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
-                        ? mlModelBuilder.trainClassifierForest(dataTrain) : classifierToBuild.equals("bagging")
-                        ? mlModelBuilder.trainClassifierBagging(dataTrain) : classifierToBuild.equals("extratrees")
-                        ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
-                        ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : null;
-        
+                ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
+                ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
+                ? mlModelBuilder.trainClassifierForest(dataTrain) : classifierToBuild.equals("bagging")
+                ? mlModelBuilder.trainClassifierBagging(dataTrain) : classifierToBuild.equals("extratrees")
+                ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
+                ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
+                ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
+
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
         oos.writeObject(classifier);
@@ -74,7 +75,6 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
-        
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
         testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder))

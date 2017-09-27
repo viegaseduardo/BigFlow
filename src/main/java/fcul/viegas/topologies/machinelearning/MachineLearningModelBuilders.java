@@ -24,6 +24,7 @@ import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.RandomCommittee;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.ExtraTree;
+import weka.classifiers.trees.HoeffdingTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
@@ -31,8 +32,10 @@ import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
+import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.instance.Randomize;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
 /**
@@ -390,6 +393,31 @@ public class MachineLearningModelBuilders implements Serializable {
 
         inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
+
+        return inputMapped;
+    }
+    
+    public Classifier trainClassifierHoeffing(Instances train) throws Exception {
+
+        Resample resample = new Resample();
+        resample.setBiasToUniformClass(1.0d);
+        resample.setInputFormat(train);
+
+        Instances dataTrain = Filter.useFilter(train, resample);
+
+        InputMappedClassifier inputMapped = new InputMappedClassifier();
+        inputMapped.setSuppressMappingReport(true);
+        inputMapped.setModelHeader(dataTrain);
+
+        FilteredClassifier filteredClassifierRandom = new FilteredClassifier();
+        filteredClassifierRandom.setFilter(new Randomize());
+
+        HoeffdingTree classifier = new HoeffdingTree();
+
+        filteredClassifierRandom.setClassifier(classifier);
+
+        inputMapped.setClassifier(filteredClassifierRandom);
+        inputMapped.buildClassifier(dataTrain);
 
         return inputMapped;
     }
