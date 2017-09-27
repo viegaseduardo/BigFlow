@@ -399,15 +399,15 @@ public class MachineLearningModelBuilders implements Serializable {
     
     public Classifier trainClassifierHoeffing(Instances train) throws Exception {
 
-        Resample resample = new Resample();
-        resample.setBiasToUniformClass(1.0d);
-        resample.setInputFormat(train);
-
-        Instances dataTrain = Filter.useFilter(train, resample);
+//        Resample resample = new Resample();
+//        resample.setBiasToUniformClass(1.0d);
+//        resample.setInputFormat(train);
+//
+//        Instances dataTrain = Filter.useFilter(train, resample);
 
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
-        inputMapped.setModelHeader(dataTrain);
+        inputMapped.setModelHeader(train);
 
         FilteredClassifier filteredClassifierRandom = new FilteredClassifier();
         filteredClassifierRandom.setFilter(new Randomize());
@@ -417,7 +417,7 @@ public class MachineLearningModelBuilders implements Serializable {
         filteredClassifierRandom.setClassifier(classifier);
 
         inputMapped.setClassifier(filteredClassifierRandom);
-        inputMapped.buildClassifier(dataTrain);
+        inputMapped.buildClassifier(train);
 
         return inputMapped;
     }
