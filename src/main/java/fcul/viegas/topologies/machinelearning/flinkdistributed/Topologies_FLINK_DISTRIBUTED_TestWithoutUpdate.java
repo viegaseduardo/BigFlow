@@ -73,7 +73,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        Collections.shuffle(testFiles);
+        //Collections.shuffle(testFiles);
         
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
