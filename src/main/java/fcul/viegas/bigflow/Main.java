@@ -65,7 +65,7 @@ public class Main {
                 args[1] = path to folder
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
                 args[3] = output
-                args[4] = classifier {naive, tree, forest, extratrees, adaboost}
+                args[4] = classifier {naive, tree, forest, extratrees, adaboost, bagging}
                 args[5] = days to use for training
             
             ./bin/flink run -p 144 /home/viegas/BigFlow/target/BigFlow-1.0-SNAPSHOT-jar-with-dependencies.jar testwithoutupdatedistributed /home/viegas/Bases/arrfs/ NIGEL /home/viegas/testes/forest forest 7
@@ -82,7 +82,7 @@ public class Main {
                 args[1] = path to folder
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
                 args[3] = output
-                args[4] = classifier {naive, tree, forest, extratrees, adaboost}
+                args[4] = classifier {naive, tree, forest, extratrees, adaboost, bagging}
                 args[5] = days to use for training
                 args[6] = days model life
              */

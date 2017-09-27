@@ -74,7 +74,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
-        testFilesDataset.rebalance().map(new EvaluateClassiferMapFunction(mlModelBuilder))
+        testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder))
                 .setParallelism(env.getParallelism())
                 .sortPartition(new KeySelector<String, String>() {
                     @Override
