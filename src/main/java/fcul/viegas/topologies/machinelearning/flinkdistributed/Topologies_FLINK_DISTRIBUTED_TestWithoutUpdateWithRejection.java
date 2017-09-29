@@ -74,7 +74,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         for (float normalThreshold = 0.5f; normalThreshold <= 1.01f; normalThreshold += 0.05f) {
             for (float attackThreshold = 0.5f; attackThreshold <= 1.01f; attackThreshold += 0.05f) {
                 
-                String output = outputPath + "_raw_output_" + normalThreshold + "_" + attackThreshold + ".csv";
+                String output = outputPath + "_raw_outputt_" + normalThreshold + "_" + attackThreshold + ".csv";
 
                 ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
