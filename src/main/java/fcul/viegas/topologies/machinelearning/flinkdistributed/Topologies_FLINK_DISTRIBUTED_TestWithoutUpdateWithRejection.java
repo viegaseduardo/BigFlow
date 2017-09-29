@@ -7,18 +7,17 @@ package fcul.viegas.topologies.machinelearning.flinkdistributed;
 
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
+import fcul.viegas.topologies.machinelearning.flinkdistributed.EvaluateClassiferMapFunction;
+import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.core.fs.FileSystem;
 import weka.classifiers.Classifier;
-import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -26,7 +25,7 @@ import weka.core.Instances;
  *
  * @author viegas
  */
-public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
+public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
 
     public String folderPath;
     public String featureSET;
@@ -72,30 +71,36 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         oos.flush();
         oos.close();
 
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+        for (float normalThreshold = 0.5f; normalThreshold <= 1.01f; normalThreshold += 0.05f) {
+            for (float attackThreshold = 0.5f; attackThreshold <= 1.01f; attackThreshold += 0.05f) {
+                
+                String output = outputPath + "_raw_output_" + normalThreshold + "_" + attackThreshold;
 
-        //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
+                ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder))
-                .setParallelism(env.getParallelism())
-                .sortPartition(new KeySelector<String, String>() {
-                    @Override
-                    public String getKey(String in) throws Exception {
-                        return in;
-                    }
-                }, Order.ASCENDING).setParallelism(1).
-                writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
-                setParallelism(1);
+                //Collections.shuffle(testFiles);
+                DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
-        env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
+                testFilesDataset.map(new EvaluateClassifierMapFunctionWithRejection(mlModelBuilder, normalThreshold, attackThreshold))
+                        .setParallelism(env.getParallelism())
+                        .sortPartition(new KeySelector<String, String>() {
+                            @Override
+                            public String getKey(String in) throws Exception {
+                                return in;
+                            }
+                        }, Order.ASCENDING).setParallelism(1).
+                        writeAsText(output, FileSystem.WriteMode.OVERWRITE).
+                        setParallelism(1);
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection(outputPath + "_raw_output.csv", outputPath + "_summarized_monthly.csv",
-                ParseRawOutputFlinkNoUpdate.MonthRange);
+                env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection(outputPath + "_raw_output.csv", outputPath + "_summarized_yearly.csv",
-                ParseRawOutputFlinkNoUpdate.YearRange);
+                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
+                        ParseRawOutputFlinkNoUpdate.MonthRange);
+
+                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
+                        ParseRawOutputFlinkNoUpdate.YearRange);
+            }
+        }
 
     }
-
 }

@@ -25,6 +25,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateSt
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreaded;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
+import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -72,6 +73,26 @@ public class Main {
              
             */
             new Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate().run(
+                    args[1],
+                    args[2],
+                    args[3],
+                    args[4],
+                    Integer.valueOf(args[5]));
+        } else if (args[0].equals("testwithoutupdatedistributedwithrejection")) {
+            /*
+            note that this version is way faster than "testwithupdatedistributed" 
+                due to the need to load from disk the models
+            
+                args[1] = path to folder
+                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[3] = output
+                args[4] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+                args[5] = days to use for training
+            
+            ./bin/flink run -p 144 /home/viegas/BigFlow/target/BigFlow-1.0-SNAPSHOT-jar-with-dependencies.jar testwithoutupdatedistributed /home/viegas/Bases/arrfs/ NIGEL /home/viegas/testes/forest forest 7
+             
+            */
+            new Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection().run(
                     args[1],
                     args[2],
                     args[3],

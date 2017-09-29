@@ -25,11 +25,11 @@ import java.util.TreeMap;
  * @author viegas
  */
 public class ParseRawOutputFlinkNoUpdate {
-    
+
     public static int MonthRange = 6;
     public static int YearRange = 4;
 
-    public static void generateSummaryFile(String rawFile, String outputFile, int range) throws Exception {
+    public static void generateSummaryFileWithoutRejection(String rawFile, String outputFile, int range) throws Exception {
         HashMap<String, ValuesDTO> hashMap = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(rawFile))) {
             String line;
@@ -38,7 +38,7 @@ public class ParseRawOutputFlinkNoUpdate {
                 if (split.length > 4 && !line.contains("NaN")) {
                     String month = split[0].split("/")[split[0].split("/").length - 1];
                     month = month.substring(0, range);
-                    
+
                     //System.out.println(month);
                     if (!hashMap.containsKey(month)) {
                         hashMap.put(month, new ValuesDTO());
@@ -81,6 +81,79 @@ public class ParseRawOutputFlinkNoUpdate {
             float accAllATK = (values.accAnomalous + values.accSusp) / (float) (values.nAnomalous + values.nSusp);
             writer.println(s + ";" + values.nNormal + ";" + values.nAnomalous + ";" + values.nSusp + ";"
                     + acc + ";" + accNormal + ";" + accAllATK + ";" + accAnomalous + ";" + accSuspicious);
+        }
+        writer.close();
+
+    }
+
+    public static void generateSummaryFileWithRejection(String rawFile, String outputFile, int range) throws Exception {
+        HashMap<String, ValuesDTO> hashMap = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(rawFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String split[] = line.split(";");
+                if (split.length > 4 && !line.contains("NaN")) {
+                    String month = split[0].split("/")[split[0].split("/").length - 1];
+                    month = month.substring(0, range);
+
+                    //System.out.println(month);
+                    if (!hashMap.containsKey(month)) {
+                        hashMap.put(month, new ValuesDTO());
+                    }
+
+                    hashMap.get(month).nNormal += Integer.valueOf(split[2]);
+                    hashMap.get(month).nSusp += Integer.valueOf(split[4]);
+                    hashMap.get(month).nAnomalous += Integer.valueOf(split[3]);
+                    hashMap.get(month).floatAVGAvgAccuracy += Float.valueOf(split[12]);
+                    hashMap.get(month).floatAccAccept += Float.valueOf(split[7]);
+                    hashMap.get(month).floatAccAcceptAttack += Float.valueOf(split[6]);
+                    hashMap.get(month).floatAccAcceptNormal += Float.valueOf(split[5]);
+                    hashMap.get(month).floatClassificationQuality += Float.valueOf(split[13]);
+                    hashMap.get(month).floatRejection += Float.valueOf(split[11]);
+                    hashMap.get(month).floatRejectionAttack += Float.valueOf(split[14]);
+                    hashMap.get(month).floatRejectionNormal += Float.valueOf(split[15]);
+                    hashMap.get(month).nMeasures += 1.0f;
+
+                    System.out.println("Accepted - " + split[0]);
+                } else {
+                    if (split.length > 4) {
+                        System.out.println("IGNORED - " + split[0]);
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        TreeMap<String, ValuesDTO> sorted = new TreeMap<>(hashMap);
+        Set<Entry<String, ValuesDTO>> mappings = sorted.entrySet();
+        Iterator it = mappings.iterator();
+
+        PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
+
+        writer.println("month;nNormal;nAnomalous;nSusp;accAccept;accAcceptNormal;"
+                + "accAcceptAttack;rejectionPCT;rejectionAttackPCT;rejectionNormalPCT;"
+                + "avgAVGAccuracy;classificationQuality");
+
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            ValuesDTO values = (ValuesDTO) pair.getValue();
+            String s = (String) pair.getKey();
+
+            writer.println(s + ";"
+                    + values.nNormal + ";"
+                    + values.nAnomalous + ";"
+                    + values.nSusp + ";"
+                    + (values.floatAccAccept / values.nMeasures) + ";"
+                    + (values.floatAccAcceptNormal / values.nMeasures) + ";"
+                    + (values.floatAccAcceptAttack / values.nMeasures) + ";"
+                    + (values.floatRejection / values.nMeasures) + ";"
+                    + (values.floatRejectionAttack / values.nMeasures) + ";"
+                    + (values.floatRejectionNormal / values.nMeasures) + ";"
+                    + (values.floatAVGAvgAccuracy / values.nMeasures) + ";"
+                    + (values.floatClassificationQuality / values.nMeasures));
+
         }
         writer.close();
 

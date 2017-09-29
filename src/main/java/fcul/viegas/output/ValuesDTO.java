@@ -19,4 +19,14 @@ public class ValuesDTO {
     public int accAnomalous = 0;
     public int accATK;
 
+    public float floatAccAcceptNormal = 0.0f;
+    public float floatAccAcceptAttack = 0.0f;
+    public float floatAccAccept = 0.0f;
+    public float floatRejection = 0.0f;
+    public float floatRejectionAttack = 0.0f;
+    public float floatRejectionNormal = 0.0f;
+    public float floatAVGAvgAccuracy = 0.0f;
+    public float floatClassificationQuality = 0.0f;
+
+    public float nMeasures;
 }
