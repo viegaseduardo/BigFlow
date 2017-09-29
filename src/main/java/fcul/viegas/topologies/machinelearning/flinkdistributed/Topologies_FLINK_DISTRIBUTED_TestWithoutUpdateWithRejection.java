@@ -74,7 +74,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         for (float normalThreshold = 0.5f; normalThreshold <= 1.01f; normalThreshold += 0.05f) {
             for (float attackThreshold = 0.5f; attackThreshold <= 1.01f; attackThreshold += 0.05f) {
                 
-                String output = outputPath + "_raw_output_" + normalThreshold + "_" + attackThreshold;
+                String output = outputPath + "_raw_output_" + normalThreshold + "_" + attackThreshold + ".csv";
 
                 ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
@@ -94,10 +94,10 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
 
                 env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
-                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
+                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
                         ParseRawOutputFlinkNoUpdate.MonthRange);
 
-                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
+                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
                         ParseRawOutputFlinkNoUpdate.YearRange);
             }
         }
