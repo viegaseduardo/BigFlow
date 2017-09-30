@@ -568,9 +568,9 @@ public class MachineLearningModelBuilders implements Serializable {
             print = print + (nCorrectlyRejectedNormal / (float) nRejectedNormal) + ";";
             print = print + (nCorrectlyRejectedAttack / (float) nRejectedAttack) + ";";
             print = print + corretamenteRej + ";";
-            print = print + ((nRejectedNormal + nRejectedAttack) / (nNormal + nAttack)) + ";";
+            print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
             print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
-            print = print + (((nCorrectlyAcceptedAttack + nCorrectlyAcceptedNormal) + (nCorrectlyRejectedAttack + nCorrectlyRejectedNormal)) / (nNormal + nAttack)) + ";";
+            print = print + (((nCorrectlyAcceptedAttack + nCorrectlyAcceptedNormal) + (nCorrectlyRejectedAttack + nCorrectlyRejectedNormal)) / (float) (nNormal + nAttack)) + ";";
             print = print + ((nRejectedAttack) / (float) nAttack) + ";";
             print = print + ((nRejectedNormal) / (float) nNormal);
 
