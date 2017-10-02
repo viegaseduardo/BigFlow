@@ -71,36 +71,31 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         oos.flush();
         oos.close();
 
-        for (float normalThreshold = 0.5f; normalThreshold <= 1.01f; normalThreshold += 0.05f) {
-            for (float attackThreshold = 0.5f; attackThreshold <= 1.01f; attackThreshold += 0.05f) {
-                
-                String output = outputPath + "_raw_outputt_" + normalThreshold + "_" + attackThreshold + ".csv";
+        String output = outputPath + "_raw_outputt.csv";
 
-                ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+        ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-                //Collections.shuffle(testFiles);
-                DataSet<String> testFilesDataset = env.fromCollection(testFiles);
+        //Collections.shuffle(testFiles);
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
-                testFilesDataset.map(new EvaluateClassifierMapFunctionWithRejection(mlModelBuilder, normalThreshold, attackThreshold))
-                        .setParallelism(env.getParallelism())
-                        .sortPartition(new KeySelector<String, String>() {
-                            @Override
-                            public String getKey(String in) throws Exception {
-                                return in;
-                            }
-                        }, Order.ASCENDING).setParallelism(1).
-                        writeAsText(output, FileSystem.WriteMode.OVERWRITE).
-                        setParallelism(1);
+        testFilesDataset.flatMap(new EvaluateClassifierMapFunctionWithRejection(mlModelBuilder))
+                .setParallelism(env.getParallelism())
+                .sortPartition(new KeySelector<String, String>() {
+                    @Override
+                    public String getKey(String in) throws Exception {
+                        return in;
+                    }
+                }, Order.ASCENDING).setParallelism(1).
+                writeAsText(output, FileSystem.WriteMode.OVERWRITE).
+                setParallelism(1);
 
-                env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
+        env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
-                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
-                        ParseRawOutputFlinkNoUpdate.MonthRange);
-
-                ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
-                        ParseRawOutputFlinkNoUpdate.YearRange);
-            }
-        }
+//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
+//                ParseRawOutputFlinkNoUpdate.MonthRange);
+//
+//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
+//                ParseRawOutputFlinkNoUpdate.YearRange);
 
     }
 }

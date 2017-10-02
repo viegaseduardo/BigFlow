@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Serializable;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -463,7 +465,7 @@ public class MachineLearningModelBuilders implements Serializable {
         }
     }
 
-    public String evaluateClassifierWithRejection(String path, Classifier classifier, float normalThreshold, float attackThreshold) {
+    public ArrayList<String> evaluateClassifierWithRejection(String path, Classifier classifier) {
         try {
             Instances[] dataTest = this.openFileForTest(path);
 
@@ -471,112 +473,130 @@ public class MachineLearningModelBuilders implements Serializable {
             Instances dataSuspicious = dataTest[0];
             Instances dataAnomalous = dataTest[0];
 
-            int nNormal = 0; //ok
-            int nAttack = 0; //ok
-            int nRejectedNormal = 0; //ok
-            int nRejectedAttack = 0; //ok
-            int nAcceptedNormal = 0; //ok
-            int nAcceptedAttack = 0; //ok
-            int nCorrectlyAcceptedNormal = 0; //ok
-            int nCorrectlyAcceptedAttack = 0;
-            int nCorrectlyRejectedNormal = 0;
-            int nCorrectlyRejectedAttack = 0; //ok
+            ArrayList<String> returnArray = new ArrayList<>();
 
-            for (int i = 0; i < dataTest.length; i++) {
-                for (Instance inst : dataTest[i]) {
-                    double prob[] = classifier.distributionForInstance(inst);
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.CEILING);
 
-                    //if is normal
-                    if (inst.classValue() == 0.0d) {
-                        nNormal++;
-                    } else {
-                        //is attack
-                        nAttack++;
-                    }
+            for (int normalT = 50; normalT <= 100; normalT += 5) {
+                for (int attackT = 50; attackT <= 100; attackT += 5) {
 
-                    //classified as normal
-                    if (prob[0] > prob[1]) {
-                        //if should accept
-                        if (prob[0] >= normalThreshold) {
-                            //correctly classified
+                    float normalThreshold = normalT / 100.0f;
+                    float attackThreshold = attackT / 100.0f;
+
+                    int nNormal = 0; //ok
+                    int nAttack = 0; //ok
+                    int nRejectedNormal = 0; //ok
+                    int nRejectedAttack = 0; //ok
+                    int nAcceptedNormal = 0; //ok
+                    int nAcceptedAttack = 0; //ok
+                    int nCorrectlyAcceptedNormal = 0; //ok
+                    int nCorrectlyAcceptedAttack = 0;
+                    int nCorrectlyRejectedNormal = 0;
+                    int nCorrectlyRejectedAttack = 0; //ok
+
+                    for (int i = 0; i < dataTest.length; i++) {
+                        for (Instance inst : dataTest[i]) {
+                            double prob[] = classifier.distributionForInstance(inst);
+
+                            //if is normal
                             if (inst.classValue() == 0.0d) {
-                                nAcceptedNormal++;
-                                nCorrectlyAcceptedNormal++;
+                                nNormal++;
                             } else {
-                                //misclassified
-                                nAcceptedAttack++;
+                                //is attack
+                                nAttack++;
                             }
-                        } else {
-                            //check if correctly rejected
-                            if (inst.classValue() != 0.0d) {
-                                nRejectedAttack++;
-                                nCorrectlyRejectedAttack++;
+
+                            //classified as normal
+                            if (prob[0] > prob[1]) {
+                                //if should accept
+                                if (prob[0] >= normalThreshold) {
+                                    //correctly classified
+                                    if (inst.classValue() == 0.0d) {
+                                        nAcceptedNormal++;
+                                        nCorrectlyAcceptedNormal++;
+                                    } else {
+                                        //misclassified
+                                        nAcceptedAttack++;
+                                    }
+                                } else {
+                                    //check if correctly rejected
+                                    if (inst.classValue() != 0.0d) {
+                                        nRejectedAttack++;
+                                        nCorrectlyRejectedAttack++;
+                                    } else {
+                                        //misrejected
+                                        nRejectedNormal++;
+                                    }
+                                }
                             } else {
-                                //misrejected
-                                nRejectedNormal++;
-                            }
-                        }
-                    } else {
-                        //classified as attack
-                        //if should accept
-                        if (prob[1] >= attackThreshold) {
-                            //correctly classified
-                            if (inst.classValue() == 1.0d) {
-                                nAcceptedAttack++;
-                                nCorrectlyAcceptedAttack++;
-                            } else {
-                                //misclassified
-                                nAcceptedNormal++;
-                            }
-                        } else {
-                            //check if correctly rejected
-                            if (inst.classValue() != 1.0d) {
-                                nRejectedNormal++;
-                                nCorrectlyRejectedNormal++;
-                            } else {
-                                //misrejected
-                                nRejectedAttack++;
+                                //classified as attack
+                                //if should accept
+                                if (prob[1] >= attackThreshold) {
+                                    //correctly classified
+                                    if (inst.classValue() == 1.0d) {
+                                        nAcceptedAttack++;
+                                        nCorrectlyAcceptedAttack++;
+                                    } else {
+                                        //misclassified
+                                        nAcceptedNormal++;
+                                    }
+                                } else {
+                                    //check if correctly rejected
+                                    if (inst.classValue() != 1.0d) {
+                                        nRejectedNormal++;
+                                        nCorrectlyRejectedNormal++;
+                                    } else {
+                                        //misrejected
+                                        nRejectedAttack++;
+                                    }
+                                }
                             }
                         }
                     }
+
+                    float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
+                    float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
+
+                    if (nRejectedNormal == 0) {
+                        nRejectedNormal = 1;
+                    }
+                    if (nRejectedAttack == 0) {
+                        nRejectedAttack = 1;
+                    }
+                    if (nAcceptedNormal == 0) {
+                        nAcceptedNormal = 1;
+                    }
+                    if (nAcceptedAttack == 0) {
+                        nAcceptedAttack = 1;
+                    }
+                    String print = path + ";";
+                    print = print + df.format(normalThreshold) + ";";
+                    print = print + df.format(attackThreshold) + ";";
+                    print = print + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";";
+                    print = print + dataTest[0].size() + ";";
+                    print = print + dataTest[2].size() + ";";
+                    print = print + dataTest[1].size() + ";";
+                    print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
+                    print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
+                    print = print + accAceito + ";";
+                    print = print + (nCorrectlyRejectedNormal / (float) nRejectedNormal) + ";";
+                    print = print + (nCorrectlyRejectedAttack / (float) nRejectedAttack) + ";";
+                    print = print + corretamenteRej + ";";
+                    print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
+                    print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+                    print = print + (((nCorrectlyAcceptedAttack + nCorrectlyAcceptedNormal) + (nCorrectlyRejectedAttack + nCorrectlyRejectedNormal)) / (float) (nNormal + nAttack)) + ";";
+                    print = print + ((nRejectedAttack) / (float) nAttack) + ";";
+                    print = print + ((nRejectedNormal) / (float) nNormal);
+
+                    returnArray.add(print.replace(",", "."));
                 }
             }
 
-            float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
-            float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
+            return returnArray;
 
-            if (nRejectedNormal == 0) {
-                nRejectedNormal = 1;
-            }
-            if (nRejectedAttack == 0) {
-                nRejectedAttack = 1;
-            }
-            if (nAcceptedNormal == 0) {
-                nAcceptedNormal = 1;
-            }
-            if (nAcceptedAttack == 0) {
-                nAcceptedAttack = 1;
-            }
-            String print = path + ";";
-            print = print + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";";
-            print = print + dataTest[0].size() + ";";
-            print = print + dataTest[2].size() + ";";
-            print = print + dataTest[1].size() + ";";
-            print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
-            print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
-            print = print + accAceito + ";";
-            print = print + (nCorrectlyRejectedNormal / (float) nRejectedNormal) + ";";
-            print = print + (nCorrectlyRejectedAttack / (float) nRejectedAttack) + ";";
-            print = print + corretamenteRej + ";";
-            print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
-            print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
-            print = print + (((nCorrectlyAcceptedAttack + nCorrectlyAcceptedNormal) + (nCorrectlyRejectedAttack + nCorrectlyRejectedNormal)) / (float) (nNormal + nAttack)) + ";";
-            print = print + ((nRejectedAttack) / (float) nAttack) + ";";
-            print = print + ((nRejectedNormal) / (float) nNormal);
-
-            return print.replace(",", ".");
         } catch (Exception ex) {
-            return ex.getStackTrace().toString();
+            return null;
         }
     }
 
