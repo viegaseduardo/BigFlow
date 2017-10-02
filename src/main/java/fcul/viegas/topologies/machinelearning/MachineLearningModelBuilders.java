@@ -484,8 +484,6 @@ public class MachineLearningModelBuilders implements Serializable {
                     float normalThreshold = normalT / 100.0f;
                     float attackThreshold = attackT / 100.0f;
                     
-                    
-
                     int nNormal = 0; //ok
                     int nAttack = 0; //ok
                     int nRejectedNormal = 0; //ok
@@ -513,7 +511,7 @@ public class MachineLearningModelBuilders implements Serializable {
                             if (prob[0] > prob[1]) {
                                 //if should accept
                                 if (prob[0] >= normalThreshold) {
-                                    //correctly classified
+                                    //if correctly classified
                                     if (inst.classValue() == 0.0d) {
                                         nAcceptedNormal++;
                                         nCorrectlyAcceptedNormal++;
@@ -572,9 +570,16 @@ public class MachineLearningModelBuilders implements Serializable {
                     if (nAcceptedAttack == 0) {
                         nAcceptedAttack = 1;
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     String print = path + ";";
-                    print = print + df.format(normalThreshold) + ";";
-                    print = print + df.format(attackThreshold) + ";";
+                    print = print + normalT + ";";
+                    print = print + attackT + ";";
                     print = print + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";";
                     print = print + dataTest[0].size() + ";";
                     print = print + dataTest[2].size() + ";";

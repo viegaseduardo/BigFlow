@@ -108,8 +108,8 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
 
         for (String s : rejectList) {
 
-            float normalThreshold = Float.valueOf(s.split("_")[0]);
-            float attackThreshold = Float.valueOf(s.split("_")[1]);
+            int normalThreshold = Integer.valueOf(s.split("_")[0]);
+            int attackThreshold = Integer.valueOf(s.split("_")[1]);
 
             int nMonth = ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
                     normalThreshold,
