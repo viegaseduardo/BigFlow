@@ -86,8 +86,10 @@ public class ParseRawOutputFlinkNoUpdate {
 
     }
 
-    public static void generateSummaryFileWithRejection(String rawFile, String outputFile, float normalThreshold, float attackThreshold, int range) throws Exception {
+    public static int generateSummaryFileWithRejection(String rawFile, String outputFile, float normalThreshold, float attackThreshold, int range) throws Exception {
         HashMap<String, ValuesDTO> hashMap = new HashMap<>();
+        int n = 0;
+        
         try (BufferedReader br = new BufferedReader(new FileReader(rawFile))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -117,6 +119,7 @@ public class ParseRawOutputFlinkNoUpdate {
                     hashMap.get(month).floatRejectionNormal += Float.valueOf(split[17]);
                     hashMap.get(month).nMeasures += 1.0f;
 
+                    n++;
                     //System.out.println("Accepted - " + split[0]);
                 } else {
                     if (split.length > 4) {
@@ -160,6 +163,7 @@ public class ParseRawOutputFlinkNoUpdate {
         }
         writer.close();
 
+        return n;
     }
 
 }

@@ -107,21 +107,21 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         }
 
         for (String s : rejectList) {
-            System.out.println("Generating summary file for " + s);
 
             float normalThreshold = Float.valueOf(s.split("_")[0]);
             float attackThreshold = Float.valueOf(s.split("_")[1]);
 
-            ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
+            int nMonth = ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
                     normalThreshold,
                     attackThreshold,
                     ParseRawOutputFlinkNoUpdate.MonthRange);
 
-            ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
-                     normalThreshold,
+            int nYear = ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
+                    normalThreshold,
                     attackThreshold,
                     ParseRawOutputFlinkNoUpdate.YearRange);
 
+            System.out.println("Generated summary file with " + nMonth + " and " + nYear + " for " + s);
         }
 
     }
