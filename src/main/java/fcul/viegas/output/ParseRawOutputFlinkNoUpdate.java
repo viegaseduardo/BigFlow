@@ -159,7 +159,83 @@ public class ParseRawOutputFlinkNoUpdate {
                     + (values.floatRejectionNormal / values.nMeasures) + ";"
                     + (values.floatAVGAvgAccuracy / values.nMeasures) + ";"
                     + (values.floatClassificationQuality / values.nMeasures));
+        }
+        writer.close();
 
+        return n;
+    }
+    
+    
+    public static int generateSummaryFileWithRejection(String rawFile, String outputFile) throws Exception {
+        HashMap<String, ValuesDTO> hashMap = new HashMap<>();
+        int n = 0;
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(rawFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String split[] = line.split(";");
+                if (split.length > 4
+                        && !line.contains("NaN")) {
+                    String rej = line.split(";")[1] + "_" + line.split(";")[2];
+
+                    //System.out.println(month);
+                    if (!hashMap.containsKey(rej)) {
+                        hashMap.put(rej, new ValuesDTO());
+                    }
+
+                    hashMap.get(rej).nNormal += Integer.valueOf(split[4]);
+                    hashMap.get(rej).nSusp += Integer.valueOf(split[6]);
+                    hashMap.get(rej).nAnomalous += Integer.valueOf(split[5]);
+                    hashMap.get(rej).floatAVGAvgAccuracy += Float.valueOf(split[14]);
+                    hashMap.get(rej).floatAccAccept += Float.valueOf(split[9]);
+                    hashMap.get(rej).floatAccAcceptAttack += Float.valueOf(split[8]);
+                    hashMap.get(rej).floatAccAcceptNormal += Float.valueOf(split[7]);
+                    hashMap.get(rej).floatClassificationQuality += Float.valueOf(split[15]);
+                    hashMap.get(rej).floatRejection += Float.valueOf(split[13]);
+                    hashMap.get(rej).floatRejectionAttack += Float.valueOf(split[16]);
+                    hashMap.get(rej).floatRejectionNormal += Float.valueOf(split[17]);
+                    hashMap.get(rej).nMeasures += 1.0f;
+
+                    n++;
+                    //System.out.println("Accepted - " + split[0]);
+                } else {
+                    if (split.length > 4) {
+                        //System.out.println("IGNORED - " + split[0]);
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        TreeMap<String, ValuesDTO> sorted = new TreeMap<>(hashMap);
+        Set<Entry<String, ValuesDTO>> mappings = sorted.entrySet();
+        Iterator it = mappings.iterator();
+
+        PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
+
+        writer.println("month;nNormal;nAnomalous;nSusp;accAccept;accAcceptNormal;"
+                + "accAcceptAttack;rejectionPCT;rejectionAttackPCT;rejectionNormalPCT;"
+                + "avgAVGAccuracy;classificationQuality");
+
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            ValuesDTO values = (ValuesDTO) pair.getValue();
+            String s = (String) pair.getKey();
+
+            writer.println(s + ";"
+                    + values.nNormal + ";"
+                    + values.nAnomalous + ";"
+                    + values.nSusp + ";"
+                    + (values.floatAccAccept / values.nMeasures) + ";"
+                    + (values.floatAccAcceptNormal / values.nMeasures) + ";"
+                    + (values.floatAccAcceptAttack / values.nMeasures) + ";"
+                    + (values.floatRejection / values.nMeasures) + ";"
+                    + (values.floatRejectionAttack / values.nMeasures) + ";"
+                    + (values.floatRejectionNormal / values.nMeasures) + ";"
+                    + (values.floatAVGAvgAccuracy / values.nMeasures) + ";"
+                    + (values.floatClassificationQuality / values.nMeasures));
         }
         writer.close();
 

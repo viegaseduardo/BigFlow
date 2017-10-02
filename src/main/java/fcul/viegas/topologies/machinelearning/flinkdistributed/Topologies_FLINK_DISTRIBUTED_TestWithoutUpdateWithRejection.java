@@ -124,5 +124,9 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
             System.out.println("Generated summary file with " + nMonth + " and " + nYear + " for " + s);
         }
 
+        int nAll = ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_rejection_summarized.csv");
+
+        System.out.println("Generated summary for all with " + nAll + " entries");
+
     }
 }

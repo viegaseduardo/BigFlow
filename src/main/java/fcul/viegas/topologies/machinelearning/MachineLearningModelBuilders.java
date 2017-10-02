@@ -476,7 +476,7 @@ public class MachineLearningModelBuilders implements Serializable {
             ArrayList<String> returnArray = new ArrayList<>();
 
             DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.CEILING);
+            df.setRoundingMode(RoundingMode.HALF_EVEN);
 
             for (int normalT = 50; normalT <= 100; normalT += 5) {
                 for (int attackT = 50; attackT <= 100; attackT += 5) {
