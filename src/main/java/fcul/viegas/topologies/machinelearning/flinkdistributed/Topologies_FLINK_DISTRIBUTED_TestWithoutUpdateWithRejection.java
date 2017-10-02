@@ -7,8 +7,6 @@ package fcul.viegas.topologies.machinelearning.flinkdistributed;
 
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
-import fcul.viegas.topologies.machinelearning.flinkdistributed.EvaluateClassiferMapFunction;
-import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -78,7 +76,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 300));
 
         testFilesDataset.flatMap(new EvaluateClassifierMapFunctionWithRejection(mlModelBuilder))
                 .setParallelism(env.getParallelism())
@@ -100,24 +98,31 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
             while ((line = br.readLine()) != null) {
                 String[] split = line.split(";");
                 String reject = split[1] + "_" + split[2];
-                if(!rejectList.contains(reject)){
+                if (!rejectList.contains(reject)) {
                     rejectList.add(reject);
                 }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
-        for(String s : rejectList){
+
+        for (String s : rejectList) {
             System.out.println("Generating summary file for " + s);
-            
-            
+
+            float normalThreshold = Float.valueOf(s.split("_")[0]);
+            float attackThreshold = Float.valueOf(s.split("_")[1]);
+
+            ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
+                    normalThreshold,
+                    attackThreshold,
+                    ParseRawOutputFlinkNoUpdate.MonthRange);
+
+            ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
+                     normalThreshold,
+                    attackThreshold,
+                    ParseRawOutputFlinkNoUpdate.YearRange);
+
         }
 
-//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
-//                ParseRawOutputFlinkNoUpdate.MonthRange);
-//
-//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
-//                ParseRawOutputFlinkNoUpdate.YearRange);
     }
 }

@@ -86,13 +86,16 @@ public class ParseRawOutputFlinkNoUpdate {
 
     }
 
-    public static void generateSummaryFileWithRejection(String rawFile, String outputFile, int range) throws Exception {
+    public static void generateSummaryFileWithRejection(String rawFile, String outputFile, float normalThreshold, float attackThreshold, int range) throws Exception {
         HashMap<String, ValuesDTO> hashMap = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(rawFile))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String split[] = line.split(";");
-                if (split.length > 4 && !line.contains("NaN")) {
+                if (split.length > 4
+                        && !line.contains("NaN")
+                        && Float.compare(normalThreshold, Float.valueOf(line.split(";")[1])) == 0
+                        && Float.compare(attackThreshold, Float.valueOf(line.split(";")[2])) == 0) {
                     String month = split[0].split("/")[split[0].split("/").length - 1];
                     month = month.substring(0, range);
 
@@ -101,23 +104,23 @@ public class ParseRawOutputFlinkNoUpdate {
                         hashMap.put(month, new ValuesDTO());
                     }
 
-                    hashMap.get(month).nNormal += Integer.valueOf(split[2]);
-                    hashMap.get(month).nSusp += Integer.valueOf(split[4]);
-                    hashMap.get(month).nAnomalous += Integer.valueOf(split[3]);
-                    hashMap.get(month).floatAVGAvgAccuracy += Float.valueOf(split[12]);
-                    hashMap.get(month).floatAccAccept += Float.valueOf(split[7]);
-                    hashMap.get(month).floatAccAcceptAttack += Float.valueOf(split[6]);
-                    hashMap.get(month).floatAccAcceptNormal += Float.valueOf(split[5]);
-                    hashMap.get(month).floatClassificationQuality += Float.valueOf(split[13]);
-                    hashMap.get(month).floatRejection += Float.valueOf(split[11]);
-                    hashMap.get(month).floatRejectionAttack += Float.valueOf(split[14]);
-                    hashMap.get(month).floatRejectionNormal += Float.valueOf(split[15]);
+                    hashMap.get(month).nNormal += Integer.valueOf(split[4]);
+                    hashMap.get(month).nSusp += Integer.valueOf(split[6]);
+                    hashMap.get(month).nAnomalous += Integer.valueOf(split[5]);
+                    hashMap.get(month).floatAVGAvgAccuracy += Float.valueOf(split[14]);
+                    hashMap.get(month).floatAccAccept += Float.valueOf(split[9]);
+                    hashMap.get(month).floatAccAcceptAttack += Float.valueOf(split[8]);
+                    hashMap.get(month).floatAccAcceptNormal += Float.valueOf(split[7]);
+                    hashMap.get(month).floatClassificationQuality += Float.valueOf(split[15]);
+                    hashMap.get(month).floatRejection += Float.valueOf(split[13]);
+                    hashMap.get(month).floatRejectionAttack += Float.valueOf(split[16]);
+                    hashMap.get(month).floatRejectionNormal += Float.valueOf(split[17]);
                     hashMap.get(month).nMeasures += 1.0f;
 
-                    System.out.println("Accepted - " + split[0]);
+                    //System.out.println("Accepted - " + split[0]);
                 } else {
                     if (split.length > 4) {
-                        System.out.println("IGNORED - " + split[0]);
+                        //System.out.println("IGNORED - " + split[0]);
                     }
                 }
             }
