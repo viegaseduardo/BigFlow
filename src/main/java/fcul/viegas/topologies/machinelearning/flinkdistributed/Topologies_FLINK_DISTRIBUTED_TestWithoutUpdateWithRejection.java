@@ -9,7 +9,9 @@ import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.EvaluateClassiferMapFunction;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import org.apache.flink.api.common.operators.Order;
@@ -71,12 +73,12 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         oos.flush();
         oos.close();
 
-        String output = outputPath + "_raw_outputt.csv";
+        String output = outputPath + "_raw_output.csv";
 
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
 
         testFilesDataset.flatMap(new EvaluateClassifierMapFunctionWithRejection(mlModelBuilder))
                 .setParallelism(env.getParallelism())
@@ -91,11 +93,31 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
 
+        ArrayList<String> rejectList = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(outputPath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] split = line.split(";");
+                String reject = split[1] + "_" + split[2];
+                if(!rejectList.contains(reject)){
+                    rejectList.add(reject);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        for(String s : rejectList){
+            System.out.println("Generating summary file for " + s);
+            
+            
+        }
+
 //        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_monthly.csv",
 //                ParseRawOutputFlinkNoUpdate.MonthRange);
 //
 //        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(output, outputPath + "_" + normalThreshold + "_" + attackThreshold + "_summarized_yearly.csv",
 //                ParseRawOutputFlinkNoUpdate.YearRange);
-
     }
 }
