@@ -76,7 +76,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 300));
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 900));
 
         testFilesDataset.flatMap(new EvaluateClassifierMapFunctionWithRejection(mlModelBuilder))
                 .setParallelism(env.getParallelism())

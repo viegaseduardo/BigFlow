@@ -497,6 +497,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
                     for (int i = 0; i < dataTest.length; i++) {
                         for (Instance inst : dataTest[i]) {
+                            
                             double prob[] = classifier.distributionForInstance(inst);
 
                             //if is normal
@@ -570,7 +571,6 @@ public class MachineLearningModelBuilders implements Serializable {
                     if (nAcceptedAttack == 0) {
                         nAcceptedAttack = 1;
                     }
-                    
                     
                     
                     
