@@ -93,7 +93,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
 
         ArrayList<String> rejectList = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(outputPath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(output))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] split = line.split(";");
