@@ -29,7 +29,8 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
 
     public String folderPath;
     public String featureSET;
-    public static String PathToModel = "/home/viegas/Bases2/model/model";
+    //public static String PathToModel = "/home/viegas/Bases2/model/model";
+    public static String PathToModel = "/home/viegas/Downloads/model/model";
 
     public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
@@ -66,7 +67,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
         ObjectOutputStream oos = new ObjectOutputStream(
-                new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
+                new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection.PathToModel));
         oos.writeObject(classifier);
         oos.flush();
         oos.close();
@@ -76,7 +77,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 900));
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
 
         testFilesDataset.flatMap(new EvaluateClassifierMapFunctionWithRejection(mlModelBuilder))
                 .setParallelism(env.getParallelism())

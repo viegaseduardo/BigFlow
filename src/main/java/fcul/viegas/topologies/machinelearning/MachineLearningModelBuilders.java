@@ -74,6 +74,20 @@ public class MachineLearningModelBuilders implements Serializable {
 
         return attsel.reduceDimensionality(path);
     }
+    
+    public Instances getAsNormalizeFeatures(Instances path) throws Exception {
+
+        Normalize norm = new Normalize();
+
+        norm.setInputFormat(path);
+        norm.setScale(2.0d);
+        norm.setTranslation(-1.0d);
+
+        Instances normData = Filter.useFilter(path, norm);
+        normData.setClassIndex(normData.numAttributes() - 1);
+        
+        return normData;
+    }
 
     public Instances openFile(String path) throws Exception {
         BufferedReader reader
@@ -144,7 +158,7 @@ public class MachineLearningModelBuilders implements Serializable {
         Instances normData = Filter.useFilter(dataTrain, norm);
         normData.setClassIndex(normData.numAttributes() - 1);
 
-        return newdataFeat;
+        return normData;
     }
 
     public Instances[] openFileForTest(String path) throws Exception {
@@ -198,10 +212,10 @@ public class MachineLearningModelBuilders implements Serializable {
         newdataAnomalous.setClassIndex(newdataAnomalous.numAttributes() - 1);
 
         Instances[] ret = new Instances[3];
-        ret[0] = newdataNormal;
-        ret[1] = newdataSuspicious;
-        ret[2] = newdataAnomalous;
-
+        ret[0] = this.getAsNormalizeFeatures(newdataNormal);
+        ret[1] = this.getAsNormalizeFeatures(newdataSuspicious);
+        ret[2] = this.getAsNormalizeFeatures(newdataAnomalous);
+        
         return ret;
     }
 
@@ -467,19 +481,15 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public ArrayList<String> evaluateClassifierWithRejection(String path, Classifier classifier) {
         try {
-            Instances[] dataTest = this.openFileForTest(path);
-
-            Instances dataNormal = dataTest[0];
-            Instances dataSuspicious = dataTest[0];
-            Instances dataAnomalous = dataTest[0];
+            Instances dataTest = this.openFile(path);
 
             ArrayList<String> returnArray = new ArrayList<>();
 
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.HALF_EVEN);
 
-            for (int normalT = 50; normalT <= 100; normalT += 5) {
-                for (int attackT = 50; attackT <= 100; attackT += 5) {
+            for (int normalT = 95; normalT <= 100; normalT += 1) {
+                for (int attackT = 95; attackT <= 100; attackT += 1) {
 
                     float normalThreshold = normalT / 100.0f;
                     float attackThreshold = attackT / 100.0f;
@@ -495,64 +505,63 @@ public class MachineLearningModelBuilders implements Serializable {
                     int nCorrectlyRejectedNormal = 0;
                     int nCorrectlyRejectedAttack = 0; //ok
 
-                    for (int i = 0; i < dataTest.length; i++) {
-                        for (Instance inst : dataTest[i]) {
+                    for (Instance inst : dataTest) {
 
-                            double prob[] = classifier.distributionForInstance(inst);
+                        double prob[] = classifier.distributionForInstance(inst);
 
-                            //if is normal
-                            if (inst.classValue() == 0.0d) {
-                                nNormal++;
-                            } else {
-                                //is attack
-                                nAttack++;
-                            }
+                        //if is normal
+                        if (inst.classValue() == 0.0d) {
+                            nNormal++;
+                        } else {
+                            //is attack
+                            nAttack++;
+                        }
 
-                            //classified as normal
-                            if (prob[0] > prob[1]) {
-                                //if should accept
-                                if (prob[0] >= normalThreshold) {
-                                    //if correctly classified
-                                    if (inst.classValue() == 0.0d) {
-                                        nAcceptedNormal++;
-                                        nCorrectlyAcceptedNormal++;
-                                    } else {
-                                        //misclassified
-                                        nAcceptedAttack++;
-                                    }
+                        //classified as normal
+                        if (prob[0] > prob[1]) {
+                            //if should accept
+                            if (prob[0] >= normalThreshold) {
+                                //if correctly classified
+                                if (inst.classValue() == 0.0d) {
+                                    nAcceptedNormal++;
+                                    nCorrectlyAcceptedNormal++;
                                 } else {
-                                    //check if correctly rejected
-                                    if (inst.classValue() != 0.0d) {
-                                        nRejectedAttack++;
-                                        nCorrectlyRejectedAttack++;
-                                    } else {
-                                        //misrejected
-                                        nRejectedNormal++;
-                                    }
+                                    //misclassified
+                                    nAcceptedAttack++;
                                 }
                             } else {
-                                //classified as attack
-                                //if should accept
-                                if (prob[1] >= attackThreshold) {
-                                    //correctly classified
-                                    if (inst.classValue() == 1.0d) {
-                                        nAcceptedAttack++;
-                                        nCorrectlyAcceptedAttack++;
-                                    } else {
-                                        //misclassified
-                                        nAcceptedNormal++;
-                                    }
+                                //check if correctly rejected
+                                if (inst.classValue() != 0.0d) {
+                                    nRejectedAttack++;
+                                    nCorrectlyRejectedAttack++;
                                 } else {
-                                    //check if correctly rejected
-                                    if (inst.classValue() != 1.0d) {
-                                        nRejectedNormal++;
-                                        nCorrectlyRejectedNormal++;
-                                    } else {
-                                        //misrejected
-                                        nRejectedAttack++;
-                                    }
+                                    //misrejected
+                                    nRejectedNormal++;
                                 }
                             }
+                        } else {
+                            //classified as attack
+                            //if should accept
+                            if (prob[1] >= attackThreshold) {
+                                //correctly classified
+                                if (inst.classValue() == 1.0d) {
+                                    nAcceptedAttack++;
+                                    nCorrectlyAcceptedAttack++;
+                                } else {
+                                    //misclassified
+                                    nAcceptedNormal++;
+                                }
+                            } else {
+                                //check if correctly rejected
+                                if (inst.classValue() != 1.0d) {
+                                    nRejectedNormal++;
+                                    nCorrectlyRejectedNormal++;
+                                } else {
+                                    //misrejected
+                                    nRejectedAttack++;
+                                }
+                            }
+
                         }
                     }
 
@@ -572,18 +581,13 @@ public class MachineLearningModelBuilders implements Serializable {
                     float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
                     float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
 
-                    
-                    
-                    
-                    
-                    
                     String print = path + ";";
                     print = print + normalT + ";";
                     print = print + attackT + ";";
-                    print = print + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";";
-                    print = print + dataTest[0].size() + ";";
-                    print = print + dataTest[2].size() + ";";
-                    print = print + dataTest[1].size() + ";";
+                    print = print + (dataTest.size()) + ";";
+                    print = print + nNormal + ";";
+                    print = print + nAttack + ";";
+                    print = print + nAttack + ";";
                     print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
                     print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
                     print = print + accAceito + ";";

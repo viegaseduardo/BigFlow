@@ -20,6 +20,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_NAIVE;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_RejectionThresholds;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection_Evaluation;
+import fcul.viegas.topologies.machinelearning.Topologies_WEKA_TestWithRejection;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdate;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateStream;
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreaded;
@@ -37,6 +38,14 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        
+//        new Topologies_WEKA_TestWithRejection().run(
+//                    "/home/viegas/Downloads/2007",
+//                    "MOORE",
+//                    "/home/viegas/Downloads/saida",
+//                    "naive",
+//                    30);
+//        
 
         if (args.length == 1) {
 

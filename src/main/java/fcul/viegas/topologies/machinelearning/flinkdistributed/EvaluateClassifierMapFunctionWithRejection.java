@@ -31,7 +31,7 @@ public class EvaluateClassifierMapFunctionWithRejection extends RichFlatMapFunct
     public void open(Configuration cfg) {
         try {
             ObjectInputStream ois = new ObjectInputStream(
-                    new FileInputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
+                    new FileInputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection.PathToModel));
             this.classifier = (Classifier) ois.readObject();
             ois.close();
             System.out.println("EvaluateClassifierMapFunctionWithRejection - Just loaded model: "
@@ -47,6 +47,7 @@ public class EvaluateClassifierMapFunctionWithRejection extends RichFlatMapFunct
         for(String s : list){
             clctr.collect(s);
         }
+        System.out.println("foi: " + path);
     }
 
 }
