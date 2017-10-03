@@ -17,7 +17,7 @@ public class ValuesDTO {
     public int accNormal = 0;
     public int accSusp = 0;
     public int accAnomalous = 0;
-    public int accATK;
+    public int accATK = 0;
 
     public float floatAccAcceptNormal = 0.0f;
     public float floatAccAcceptAttack = 0.0f;
@@ -31,5 +31,5 @@ public class ValuesDTO {
     public float floatCorrectlyRejectedNormal = 0.0f;
     public float floatCorrectlyRejectedAttack = 0.0f;
 
-    public float nMeasures;
+    public float nMeasures = 0;
 }
