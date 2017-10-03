@@ -27,6 +27,9 @@ public class ValuesDTO {
     public float floatRejectionNormal = 0.0f;
     public float floatAVGAvgAccuracy = 0.0f;
     public float floatClassificationQuality = 0.0f;
+    public float floatCorrectlyRejected = 0.0f;
+    public float floatCorrectlyRejectedNormal = 0.0f;
+    public float floatCorrectlyRejectedAttack = 0.0f;
 
     public float nMeasures;
 }

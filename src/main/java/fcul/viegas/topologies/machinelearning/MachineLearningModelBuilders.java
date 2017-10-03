@@ -483,7 +483,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
                     float normalThreshold = normalT / 100.0f;
                     float attackThreshold = attackT / 100.0f;
-                    
+
                     int nNormal = 0; //ok
                     int nAttack = 0; //ok
                     int nRejectedNormal = 0; //ok
@@ -497,7 +497,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
                     for (int i = 0; i < dataTest.length; i++) {
                         for (Instance inst : dataTest[i]) {
-                            
+
                             double prob[] = classifier.distributionForInstance(inst);
 
                             //if is normal
@@ -556,9 +556,6 @@ public class MachineLearningModelBuilders implements Serializable {
                         }
                     }
 
-                    float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
-                    float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
-
                     if (nRejectedNormal == 0) {
                         nRejectedNormal = 1;
                     }
@@ -571,7 +568,10 @@ public class MachineLearningModelBuilders implements Serializable {
                     if (nAcceptedAttack == 0) {
                         nAcceptedAttack = 1;
                     }
-                    
+
+                    float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
+                    float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
+
                     
                     
                     
@@ -580,7 +580,7 @@ public class MachineLearningModelBuilders implements Serializable {
                     String print = path + ";";
                     print = print + normalT + ";";
                     print = print + attackT + ";";
-                    print = print + +(dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";";
+                    print = print + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";";
                     print = print + dataTest[0].size() + ";";
                     print = print + dataTest[2].size() + ";";
                     print = print + dataTest[1].size() + ";";

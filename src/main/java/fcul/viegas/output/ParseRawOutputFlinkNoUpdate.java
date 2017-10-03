@@ -96,8 +96,8 @@ public class ParseRawOutputFlinkNoUpdate {
                 String split[] = line.split(";");
                 if (split.length > 4
                         && !line.contains("NaN")
-                        && Integer.compare(normalThreshold, Integer.valueOf(line.split(";")[1])) == 0
-                        && Integer.compare(attackThreshold, Integer.valueOf(line.split(";")[2])) == 0) {
+                        && normalThreshold == Integer.valueOf(line.split(";")[1])
+                        && attackThreshold == Integer.valueOf(line.split(";")[2])) {
                     String month = split[0].split("/")[split[0].split("/").length - 1];
                     month = month.substring(0, range);
 
@@ -117,6 +117,9 @@ public class ParseRawOutputFlinkNoUpdate {
                     hashMap.get(month).floatRejection += Float.valueOf(split[13]);
                     hashMap.get(month).floatRejectionAttack += Float.valueOf(split[16]);
                     hashMap.get(month).floatRejectionNormal += Float.valueOf(split[17]);
+                    hashMap.get(month).floatCorrectlyRejected += Float.valueOf(split[12]);
+                    hashMap.get(month).floatCorrectlyRejectedNormal += Float.valueOf(split[10]);
+                    hashMap.get(month).floatCorrectlyRejectedAttack += Float.valueOf(split[11]);
                     hashMap.get(month).nMeasures += 1.0f;
 
                     n++;
@@ -139,7 +142,7 @@ public class ParseRawOutputFlinkNoUpdate {
         PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
 
         writer.println("month;nNormal;nAnomalous;nSusp;accAccept;accAcceptNormal;"
-                + "accAcceptAttack;rejectionPCT;rejectionAttackPCT;rejectionNormalPCT;"
+                + "accAcceptAttack;rejectionPCT;rejectionAttackPCT;rejectionNormalPCT;correctlyRejected;correctlyRejectedNormal;correctlyRejectedAttack;"
                 + "avgAVGAccuracy;classificationQuality");
 
         while (it.hasNext()) {
@@ -157,6 +160,9 @@ public class ParseRawOutputFlinkNoUpdate {
                     + (values.floatRejection / values.nMeasures) + ";"
                     + (values.floatRejectionAttack / values.nMeasures) + ";"
                     + (values.floatRejectionNormal / values.nMeasures) + ";"
+                    + (values.floatCorrectlyRejected / values.nMeasures) + ";"
+                    + (values.floatCorrectlyRejectedNormal / values.nMeasures) + ";"
+                    + (values.floatCorrectlyRejectedAttack / values.nMeasures) + ";"
                     + (values.floatAVGAvgAccuracy / values.nMeasures) + ";"
                     + (values.floatClassificationQuality / values.nMeasures));
         }
@@ -194,6 +200,9 @@ public class ParseRawOutputFlinkNoUpdate {
                     hashMap.get(rej).floatRejection += Float.valueOf(split[13]);
                     hashMap.get(rej).floatRejectionAttack += Float.valueOf(split[16]);
                     hashMap.get(rej).floatRejectionNormal += Float.valueOf(split[17]);
+                    hashMap.get(rej).floatCorrectlyRejected += Float.valueOf(split[12]);
+                    hashMap.get(rej).floatCorrectlyRejectedNormal += Float.valueOf(split[10]);
+                    hashMap.get(rej).floatCorrectlyRejectedAttack += Float.valueOf(split[11]);
                     hashMap.get(rej).nMeasures += 1.0f;
 
                     n++;
@@ -215,8 +224,8 @@ public class ParseRawOutputFlinkNoUpdate {
 
         PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
 
-        writer.println("month;nNormal;nAnomalous;nSusp;accAccept;accAcceptNormal;"
-                + "accAcceptAttack;rejectionPCT;rejectionAttackPCT;rejectionNormalPCT;"
+                writer.println("month;nNormal;nAnomalous;nSusp;accAccept;accAcceptNormal;"
+                + "accAcceptAttack;rejectionPCT;rejectionAttackPCT;rejectionNormalPCT;correctlyRejected;correctlyRejectedNormal;correctlyRejectedAttack;"
                 + "avgAVGAccuracy;classificationQuality");
 
         while (it.hasNext()) {
@@ -234,11 +243,14 @@ public class ParseRawOutputFlinkNoUpdate {
                     + (values.floatRejection / values.nMeasures) + ";"
                     + (values.floatRejectionAttack / values.nMeasures) + ";"
                     + (values.floatRejectionNormal / values.nMeasures) + ";"
+                    + (values.floatCorrectlyRejected / values.nMeasures) + ";"
+                    + (values.floatCorrectlyRejectedNormal / values.nMeasures) + ";"
+                    + (values.floatCorrectlyRejectedAttack / values.nMeasures) + ";"
                     + (values.floatAVGAvgAccuracy / values.nMeasures) + ";"
                     + (values.floatClassificationQuality / values.nMeasures));
         }
         writer.close();
-
+        
         return n;
     }
 
