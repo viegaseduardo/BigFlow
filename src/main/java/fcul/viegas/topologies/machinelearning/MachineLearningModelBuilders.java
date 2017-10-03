@@ -482,6 +482,9 @@ public class MachineLearningModelBuilders implements Serializable {
     public ArrayList<String> evaluateClassifierWithRejection(String path, Classifier classifier) {
         try {
             Instances dataTest = this.openFile(path);
+            
+            dataTest = this.getAsNormalizeFeatures(dataTest);
+            
 
             ArrayList<String> returnArray = new ArrayList<>();
 

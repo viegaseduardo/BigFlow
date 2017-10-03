@@ -29,8 +29,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
 
     public String folderPath;
     public String featureSET;
-    //public static String PathToModel = "/home/viegas/Bases2/model/model";
-    public static String PathToModel = "/home/viegas/Downloads/model/model";
+    public static String PathToModel = "/home/viegas/Bases2/model/model";
 
     public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
@@ -55,7 +54,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection {
                 dataTrain.add(inst);
             }
         }
-        //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
+        dataTrain = mlModelBuilder.getAsNormalizeFeatures(dataTrain);
 
         final Classifier classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")

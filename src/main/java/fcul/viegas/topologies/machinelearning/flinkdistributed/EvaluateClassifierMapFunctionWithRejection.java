@@ -47,7 +47,6 @@ public class EvaluateClassifierMapFunctionWithRejection extends RichFlatMapFunct
         for(String s : list){
             clctr.collect(s);
         }
-        System.out.println("foi: " + path);
     }
 
 }
