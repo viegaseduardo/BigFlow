@@ -491,8 +491,8 @@ public class MachineLearningModelBuilders implements Serializable {
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.HALF_EVEN);
 
-            for (int normalT = 95; normalT <= 100; normalT += 1) {
-                for (int attackT = 95; attackT <= 100; attackT += 1) {
+            for (int normalT = 50; normalT <= 100; normalT += 5) {
+                for (int attackT = 50; attackT <= 100; attackT += 5) {
 
                     float normalThreshold = normalT / 100.0f;
                     float attackThreshold = attackT / 100.0f;
