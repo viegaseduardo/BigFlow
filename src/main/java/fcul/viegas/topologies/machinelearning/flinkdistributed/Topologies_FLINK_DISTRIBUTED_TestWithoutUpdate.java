@@ -55,8 +55,12 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 dataTrain.add(inst);
             }
         }
-                
-        dataTrain = mlModelBuilder.removeParticularAttributes(dataTrain);
+
+        if (classifierToBuild.equals("VIEGAS")) {
+            dataTrain = mlModelBuilder.removeParticularAttributesViegas(dataTrain);
+        } else if (classifierToBuild.equals("ORUNADA")) {
+            dataTrain = mlModelBuilder.removeParticularAttributesOrunada(dataTrain);
+        }
 
         final Classifier classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")

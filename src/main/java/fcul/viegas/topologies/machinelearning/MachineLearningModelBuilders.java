@@ -35,7 +35,6 @@ import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
-import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.Randomize;
@@ -47,10 +46,18 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  */
 public class MachineLearningModelBuilders implements Serializable {
 
-    public Instances removeParticularAttributes(Instances data) {
+    public Instances removeParticularAttributesViegas(Instances data) {
 
         data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentDestinations_A").index());
         data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentServices_A").index());
+
+        return data;
+    }
+    
+    public Instances removeParticularAttributesOrunada(Instances data) {
+
+        data.deleteAttributeAt(data.attribute("ORUNADA_numberOfDifferentDestinations").index());
+        data.deleteAttributeAt(data.attribute("ORUNADA_numberOfDifferentServices").index());
 
         return data;
     }
