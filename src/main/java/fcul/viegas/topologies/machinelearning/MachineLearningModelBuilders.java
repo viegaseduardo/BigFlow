@@ -47,6 +47,14 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
  */
 public class MachineLearningModelBuilders implements Serializable {
 
+    public Instances removeParticularAttributes(Instances data) {
+
+        data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentDestinations_A").index());
+        data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentServices_A").index());
+
+        return data;
+    }
+    
     public void findFilesForTest(String pathTestDirectory, String featureSet, ArrayList<String> testFiles) {
         File directory = new File(pathTestDirectory);
         String[] directoryContents = directory.list();

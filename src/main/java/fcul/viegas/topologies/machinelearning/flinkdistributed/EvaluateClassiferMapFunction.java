@@ -42,5 +42,5 @@ public class EvaluateClassiferMapFunction extends RichMapFunction<String, String
     public String map(String path) throws Exception {
         return mlModelBuilder.evaluateClassifier(path, classifier);
     }
-
+    
 }
