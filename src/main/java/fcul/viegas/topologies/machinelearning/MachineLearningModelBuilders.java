@@ -292,14 +292,14 @@ public class MachineLearningModelBuilders implements Serializable {
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
 
-//        FilteredClassifier filteredClassifier = new FilteredClassifier();
-//        filteredClassifier.setFilter(new ClassBalancer());
+        FilteredClassifier filteredClassifier = new FilteredClassifier();
+        filteredClassifier.setFilter(new ClassBalancer());
 
         J48 classifier = new J48();
 
-//        filteredClassifier.setClassifier(classifier);
+        filteredClassifier.setClassifier(classifier);
 
-        inputMapped.setClassifier(classifier);
+        inputMapped.setClassifier(filteredClassifier);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
