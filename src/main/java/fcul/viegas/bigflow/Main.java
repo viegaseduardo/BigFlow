@@ -38,14 +38,14 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        
+//        
 //        new Topologies_WEKA_TestWithRejection().run(
 //                    "/home/viegas/Downloads/2007",
 //                    "MOORE",
 //                    "/home/viegas/Downloads/saida",
-//                    "naive",
-//                    30);
-//        
+//                    "tree",
+//                    7);
+        
 
         if (args.length == 1) {
 

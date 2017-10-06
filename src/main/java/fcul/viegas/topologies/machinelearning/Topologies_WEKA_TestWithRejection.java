@@ -8,6 +8,7 @@ package fcul.viegas.topologies.machinelearning;
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.EvaluateClassifierMapFunctionWithRejection;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
+import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -34,7 +35,8 @@ public class Topologies_WEKA_TestWithRejection {
 
         public double instClass;
         public double predictClass;
-        public double probability;
+        public double credibility;
+        public double confidence;
     }
 
     public String folderPath;
@@ -66,7 +68,12 @@ public class Topologies_WEKA_TestWithRejection {
                 dataTrain.add(inst);
             }
         }
+        dataTrain = mlModelBuilder.getAsNormalizeFeatures(dataTrain);
         //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
+
+        System.out.println("building conformal");
+        Transcend_ConformalPredictor conformal = new Transcend_ConformalPredictor();
+        conformal.setDataset(dataTrain);
 
         final Classifier classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
@@ -79,26 +86,33 @@ public class Topologies_WEKA_TestWithRejection {
 
         ArrayList<ValueForRejectEvaluation> listValues = new ArrayList<>();
 
+        int j = 0;
         for (String s : testFiles) {
+            if(j++ >= 30){
+                break;
+            }
             Instances dataTest = mlModelBuilder.openFile(s);
+            dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
 
             for (Instance inst : dataTest) {
-                //if (inst.classValue() != 0.0d) {
-                ValueForRejectEvaluation values = new ValueForRejectEvaluation();
+                if (inst.classValue() != 0.0d) {
+                    ValueForRejectEvaluation values = new ValueForRejectEvaluation();
 
-                values.instClass = inst.classValue();
+                    values.instClass = inst.classValue();
 
-                double[] prob = classifier.distributionForInstance(inst);
-                if (prob[0] > prob[1]) {
-                    values.predictClass = 0.0d;
-                    values.probability = prob[0];
-                } else {
-                    values.predictClass = 1.0d;
-                    values.probability = prob[1];
+                    double[] prob = classifier.distributionForInstance(inst);
+                    if (prob[0] > prob[1]) {
+                        values.predictClass = 0.0d;
+                        values.credibility = conformal.getPValueForNormal(inst);
+                        values.confidence = conformal.getPValueForAttack(inst);
+                    } else {
+                        values.predictClass = 1.0d;
+                        values.confidence = conformal.getPValueForNormal(inst);
+                        values.credibility = conformal.getPValueForAttack(inst);
+                    }
+
+                    listValues.add(values);
                 }
-
-                listValues.add(values);
-                // }
             }
             System.out.println(s);
         }
@@ -106,33 +120,37 @@ public class Topologies_WEKA_TestWithRejection {
         Collections.sort(listValues, new Comparator<ValueForRejectEvaluation>() {
             @Override
             public int compare(ValueForRejectEvaluation o1, ValueForRejectEvaluation o2) {
-                return Double.compare(o2.probability, o1.probability);
+                return Double.compare(o2.credibility, o1.credibility);
             }
         });
 
         for (ValueForRejectEvaluation value : listValues) {
-            //System.out.println(value.probability);
-        }
-
-        for (int i = 1; i < 100; i++) {
-            int index = (int) ((int) listValues.size() - (listValues.size() * (i / (float) 100)));
-
-            int n = 0;
-            int nAcc = 0;
-
-            for (int j = 0; j < index; j++) {
-                n++;
-                if (Double.compare(listValues.get(j).instClass, listValues.get(j).predictClass) == 0) {
-                    nAcc++;
-                }
-
+            String acertou = "0";
+            if(value.instClass != value.predictClass){
+                acertou = "0";
+                System.out.println(value.confidence + ";" + value.credibility + ";" + acertou);
             }
-
-            System.out.println(i + ";" 
-                    + (1 - (nAcc / (float) n)) + ";" 
-                    + index);
-
+            
         }
+//
+//        for (int i = 1; i < 100; i++) {
+//            int index = (int) ((int) listValues.size() - (listValues.size() * (i / (float) 100)));
+//
+//            int n = 0;
+//            int nAcc = 0;
+//
+//            for (j = 0; j < index; j++) {
+//                n++;
+//                if (Double.compare(listValues.get(j).instClass, listValues.get(j).predictClass) == 0) {
+//                    nAcc++;
+//                }
+//            }
+//
+//            System.out.println(i + ";"
+//                    + (1 - (nAcc / (float) n)) + ";"
+//                    + index);
+//
+//        }
 
     }
 
