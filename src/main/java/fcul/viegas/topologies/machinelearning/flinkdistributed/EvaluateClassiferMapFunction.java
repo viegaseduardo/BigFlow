@@ -13,7 +13,6 @@ import org.apache.flink.configuration.Configuration;
 import weka.classifiers.Classifier;
 
 /**
- *
  * @author viegas
  */
 public class EvaluateClassiferMapFunction extends RichMapFunction<String, String> {
