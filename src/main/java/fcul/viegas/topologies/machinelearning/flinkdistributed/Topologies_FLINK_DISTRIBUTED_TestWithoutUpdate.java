@@ -56,9 +56,9 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
             }
         }
 
-        if (classifierToBuild.equals("VIEGAS")) {
+        if (featureSet.equals("VIEGAS")) {
             dataTrain = mlModelBuilder.removeParticularAttributesViegas(dataTrain);
-        } else if (classifierToBuild.equals("ORUNADA")) {
+        } else if (featureSet.equals("ORUNADA")) {
             dataTrain = mlModelBuilder.removeParticularAttributesOrunada(dataTrain);
         }
 
