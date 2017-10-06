@@ -63,7 +63,7 @@ public class MachineLearningModelBuilders implements Serializable {
             File temp = new File(String.valueOf(directory), fileName);
             if (temp.isDirectory()) {
                 this.findFilesForTest(String.valueOf(temp), featureSet, testFiles);
-            } else if (String.valueOf(temp).contains("_" + featureSet + ".arff") && !String.valueOf(temp).contains("2007")) {
+            } else if (String.valueOf(temp).contains("_" + featureSet + ".arff")) {
                 testFiles.add(String.valueOf(temp));
             }
         }
