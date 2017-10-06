@@ -77,16 +77,17 @@ public class MachineLearningModelBuilders implements Serializable {
     
     public Instances getAsNormalizeFeatures(Instances path) throws Exception {
 
-        Normalize norm = new Normalize();
-
-        norm.setInputFormat(path);
-        norm.setScale(2.0d);
-        norm.setTranslation(-1.0d);
-
-        Instances normData = Filter.useFilter(path, norm);
-        normData.setClassIndex(normData.numAttributes() - 1);
-        
-        return normData;
+        throw new Exception();
+//        Normalize norm = new Normalize();
+//
+//        norm.setInputFormat(path);
+//        norm.setScale(2.0d);
+//        norm.setTranslation(-1.0d);
+//
+//        Instances normData = Filter.useFilter(path, norm);
+//        normData.setClassIndex(normData.numAttributes() - 1);
+//        
+//        return normData;
     }
 
     public Instances openFile(String path) throws Exception {
@@ -212,9 +213,9 @@ public class MachineLearningModelBuilders implements Serializable {
         newdataAnomalous.setClassIndex(newdataAnomalous.numAttributes() - 1);
 
         Instances[] ret = new Instances[3];
-        ret[0] = this.getAsNormalizeFeatures(newdataNormal);
-        ret[1] = this.getAsNormalizeFeatures(newdataSuspicious);
-        ret[2] = this.getAsNormalizeFeatures(newdataAnomalous);
+        ret[0] = newdataNormal;
+        ret[1] = newdataSuspicious;
+        ret[2] = newdataAnomalous;
         
         return ret;
     }
@@ -482,9 +483,7 @@ public class MachineLearningModelBuilders implements Serializable {
     public ArrayList<String> evaluateClassifierWithRejection(String path, Classifier classifier) {
         try {
             Instances dataTest = this.openFile(path);
-            
-            dataTest = this.getAsNormalizeFeatures(dataTest);
-            
+                        
 
             ArrayList<String> returnArray = new ArrayList<>();
 

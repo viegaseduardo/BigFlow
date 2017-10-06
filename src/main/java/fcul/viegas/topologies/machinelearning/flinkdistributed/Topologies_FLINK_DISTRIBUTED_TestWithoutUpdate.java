@@ -55,9 +55,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 dataTrain.add(inst);
             }
         }
-        
-        dataTrain = mlModelBuilder.getAsNormalizeFeatures(dataTrain);
-        
+                
         //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
 
         final Classifier classifier = classifierToBuild.equals("naive")
