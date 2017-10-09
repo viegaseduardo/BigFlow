@@ -42,7 +42,7 @@ public class Main {
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection("/home/viegas/testes/modelsovertime/adaboostviegas_raw_output.csv", "/home/viegas/testes/modelsovertime/adaboostviegas_summarized_monthly.csv",
                 ParseRawOutputFlinkNoUpdate.MonthRange);
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection("/home/viegas/testes/modelsovertime/adaboostviegas_raw_output.csv", "\"/home/viegas/testes/modelsovertime/adaboostviegas_summarized_yearly.csv",
+        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection("/home/viegas/testes/modelsovertime/adaboostviegas_raw_output.csv", "/home/viegas/testes/modelsovertime/adaboostviegas_summarized_yearly.csv",
                 ParseRawOutputFlinkNoUpdate.YearRange);
 
 //        new Topologies_WEKA_TestWithRejection().run(
