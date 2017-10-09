@@ -5,6 +5,7 @@
  */
 package fcul.viegas.bigflow;
 
+import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_FOREST;
@@ -38,7 +39,12 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-//        
+        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection("/home/viegas/testes/modelsovertime/adaboostviegas_raw_output.csv", "/home/viegas/testes/modelsovertime/adaboostviegas_summarized_monthly.csv",
+                ParseRawOutputFlinkNoUpdate.MonthRange);
+
+        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection("/home/viegas/testes/modelsovertime/adaboostviegas_raw_output.csv", "\"/home/viegas/testes/modelsovertime/adaboostviegas_summarized_yearly.csv",
+                ParseRawOutputFlinkNoUpdate.YearRange);
+
 //        new Topologies_WEKA_TestWithRejection().run(
 //                    "/home/viegas/Downloads/2007",
 //                    "MOORE",
