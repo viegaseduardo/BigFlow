@@ -29,7 +29,7 @@ import weka.core.Instances;
  *
  * @author viegas
  */
-public class Topologies_WEKA_TestWithRejection {
+public class Topologies_WEKA_ConformalThresholdFinder {
 
     public class ValueForRejectEvaluation {
 
@@ -92,9 +92,6 @@ public class Topologies_WEKA_TestWithRejection {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
-        
-     
-        
 
         ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<>();
         ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
@@ -155,7 +152,6 @@ public class Topologies_WEKA_TestWithRejection {
         System.out.println("Primeiro alpha: " + listValuesPredictedNormal.get(0).alpha);
         System.out.println("Ultimo alpha: " + listValuesPredictedNormal.get(listValuesPredictedNormal.size() - 1).alpha);
 
-        
         System.out.println("listValuesPredictedNormal.size(): " + listValuesPredictedNormal.size());
         System.out.println("listValuesPredictedAttack.size(): " + listValuesPredictedAttack.size());
 
@@ -318,28 +314,27 @@ public class Topologies_WEKA_TestWithRejection {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                
+
                 String[] split = line.split(";");
-                
+
                 OperationPoint op = new OperationPoint();
-                
+
                 op.difference = Math.abs(Float.valueOf(split[1]) - Float.valueOf(split[0]));
                 op.line = line;
-                
+
                 operationPointList.add(op);
             }
-            
+
             Collections.sort(operationPointList, new Comparator<OperationPoint>() {
                 @Override
                 public int compare(OperationPoint o1, OperationPoint o2) {
                     return Double.compare(o1.difference, o2.difference);
                 }
             });
-            
+
             System.out.println("Difference: " + operationPointList.get(0).difference);
             System.out.println("Line: " + operationPointList.get(0).line);
-            
-            
+
         } catch (Exception ex) {
 
         }
