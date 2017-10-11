@@ -41,18 +41,18 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
-                "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
-                "/home/viegas/testes/tree_orunada_conformal_summarized_monthly.csv",
-                ParseRawOutputFlinkNoUpdate.MonthRange
-        );
-
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
-                "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
-                "/home/viegas/testes/tree_orunada_conformal_summarized_yearly.csv",
-                ParseRawOutputFlinkNoUpdate.YearRange
-        );
-        System.exit(0);
+//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
+//                "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
+//                "/home/viegas/testes/tree_orunada_conformal_summarized_monthly.csv",
+//                ParseRawOutputFlinkNoUpdate.MonthRange
+//        );
+//
+//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
+//                "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
+//                "/home/viegas/testes/tree_orunada_conformal_summarized_yearly.csv",
+//                ParseRawOutputFlinkNoUpdate.YearRange
+//        );
+//        System.exit(0);
 
         if (args.length == 1) {
 

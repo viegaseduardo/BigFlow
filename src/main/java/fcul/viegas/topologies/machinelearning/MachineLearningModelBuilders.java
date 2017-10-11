@@ -627,8 +627,8 @@ public class MachineLearningModelBuilders implements Serializable {
     public String evaluateClassifierWithRejectionThroughConformal(String path,
             Classifier classifier,
             Transcend_ConformalPredictor conformalEvaluator,
-            double attackThreshold,
-            double normalThreshold,
+            float normalThreshold,
+            float attackThreshold,
             String featureSet) {
         try {
             Instances dataTest = this.openFile(path);
