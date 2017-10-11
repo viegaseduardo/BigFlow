@@ -171,7 +171,7 @@ public class ParseRawOutputFlinkNoUpdate {
         return n;
     }
     
-    public static int generateSummaryFileWithRejection(String rawFile, String outputFile, float normalThreshold, float attackThreshold, int range) throws Exception {
+    public static int generateSummaryFileWithRejection(String rawFile, String outputFile, int range) throws Exception {
         HashMap<String, ValuesDTO> hashMap = new HashMap<>();
         int n = 0;
         
@@ -180,9 +180,7 @@ public class ParseRawOutputFlinkNoUpdate {
             while ((line = br.readLine()) != null) {
                 String split[] = line.split(";");
                 if (split.length > 4
-                        && !line.contains("NaN")
-                        && normalThreshold == Float.valueOf(line.split(";")[1])
-                        && attackThreshold == Float.valueOf(line.split(";")[2])) {
+                        && !line.contains("NaN")) {
                     String month = split[0].split("/")[split[0].split("/").length - 1];
                     month = month.substring(0, range);
 

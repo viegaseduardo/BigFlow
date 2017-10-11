@@ -116,16 +116,12 @@ public class Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator {
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
                 outputPath + "_raw_output.csv",
                 outputPath + "_summarized_monthly.csv",
-                normalThreshold,
-                attackThreshold,
                 ParseRawOutputFlinkNoUpdate.MonthRange
         );
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
                 outputPath + "_raw_output.csv",
                 outputPath + "_summarized_yearly.csv",
-                normalThreshold,
-                attackThreshold,
                 ParseRawOutputFlinkNoUpdate.YearRange
         );
 

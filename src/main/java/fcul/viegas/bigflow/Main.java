@@ -44,16 +44,12 @@ public class Main {
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
                 "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
                 "/home/viegas/testes/tree_orunada_conformal_summarized_monthly.csv",
-                0.9884774088859558f,
-                0.7971514463424683f,
                 ParseRawOutputFlinkNoUpdate.MonthRange
         );
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
                 "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
                 "/home/viegas/testes/tree_orunada_conformal_summarized_yearly.csv",
-                0.9884774088859558f,
-                0.7971514463424683f,
                 ParseRawOutputFlinkNoUpdate.YearRange
         );
         System.exit(0);
@@ -86,36 +82,36 @@ public class Main {
                 args[3] = number of threads
              */
             
-            System.out.println("foi");
-            new Topologies_WEKA_ConformalThresholdFinder().findOperationPoint("/home/viegas/Downloads/tree_orunada_non_dominated.dat");
-
-            
-            System.exit(0);
-
-            new Topologies_WEKA_ConformalThresholdFinder().getNonDominatedSolutions("/home/viegas/Downloads/tree_moore.dat");
-
-            System.out.println("foi");
-            System.exit(0);
-
-            ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection("/home/viegas/Downloads/tree_orunada_raw.csv",
-                    "/home/viegas/Downloads/tree_orunada_summarized_monthly.csv",
-                    0.98847742f,
-                    0.79715146f,
-                    ParseRawOutputFlinkNoUpdate.MonthRange);
-
-            new Topologies_WEKA_ConformalThresholdFinder().run(
-                    "/home/viegas/Downloads/2007",
-                    "ORUNADA",
-                    "/home/viegas/Downloads/saida",
-                    "tree",
-                    30);
-            System.out.println("foi");
-            System.exit(0);
-            
-
-            Main.startTopologies_WEKA_Tests_WithoutUpdate(
-                    args[1],
-                    args[2]);
+//            System.out.println("foi");
+//            new Topologies_WEKA_ConformalThresholdFinder().findOperationPoint("/home/viegas/Downloads/tree_orunada_non_dominated.dat");
+//
+//            
+//            System.exit(0);
+//
+//            new Topologies_WEKA_ConformalThresholdFinder().getNonDominatedSolutions("/home/viegas/Downloads/tree_moore.dat");
+//
+//            System.out.println("foi");
+//            System.exit(0);
+//
+//            ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection("/home/viegas/Downloads/tree_orunada_raw.csv",
+//                    "/home/viegas/Downloads/tree_orunada_summarized_monthly.csv",
+//                    0.98847742f,
+//                    0.79715146f,
+//                    ParseRawOutputFlinkNoUpdate.MonthRange);
+//
+//            new Topologies_WEKA_ConformalThresholdFinder().run(
+//                    "/home/viegas/Downloads/2007",
+//                    "ORUNADA",
+//                    "/home/viegas/Downloads/saida",
+//                    "tree",
+//                    30);
+//            System.out.println("foi");
+//            System.exit(0);
+//            
+//
+//            Main.startTopologies_WEKA_Tests_WithoutUpdate(
+//                    args[1],
+//                    args[2]);
         } else if (args[0].equals("testwithoutupdatedistributed")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 
