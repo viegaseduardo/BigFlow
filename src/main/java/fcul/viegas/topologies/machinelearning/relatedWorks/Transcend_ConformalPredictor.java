@@ -5,6 +5,7 @@
  */
 package fcul.viegas.topologies.machinelearning.relatedWorks;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
@@ -15,7 +16,7 @@ import weka.core.TestInstances;
  *
  * @author viegas
  */
-public class Transcend_ConformalPredictor {
+public class Transcend_ConformalPredictor implements Serializable {
 
     private double[] centroidAttack;
     private double[] centroidNormal;
@@ -23,7 +24,6 @@ public class Transcend_ConformalPredictor {
     private double[] pvaluesNormal;
 
     public Transcend_ConformalPredictor() {
-
     }
 
     public Double getPValueForAttack(Instance inst) {
@@ -34,7 +34,8 @@ public class Transcend_ConformalPredictor {
                 break;
             }
         }
-        return (this.pvaluesAttack.length - i) / (double) this.pvaluesAttack.length;
+        double ret = (this.pvaluesAttack.length - i) / (double) this.pvaluesAttack.length;
+        return ret;
     }
 
     public Double getPValueForNormal(Instance inst) {
@@ -45,7 +46,8 @@ public class Transcend_ConformalPredictor {
                 break;
             }
         }
-        return (this.pvaluesNormal.length - i) / (double) this.pvaluesNormal.length;
+        double ret = (this.pvaluesNormal.length - i) / (double) this.pvaluesNormal.length;
+        return ret;
     }
 
     public void setDataset(Instances data) throws Exception {
@@ -54,23 +56,22 @@ public class Transcend_ConformalPredictor {
 
         Instances dataNormal = new Instances(data, 0, 1);
         Instances dataAttack = new Instances(data, 0, 1);
-        
+
         System.out.println(data.size());
 
         for (Instance inst : data) {
             if (inst.classValue() == 0.0d) {
                 dataNormal.add(inst);
-            }else{
+            } else {
                 dataAttack.add(inst);
             }
         }
-        
+
         System.out.println("attack size " + dataAttack.size());
         System.out.println("normal size " + dataNormal.size());
 
         dataNormal.setClassIndex(TestInstances.NO_CLASS);
         dataAttack.setClassIndex(TestInstances.NO_CLASS);
-
 
         System.out.println("building normal cluster");
         kmeansNormal.setNumClusters(1);
@@ -102,6 +103,13 @@ public class Transcend_ConformalPredictor {
 
         Arrays.sort(this.pvaluesNormal);
         Arrays.sort(this.pvaluesAttack);
+
+        System.out.println("NORMAL - Primeiro p-value: " + this.pvaluesNormal[0]);
+        System.out.println("NORMAL - Ultimo p-value: " + this.pvaluesNormal[this.pvaluesNormal.length - 1]);
+
+        System.out.println("ATTACK - Primeiro p-value: " + this.pvaluesAttack[0]);
+        System.out.println("ATTACK - Ultimo p-value: " + this.pvaluesAttack[this.pvaluesAttack.length - 1]);
+
     }
 
     private double distance(double[] a, double[] b) {

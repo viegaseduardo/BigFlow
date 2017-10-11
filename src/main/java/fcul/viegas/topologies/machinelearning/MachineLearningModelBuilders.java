@@ -5,6 +5,7 @@
  */
 package fcul.viegas.topologies.machinelearning;
 
+import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -51,13 +52,13 @@ public class MachineLearningModelBuilders implements Serializable {
         data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentServices_A").index());
         return data;
     }
-    
+
     public Instances removeParticularAttributesOrunada(Instances data) {
         data.deleteAttributeAt(data.attribute("ORUNADA_numberOfDifferentDestinations").index());
         data.deleteAttributeAt(data.attribute("ORUNADA_numberOfDifferentServices").index());
         return data;
     }
-    
+
     public void findFilesForTest(String pathTestDirectory, String featureSet, ArrayList<String> testFiles) {
         File directory = new File(pathTestDirectory);
         String[] directoryContents = directory.list();
@@ -85,20 +86,20 @@ public class MachineLearningModelBuilders implements Serializable {
 
         return attsel.reduceDimensionality(path);
     }
-    
+
     public Instances getAsNormalizeFeatures(Instances path) throws Exception {
 
-        throw new Exception();
-//        Normalize norm = new Normalize();
-//
-//        norm.setInputFormat(path);
-//        norm.setScale(2.0d);
-//        norm.setTranslation(-1.0d);
-//
-//        Instances normData = Filter.useFilter(path, norm);
-//        normData.setClassIndex(normData.numAttributes() - 1);
-//        
-//        return normData;
+//        throw new Exception();
+        Normalize norm = new Normalize();
+
+        norm.setInputFormat(path);
+        norm.setScale(2.0d);
+        norm.setTranslation(-1.0d);
+
+        Instances normData = Filter.useFilter(path, norm);
+        normData.setClassIndex(normData.numAttributes() - 1);
+
+        return normData;
     }
 
     public Instances openFile(String path) throws Exception {
@@ -227,7 +228,7 @@ public class MachineLearningModelBuilders implements Serializable {
         ret[0] = newdataNormal;
         ret[1] = newdataSuspicious;
         ret[2] = newdataAnomalous;
-        
+
         return ret;
     }
 
@@ -494,7 +495,6 @@ public class MachineLearningModelBuilders implements Serializable {
     public ArrayList<String> evaluateClassifierWithRejection(String path, Classifier classifier) {
         try {
             Instances dataTest = this.openFile(path);
-                        
 
             ArrayList<String> returnArray = new ArrayList<>();
 
@@ -618,6 +618,150 @@ public class MachineLearningModelBuilders implements Serializable {
             }
 
             return returnArray;
+
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public String evaluateClassifierWithRejectionThroughConformal(String path,
+            Classifier classifier,
+            Transcend_ConformalPredictor conformalEvaluator,
+            double attackThreshold,
+            double normalThreshold,
+            String featureSet) {
+        try {
+            Instances dataTest = this.openFile(path);
+
+            dataTest = this.getAsNormalizeFeatures(dataTest);
+            if (featureSet.equals("VIEGAS")) {
+                dataTest = this.removeParticularAttributesViegas(dataTest);
+            } else if (featureSet.equals("ORUNADA")) {
+                dataTest = this.removeParticularAttributesOrunada(dataTest);
+            }
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.HALF_EVEN);
+
+            int nNormal = 0; //ok
+            int nAttack = 0; //ok
+            int nRejectedNormal = 0; //ok
+            int nRejectedAttack = 0; //ok
+            int nAcceptedNormal = 0; //ok
+            int nAcceptedAttack = 0; //ok
+            int nCorrectlyAcceptedNormal = 0; //ok
+            int nCorrectlyAcceptedAttack = 0;
+            int nCorrectlyRejectedNormal = 0;
+            int nCorrectlyRejectedAttack = 0; //ok
+
+            for (Instance inst : dataTest) {
+
+                double prob[] = classifier.distributionForInstance(inst);
+
+                double alpha;
+                double confidence;
+                double credibility;
+
+                //if is normal
+                if (inst.classValue() == 0.0d) {
+                    nNormal++;
+                } else {
+                    //is attack
+                    nAttack++;
+                }
+
+                //classified as normal
+                if (prob[0] > prob[1]) {
+                    //if should accept
+                    credibility = conformalEvaluator.getPValueForNormal(inst);
+                    confidence = 1.0f - conformalEvaluator.getPValueForAttack(inst);
+                    alpha = credibility + confidence;
+
+                    if (alpha > normalThreshold) {
+                        //if correctly classified
+                        if (inst.classValue() == 0.0d) {
+                            nAcceptedNormal++;
+                            nCorrectlyAcceptedNormal++;
+                        } else {
+                            //misclassified
+                            nAcceptedAttack++;
+                        }
+                    } else {
+                        //check if correctly rejected
+                        if (inst.classValue() != 0.0d) {
+                            nRejectedAttack++;
+                            nCorrectlyRejectedAttack++;
+                        } else {
+                            //misrejected
+                            nRejectedNormal++;
+                        }
+                    }
+                } else {
+                    //classified as attack
+                    //if should accept
+                    credibility = conformalEvaluator.getPValueForAttack(inst);
+                    confidence = 1.0f - conformalEvaluator.getPValueForNormal(inst);
+                    alpha = credibility + confidence;
+
+                    if (alpha >= attackThreshold) {
+                        //correctly classified
+                        if (inst.classValue() == 1.0d) {
+                            nAcceptedAttack++;
+                            nCorrectlyAcceptedAttack++;
+                        } else {
+                            //misclassified
+                            nAcceptedNormal++;
+                        }
+                    } else {
+                        //check if correctly rejected
+                        if (inst.classValue() != 1.0d) {
+                            nRejectedNormal++;
+                            nCorrectlyRejectedNormal++;
+                        } else {
+                            //misrejected
+                            nRejectedAttack++;
+                        }
+                    }
+
+                }
+            }
+
+            if (nRejectedNormal == 0) {
+                nRejectedNormal = 1;
+            }
+            if (nRejectedAttack == 0) {
+                nRejectedAttack = 1;
+            }
+            if (nAcceptedNormal == 0) {
+                nAcceptedNormal = 1;
+            }
+            if (nAcceptedAttack == 0) {
+                nAcceptedAttack = 1;
+            }
+
+            float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
+            float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
+
+            String print = path + ";";
+            print = print + normalThreshold + ";";
+            print = print + attackThreshold + ";";
+            print = print + (dataTest.size()) + ";";
+            print = print + nNormal + ";";
+            print = print + nAttack + ";";
+            print = print + nAttack + ";";
+            print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
+            print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
+            print = print + accAceito + ";";
+            print = print + (nCorrectlyRejectedNormal / (float) nRejectedNormal) + ";";
+            print = print + (nCorrectlyRejectedAttack / (float) nRejectedAttack) + ";";
+            print = print + corretamenteRej + ";";
+            print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
+            print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+            print = print + (((nCorrectlyAcceptedAttack + nCorrectlyAcceptedNormal) + (nCorrectlyRejectedAttack + nCorrectlyRejectedNormal)) / (float) (nNormal + nAttack)) + ";";
+            print = print + ((nRejectedAttack) / (float) nAttack) + ";";
+            print = print + ((nRejectedNormal) / (float) nNormal);
+
+            return print;
 
         } catch (Exception ex) {
             return null;

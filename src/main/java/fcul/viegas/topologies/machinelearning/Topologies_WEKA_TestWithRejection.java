@@ -37,6 +37,7 @@ public class Topologies_WEKA_TestWithRejection {
         public double predictClass;
         public double credibility;
         public double confidence;
+        public double alpha;
     }
 
     public String folderPath;
@@ -69,11 +70,19 @@ public class Topologies_WEKA_TestWithRejection {
             }
         }
         dataTrain = mlModelBuilder.getAsNormalizeFeatures(dataTrain);
+
+        if (featureSet.equals("VIEGAS")) {
+            dataTrain = mlModelBuilder.removeParticularAttributesViegas(dataTrain);
+        } else if (featureSet.equals("ORUNADA")) {
+            dataTrain = mlModelBuilder.removeParticularAttributesOrunada(dataTrain);
+        }
         //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
 
         System.out.println("building conformal");
         Transcend_ConformalPredictor conformal = new Transcend_ConformalPredictor();
         conformal.setDataset(dataTrain);
+
+        System.out.println("building classifier");
 
         final Classifier classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
@@ -83,75 +92,257 @@ public class Topologies_WEKA_TestWithRejection {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
+        
+     
+        
 
-        ArrayList<ValueForRejectEvaluation> listValues = new ArrayList<>();
+        ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<>();
+        ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
 
         int j = 0;
         for (String s : testFiles) {
-            if(j++ >= 30){
-                break;
-            }
+
             Instances dataTest = mlModelBuilder.openFile(s);
             dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
 
+            if (featureSet.equals("VIEGAS")) {
+                dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
+            } else if (featureSet.equals("ORUNADA")) {
+                dataTest = mlModelBuilder.removeParticularAttributesOrunada(dataTest);
+            }
+
             for (Instance inst : dataTest) {
-                if (inst.classValue() != 0.0d) {
-                    ValueForRejectEvaluation values = new ValueForRejectEvaluation();
+                ValueForRejectEvaluation values = new ValueForRejectEvaluation();
 
-                    values.instClass = inst.classValue();
+                values.instClass = inst.classValue();
 
-                    double[] prob = classifier.distributionForInstance(inst);
-                    if (prob[0] > prob[1]) {
-                        values.predictClass = 0.0d;
-                        values.credibility = conformal.getPValueForNormal(inst);
-                        values.confidence = conformal.getPValueForAttack(inst);
-                    } else {
-                        values.predictClass = 1.0d;
-                        values.confidence = conformal.getPValueForNormal(inst);
-                        values.credibility = conformal.getPValueForAttack(inst);
-                    }
+                double[] prob = classifier.distributionForInstance(inst);
+                if (prob[0] > prob[1]) {
+                    values.predictClass = 0.0d;
+                    values.credibility = conformal.getPValueForNormal(inst);
+                    values.confidence = 1.0f - conformal.getPValueForAttack(inst);
+                    values.alpha = values.credibility + values.confidence;
+                    //values.alpha = prob[0];
 
-                    listValues.add(values);
+                    listValuesPredictedNormal.add(values);
+                } else {
+                    values.predictClass = 1.0d;
+                    values.credibility = conformal.getPValueForAttack(inst);
+                    values.confidence = 1.0f - conformal.getPValueForNormal(inst);
+                    values.alpha = values.credibility + values.confidence;
+
+                    //values.alpha = prob[1];
+                    listValuesPredictedAttack.add(values);
                 }
             }
             System.out.println(s);
         }
 
-        Collections.sort(listValues, new Comparator<ValueForRejectEvaluation>() {
+        Collections.sort(listValuesPredictedNormal, new Comparator<ValueForRejectEvaluation>() {
             @Override
             public int compare(ValueForRejectEvaluation o1, ValueForRejectEvaluation o2) {
-                return Double.compare(o2.credibility, o1.credibility);
+                return Double.compare(o2.alpha, o1.alpha);
             }
         });
 
-        for (ValueForRejectEvaluation value : listValues) {
-            String acertou = "0";
-            if(value.instClass != value.predictClass){
-                acertou = "0";
-                System.out.println(value.confidence + ";" + value.credibility + ";" + acertou);
+        Collections.sort(listValuesPredictedAttack, new Comparator<ValueForRejectEvaluation>() {
+            @Override
+            public int compare(ValueForRejectEvaluation o1, ValueForRejectEvaluation o2) {
+                return Double.compare(o2.alpha, o1.alpha);
             }
-            
+        });
+
+        System.out.println("Primeiro alpha: " + listValuesPredictedNormal.get(0).alpha);
+        System.out.println("Ultimo alpha: " + listValuesPredictedNormal.get(listValuesPredictedNormal.size() - 1).alpha);
+
+        
+        System.out.println("listValuesPredictedNormal.size(): " + listValuesPredictedNormal.size());
+        System.out.println("listValuesPredictedAttack.size(): " + listValuesPredictedAttack.size());
+
+        int pingNormal = (int) (listValuesPredictedNormal.size() / 100.0f);
+        int pingAttack = (int) (listValuesPredictedAttack.size() / 100.0f);
+        for (int iNormal = 0; iNormal < 100; iNormal++) {
+            System.out.println("Normal: [" + iNormal + "]: " + listValuesPredictedNormal.get(pingNormal * iNormal).alpha);
         }
-//
-//        for (int i = 1; i < 100; i++) {
-//            int index = (int) ((int) listValues.size() - (listValues.size() * (i / (float) 100)));
-//
-//            int n = 0;
-//            int nAcc = 0;
-//
-//            for (j = 0; j < index; j++) {
-//                n++;
-//                if (Double.compare(listValues.get(j).instClass, listValues.get(j).predictClass) == 0) {
-//                    nAcc++;
+        for (int iAttack = 0; iAttack < 100; iAttack++) {
+            System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
+        }
+
+        for (int iNormal = 0; iNormal < 100; iNormal++) {
+            for (int iAttack = 0; iAttack < 100; iAttack++) {
+
+                int n = 0;
+                int nAcc = 0;
+                int nAtk = 0;
+                int nAtkAcc = 0;
+                int nNormal = 0;
+                int nNormalAcc = 0;
+
+                int nToUseNormal = pingNormal * iNormal;
+                int nToUseAttack = pingAttack * iAttack;
+
+                for (j = 0; j < nToUseNormal; j++) {
+                    n++;
+
+                    if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
+                        nNormal++;
+                    } else {
+                        nAtk++;
+                    }
+
+                    if (Double.compare(listValuesPredictedNormal.get(j).instClass, listValuesPredictedNormal.get(j).predictClass) == 0) {
+                        nAcc++;
+                        if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
+                            nNormalAcc++;
+                        } else {
+                            nAtkAcc++;
+                        }
+                    }
+
+                }
+
+                for (j = 0; j < nToUseAttack; j++) {
+                    n++;
+
+                    if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
+                        nNormal++;
+                    } else {
+                        nAtk++;
+                    }
+
+                    if (Double.compare(listValuesPredictedAttack.get(j).instClass, listValuesPredictedAttack.get(j).predictClass) == 0) {
+                        nAcc++;
+                        if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
+                            nNormalAcc++;
+                        } else {
+                            nAtkAcc++;
+                        }
+                    }
+
+                }
+
+                if (nNormal == 0) {
+                    nNormal = 1;
+                }
+                if (nAtk == 0) {
+                    nAtk = 1;
+                }
+                if (n == 0) {
+                    n = 1;
+                }
+
+                System.out.println(iAttack + ";" + iNormal + ";"
+                        + (1 - (nAcc / (float) n)) + ";"
+                        + (1 - (nNormalAcc / (float) nNormal)) + ";"
+                        + (1 - (nAtkAcc / (float) nAtk)) + ";"
+                        + nNormalAcc + ";" + nNormal + ";"
+                        + nAtkAcc + ";" + nAtk + ";"
+                        + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())));
+            }
+
+        }
+
+    }
+
+    public class NonDominated {
+
+        public float error;
+        public float rejection;
+        public boolean toberemoved;
+
+    }
+
+    public void getNonDominatedSolutions(String filePath) {
+
+        ArrayList<NonDominated> nonDominatedList = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+
+                String[] split = line.split(";");
+
+                float error = Float.valueOf(split[2]);
+                float rejection = 1.0f - Float.valueOf(split[9]);
+
+                NonDominated nonDominated = new NonDominated();
+                nonDominated.error = error;
+                nonDominated.rejection = rejection;
+                nonDominated.toberemoved = false;
+
+                nonDominatedList.add(nonDominated);
+            }
+
+            for (NonDominated nonDominated1 : nonDominatedList) {
+                for (NonDominated nonDominated2 : nonDominatedList) {
+                    if (!nonDominated1.toberemoved && !nonDominated2.toberemoved) {
+                        if (nonDominated2.error < nonDominated1.error && nonDominated2.rejection < nonDominated1.rejection) {
+                            nonDominated1.toberemoved = true;
+                        }
+                    }
+                }
+            }
+
+//            for (NonDominated nonDominated1 : nonDominatedList) {
+//                if (nonDominated1.toberemoved) {
+//                    nonDominatedList.remove(nonDominated1);
 //                }
 //            }
-//
-//            System.out.println(i + ";"
-//                    + (1 - (nAcc / (float) n)) + ";"
-//                    + index);
-//
-//        }
+            Collections.sort(nonDominatedList, new Comparator<NonDominated>() {
+                @Override
+                public int compare(NonDominated o1, NonDominated o2) {
+                    return Double.compare(o1.rejection, o2.rejection);
+                }
+            });
 
+            for (NonDominated nonDominated1 : nonDominatedList) {
+                if (!nonDominated1.toberemoved) {
+                    System.out.println(nonDominated1.error + ";" + nonDominated1.rejection);
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public class OperationPoint {
+
+        public float difference;
+        public String line;
+    }
+
+    public void findOperationPoint(String filePath) {
+        ArrayList<OperationPoint> operationPointList = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                
+                String[] split = line.split(";");
+                
+                OperationPoint op = new OperationPoint();
+                
+                op.difference = Math.abs(Float.valueOf(split[1]) - Float.valueOf(split[0]));
+                op.line = line;
+                
+                operationPointList.add(op);
+            }
+            
+            Collections.sort(operationPointList, new Comparator<OperationPoint>() {
+                @Override
+                public int compare(OperationPoint o1, OperationPoint o2) {
+                    return Double.compare(o1.difference, o2.difference);
+                }
+            });
+            
+            System.out.println("Difference: " + operationPointList.get(0).difference);
+            System.out.println("Line: " + operationPointList.get(0).line);
+            
+            
+        } catch (Exception ex) {
+
+        }
     }
 
 }

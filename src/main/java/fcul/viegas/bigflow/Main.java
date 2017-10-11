@@ -28,6 +28,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateTh
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
+import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -39,13 +40,35 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        
+        System.out.println("NIGEL TREE");
+        
+        
+//        new Topologies_WEKA_TestWithRejection().findOperationPoint("/home/viegas/Downloads/tree_orunada_non_dominated.dat");
+//        
+//        System.out.println("foi");
+//        System.exit(0);
+        
+//        new Topologies_WEKA_TestWithRejection().getNonDominatedSolutions("/home/viegas/Downloads/tree_moore.dat");
+//        
+//        System.out.println("foi");
+//        System.exit(0);
+        
+//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection("/home/viegas/Downloads/tree_orunada_raw.csv",
+//                "/home/viegas/Downloads/tree_orunada_summarized_monthly.csv",
+//                0.98847742f,
+//                0.79715146f,
+//                ParseRawOutputFlinkNoUpdate.MonthRange);
+
 //        new Topologies_WEKA_TestWithRejection().run(
 //                    "/home/viegas/Downloads/2007",
-//                    "MOORE",
+//                    "ORUNADA",
 //                    "/home/viegas/Downloads/saida",
 //                    "tree",
-//                    7);
-        
+//                    30);
+//        System.out.println("foi");
+//        System.exit(0);
+
 
         if (args.length == 1) {
 
@@ -87,6 +110,30 @@ public class Main {
                     args[3],
                     args[4],
                     Integer.valueOf(args[5]));
+        }else if (args[0].equals("testwithoutupdateconformalevaluator")) {
+            /*
+            note that this version is way faster than "testwithupdatedistributed" 
+                due to the need to load from disk the models
+            
+                args[1] = path to folder
+                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[3] = output
+                args[4] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+                args[5] = days to use for training
+                args[6] = normal threshold
+                args[7] = attack threshold
+            
+            ./bin/flink run -p 144 /home/viegas/BigFlow/target/BigFlow-1.0-SNAPSHOT-jar-with-dependencies.jar testwithoutupdatedistributed /home/viegas/Bases/arrfs/ NIGEL /home/viegas/testes/forest forest 7
+             
+            */
+            new Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator().run(
+                    args[1],
+                    args[2],
+                    args[3],
+                    args[4],
+                    Integer.valueOf(args[5]),
+                    Float.valueOf(args[6]),
+                    Float.valueOf(args[7]));
         } else if (args[0].equals("testwithoutupdatedistributedwithrejection")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 
