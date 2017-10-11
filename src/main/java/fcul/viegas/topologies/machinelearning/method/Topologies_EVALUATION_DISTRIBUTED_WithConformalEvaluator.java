@@ -28,8 +28,8 @@ public class Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator {
 
     public String folderPath;
     public String featureSET;
-    //public static String PathToModel = "/home/viegas/Bases2/model/model";
-    public static String PathToModel = "/home/viegas/Downloads/model/model";
+    public static String PathToModel = "/home/viegas/Bases2/model/model";
+    //public static String PathToModel = "/home/viegas/Downloads/model/model";
 
     public void run(
             String pathArffs,
