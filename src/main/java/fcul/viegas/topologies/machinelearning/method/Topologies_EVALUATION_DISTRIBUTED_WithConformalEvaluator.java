@@ -93,7 +93,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
 
         testFilesDataset.map(new EvaluateClassiferMapFunctionWithConformal(
                 mlModelBuilder,
