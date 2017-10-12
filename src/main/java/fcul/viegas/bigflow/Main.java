@@ -79,39 +79,40 @@ public class Main {
             /*
                 args[1] = path to folder
                 args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
-                args[3] = number of threads
+                args[3] = output
+                args[4] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+                args[5] = days to use for training
+                args[6] = days to use for testing (if you want only 2007 use args[6]=300)
              */
             
-//            System.out.println("foi");
-//            new Topologies_WEKA_ConformalThresholdFinder().findOperationPoint("/home/viegas/Downloads/tree_orunada_non_dominated.dat");
-//
-//            
-//            System.exit(0);
-//
-//            new Topologies_WEKA_ConformalThresholdFinder().getNonDominatedSolutions("/home/viegas/Downloads/tree_moore.dat");
-//
-//            System.out.println("foi");
-//            System.exit(0);
-//
-//            ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection("/home/viegas/Downloads/tree_orunada_raw.csv",
-//                    "/home/viegas/Downloads/tree_orunada_summarized_monthly.csv",
-//                    0.98847742f,
-//                    0.79715146f,
-//                    ParseRawOutputFlinkNoUpdate.MonthRange);
-//
-//            new Topologies_WEKA_ConformalThresholdFinder().run(
-//                    "/home/viegas/Downloads/2007",
-//                    "ORUNADA",
-//                    "/home/viegas/Downloads/saida",
-//                    "tree",
-//                    30);
-//            System.out.println("foi");
-//            System.exit(0);
-//            
-//
-//            Main.startTopologies_WEKA_Tests_WithoutUpdate(
-//                    args[1],
-//                    args[2]);
+            Topologies_WEKA_ConformalThresholdFinder conformalFinder =  new Topologies_WEKA_ConformalThresholdFinder();
+            
+            
+            System.out.println("Generating threshold evaluation file...");
+            
+            conformalFinder.generateThresholdEvaluationFile(
+                    args[1],
+                    args[2],
+                    args[3] + "_threshold_file.csv",
+                    args[4],
+                    Integer.valueOf(args[5]),
+                    Integer.valueOf(args[6]));
+            
+            System.out.println("Generating non-dominated file...");
+            
+            
+            conformalFinder.getNonDominatedSolutions(
+                    args[3] + "_threshold_file.csv", 
+                    args[3] + "_non_dominated.csv");
+            
+            
+            System.out.println("Generating operation points file...");
+            
+            conformalFinder.findOperationPoints(
+                    args[3] + "_non_dominated.csv", 
+                    args[3] + "_operation_points");
+            
+            
         } else if (args[0].equals("testwithoutupdatedistributed")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 

@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,7 +46,13 @@ public class Topologies_WEKA_ConformalThresholdFinder {
     //public static String PathToModel = "/home/viegas/Bases2/model/model";
     public static String PathToModel = "/home/viegas/Downloads/model/model";
 
-    public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
+    public void generateThresholdEvaluationFile(
+            String pathArffs,
+            String featureSet,
+            String outputPath,
+            String classifierToBuild,
+            int daysToUseForTraining,
+            int daysToUseForTest) throws Exception {
 
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
         ArrayList<String> testFiles = new ArrayList();
@@ -76,7 +83,6 @@ public class Topologies_WEKA_ConformalThresholdFinder {
         } else if (featureSet.equals("ORUNADA")) {
             dataTrain = mlModelBuilder.removeParticularAttributesOrunada(dataTrain);
         }
-        //dataTrain = mlModelBuilder.selectFeatures(dataTrain);
 
         System.out.println("building conformal");
         Transcend_ConformalPredictor conformal = new Transcend_ConformalPredictor();
@@ -97,7 +103,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
         ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
 
         int j = 0;
-        for (String s : testFiles) {
+        for (String s : testFiles.subList(0, daysToUseForTest)) {
 
             Instances dataTest = mlModelBuilder.openFile(s);
             dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
@@ -164,7 +170,10 @@ public class Topologies_WEKA_ConformalThresholdFinder {
             System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
         }
 
+        ArrayList<String> outputList = new ArrayList<>();
+
         for (int iNormal = 0; iNormal < 100; iNormal++) {
+            System.out.println("Classifier: + " + classifierToBuild + " percentage done: " + iNormal);
             for (int iAttack = 0; iAttack < 100; iAttack++) {
 
                 int n = 0;
@@ -227,16 +236,27 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                     n = 1;
                 }
 
-                System.out.println(iAttack + ";" + iNormal + ";"
+                outputList.add(iAttack + ";"
+                        + iNormal + ";"
                         + (1 - (nAcc / (float) n)) + ";"
                         + (1 - (nNormalAcc / (float) nNormal)) + ";"
                         + (1 - (nAtkAcc / (float) nAtk)) + ";"
-                        + nNormalAcc + ";" + nNormal + ";"
-                        + nAtkAcc + ";" + nAtk + ";"
-                        + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())));
+                        + nNormalAcc + ";"
+                        + nNormal + ";"
+                        + nAtkAcc + ";"
+                        + nAtk + ";"
+                        + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())) + ";"
+                        + listValuesPredictedNormal.get(pingNormal * iNormal).alpha + ";"
+                        + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
             }
-
         }
+
+        PrintWriter writer = new PrintWriter(outputPath, "UTF-8");
+
+        for (String s : outputList) {
+            writer.println(s);
+        }
+        writer.close();
 
     }
 
@@ -244,15 +264,18 @@ public class Topologies_WEKA_ConformalThresholdFinder {
 
         public float error;
         public float rejection;
+        public String line;
         public boolean toberemoved;
 
     }
 
-    public void getNonDominatedSolutions(String filePath) {
+    public void getNonDominatedSolutions(
+            String fileInputPath,
+            String fileOutputPath) {
 
         ArrayList<NonDominated> nonDominatedList = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileInputPath))) {
             String line;
             while ((line = br.readLine()) != null) {
 
@@ -264,6 +287,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                 NonDominated nonDominated = new NonDominated();
                 nonDominated.error = error;
                 nonDominated.rejection = rejection;
+                nonDominated.line = line;
                 nonDominated.toberemoved = false;
 
                 nonDominatedList.add(nonDominated);
@@ -278,12 +302,6 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                     }
                 }
             }
-
-//            for (NonDominated nonDominated1 : nonDominatedList) {
-//                if (nonDominated1.toberemoved) {
-//                    nonDominatedList.remove(nonDominated1);
-//                }
-//            }
             Collections.sort(nonDominatedList, new Comparator<NonDominated>() {
                 @Override
                 public int compare(NonDominated o1, NonDominated o2) {
@@ -291,11 +309,15 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                 }
             });
 
+            PrintWriter writer = new PrintWriter(fileOutputPath, "UTF-8");
+
             for (NonDominated nonDominated1 : nonDominatedList) {
                 if (!nonDominated1.toberemoved) {
-                    System.out.println(nonDominated1.error + ";" + nonDominated1.rejection);
+                    writer.println(nonDominated1.line);
                 }
             }
+
+            writer.close();
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -305,21 +327,25 @@ public class Topologies_WEKA_ConformalThresholdFinder {
     public class OperationPoint {
 
         public float difference;
+        public float error;
+        public float rejection;
         public String line;
     }
 
-    public void findOperationPoint(String filePath) {
+    public void findOperationPoints(
+            String fileInputPath,
+            String fileOutputPath) {
         ArrayList<OperationPoint> operationPointList = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileInputPath))) {
             String line;
             while ((line = br.readLine()) != null) {
-
                 String[] split = line.split(";");
-
                 OperationPoint op = new OperationPoint();
 
-                op.difference = Math.abs(Float.valueOf(split[1]) - Float.valueOf(split[0]));
+                op.error = Float.valueOf(split[2]);
+                op.rejection = 1 - Float.valueOf(split[9]);
+                op.difference = Math.abs(op.error - op.rejection);
                 op.line = line;
 
                 operationPointList.add(op);
@@ -332,8 +358,65 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                 }
             });
 
-            System.out.println("Difference: " + operationPointList.get(0).difference);
-            System.out.println("Line: " + operationPointList.get(0).line);
+            PrintWriter writer = new PrintWriter(fileOutputPath, "UTF-8");
+
+            writer.println("\tAverage Operation Point:");
+            writer.println("Difference between objectives: " + operationPointList.get(0).difference);
+            writer.println("Error rate: " + operationPointList.get(0).error);
+            writer.println("Rejection rate: " + operationPointList.get(0).rejection);
+            writer.println("Normal threshold AVG: " + operationPointList.get(0).line.split(";")[11]);
+            writer.println("Attack threshold AVG: " + operationPointList.get(0).line.split(";")[12]);
+            writer.println("Line: " + operationPointList.get(0).line + "\n");
+
+            Collections.sort(operationPointList, new Comparator<OperationPoint>() {
+                @Override
+                public int compare(OperationPoint o1, OperationPoint o2) {
+                    return Double.compare(o2.rejection, o1.rejection);
+                }
+            });
+
+            OperationPoint bestOP = operationPointList.get(0);
+
+            for (OperationPoint op : operationPointList) {
+                if (op.error > 5.0f) {
+                    break;
+                }
+                bestOP = op;
+            }
+
+            writer.println("\tError rate 5% Operation Point:");
+            writer.println("Difference between objectives: " + bestOP.difference);
+            writer.println("Error rate: " + bestOP.error);
+            writer.println("Rejection rate: " + bestOP.rejection);
+            writer.println("Normal threshold AVG: " + bestOP.line.split(";")[11]);
+            writer.println("Attack threshold AVG: " + bestOP.line.split(";")[12]);
+            writer.println("Line: " + bestOP.line + "\n");
+
+            Collections.sort(operationPointList, new Comparator<OperationPoint>() {
+                @Override
+                public int compare(OperationPoint o1, OperationPoint o2) {
+                    return Double.compare(o2.error, o1.error);
+                }
+            });
+
+            bestOP = operationPointList.get(0);
+
+            for (OperationPoint op : operationPointList) {
+                if (op.rejection > 5.0f) {
+                    break;
+                }
+                bestOP = op;
+            }
+
+            writer.println("\tRejection rate 5% Operation Point:");
+            writer.println("Difference between objectives: " + bestOP.difference);
+            writer.println("Error rate: " + bestOP.error);
+            writer.println("Rejection rate: " + bestOP.rejection);
+            writer.println("Normal threshold AVG: " + bestOP.line.split(";")[11]);
+            writer.println("Attack threshold AVG: " + bestOP.line.split(";")[12]);
+            writer.println("Line: " + bestOP.line + "\n");
+
+            writer.close();
 
         } catch (Exception ex) {
 
