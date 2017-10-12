@@ -173,7 +173,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
         ArrayList<String> outputList = new ArrayList<>();
 
         for (int iNormal = 0; iNormal < 100; iNormal++) {
-            System.out.println("Classifier: " + classifierToBuild + " percentage done: " + iNormal);
+            System.out.println("Classifier: " + classifierToBuild + " " + this.featureSET +" percentage done: " + iNormal);
             for (int iAttack = 0; iAttack < 100; iAttack++) {
 
                 int n = 0;
