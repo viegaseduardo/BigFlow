@@ -173,7 +173,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
         ArrayList<String> outputList = new ArrayList<>();
 
         for (int iNormal = 0; iNormal < 100; iNormal++) {
-            System.out.println("Classifier: + " + classifierToBuild + " percentage done: " + iNormal);
+            System.out.println("Classifier: " + classifierToBuild + " percentage done: " + iNormal);
             for (int iAttack = 0; iAttack < 100; iAttack++) {
 
                 int n = 0;
@@ -236,6 +236,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                     n = 1;
                 }
 
+                
                 outputList.add(iAttack + ";"
                         + iNormal + ";"
                         + (1 - (nAcc / (float) n)) + ";"
@@ -364,8 +365,8 @@ public class Topologies_WEKA_ConformalThresholdFinder {
             writer.println("Difference between objectives: " + operationPointList.get(0).difference);
             writer.println("Error rate: " + operationPointList.get(0).error);
             writer.println("Rejection rate: " + operationPointList.get(0).rejection);
-            writer.println("Normal threshold AVG: " + operationPointList.get(0).line.split(";")[11]);
-            writer.println("Attack threshold AVG: " + operationPointList.get(0).line.split(";")[12]);
+            writer.println("Normal threshold AVG: " + operationPointList.get(0).line.split(";")[10]);
+            writer.println("Attack threshold AVG: " + operationPointList.get(0).line.split(";")[11]);
             writer.println("Line: " + operationPointList.get(0).line + "\n");
 
             Collections.sort(operationPointList, new Comparator<OperationPoint>() {
@@ -378,7 +379,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
             OperationPoint bestOP = operationPointList.get(0);
 
             for (OperationPoint op : operationPointList) {
-                if (op.error > 5.0f) {
+                if (op.error > 0.05f) {
                     break;
                 }
                 bestOP = op;
@@ -388,8 +389,8 @@ public class Topologies_WEKA_ConformalThresholdFinder {
             writer.println("Difference between objectives: " + bestOP.difference);
             writer.println("Error rate: " + bestOP.error);
             writer.println("Rejection rate: " + bestOP.rejection);
-            writer.println("Normal threshold AVG: " + bestOP.line.split(";")[11]);
-            writer.println("Attack threshold AVG: " + bestOP.line.split(";")[12]);
+            writer.println("Normal threshold Error5%: " + bestOP.line.split(";")[10]);
+            writer.println("Attack threshold Error5%: " + bestOP.line.split(";")[11]);
             writer.println("Line: " + bestOP.line + "\n");
 
             Collections.sort(operationPointList, new Comparator<OperationPoint>() {
@@ -402,7 +403,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
             bestOP = operationPointList.get(0);
 
             for (OperationPoint op : operationPointList) {
-                if (op.rejection > 5.0f) {
+                if (op.rejection > 0.05f) {
                     break;
                 }
                 bestOP = op;
@@ -412,14 +413,14 @@ public class Topologies_WEKA_ConformalThresholdFinder {
             writer.println("Difference between objectives: " + bestOP.difference);
             writer.println("Error rate: " + bestOP.error);
             writer.println("Rejection rate: " + bestOP.rejection);
-            writer.println("Normal threshold AVG: " + bestOP.line.split(";")[11]);
-            writer.println("Attack threshold AVG: " + bestOP.line.split(";")[12]);
+            writer.println("Normal threshold Reject5%: " + bestOP.line.split(";")[10]);
+            writer.println("Attack threshold Reject5%: " + bestOP.line.split(";")[11]);
             writer.println("Line: " + bestOP.line + "\n");
 
             writer.close();
 
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
     }
 

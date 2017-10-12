@@ -40,19 +40,6 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        
-//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
-//                "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
-//                "/home/viegas/testes/tree_orunada_conformal_summarized_monthly.csv",
-//                ParseRawOutputFlinkNoUpdate.MonthRange
-//        );
-//
-//        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
-//                "/home/viegas/testes/tree_orunada_conformal_raw_output.csv",
-//                "/home/viegas/testes/tree_orunada_conformal_summarized_yearly.csv",
-//                ParseRawOutputFlinkNoUpdate.YearRange
-//        );
-//        System.exit(0);
 
         if (args.length == 1) {
 
@@ -84,12 +71,10 @@ public class Main {
                 args[5] = days to use for training
                 args[6] = days to use for testing (if you want only 2007 use args[6]=300)
              */
-            
-            Topologies_WEKA_ConformalThresholdFinder conformalFinder =  new Topologies_WEKA_ConformalThresholdFinder();
-            
-            
+            Topologies_WEKA_ConformalThresholdFinder conformalFinder = new Topologies_WEKA_ConformalThresholdFinder();
+
             System.out.println("Generating threshold evaluation file...");
-            
+
             conformalFinder.generateThresholdEvaluationFile(
                     args[1],
                     args[2],
@@ -97,22 +82,19 @@ public class Main {
                     args[4],
                     Integer.valueOf(args[5]),
                     Integer.valueOf(args[6]));
-            
+
             System.out.println("Generating non-dominated file...");
-            
-            
+
             conformalFinder.getNonDominatedSolutions(
-                    args[3] + "_threshold_file.csv", 
+                    args[3] + "_threshold_file.csv",
                     args[3] + "_non_dominated.csv");
-            
-            
+
             System.out.println("Generating operation points file...");
-            
+
             conformalFinder.findOperationPoints(
-                    args[3] + "_non_dominated.csv", 
+                    args[3] + "_non_dominated.csv",
                     args[3] + "_operation_points");
-            
-            
+
         } else if (args[0].equals("testwithoutupdatedistributed")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 
