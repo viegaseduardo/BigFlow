@@ -237,6 +237,7 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                 }
 
                 
+                
                 outputList.add(iAttack + ";"
                         + iNormal + ";"
                         + (1 - (nAcc / (float) n)) + ";"

@@ -93,8 +93,8 @@ public class MachineLearningModelBuilders implements Serializable {
         Normalize norm = new Normalize();
 
         norm.setInputFormat(path);
-        norm.setScale(200.0d);
-        norm.setTranslation(-100.0d);
+        norm.setScale(2.0d);
+        norm.setTranslation(-1.0d);
 
         Instances normData = Filter.useFilter(path, norm);
         normData.setClassIndex(normData.numAttributes() - 1);
