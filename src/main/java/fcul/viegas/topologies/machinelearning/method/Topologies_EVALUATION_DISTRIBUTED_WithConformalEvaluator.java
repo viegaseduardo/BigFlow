@@ -111,7 +111,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator {
                 writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
-        env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE_CONFORMAL");
+        env.execute(pathArffs + "_NO_UPDATE_CONFORMAL_" + classifierToBuild + "_" + featureSet);
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
                 outputPath + "_raw_output.csv",
