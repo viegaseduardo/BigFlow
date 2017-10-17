@@ -391,7 +391,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         RandomCommittee classifier = new RandomCommittee();
 
-        classifier.setNumExecutionSlots(4);
+        classifier.setNumExecutionSlots(20);
         classifier.setNumIterations(20);
         classifier.setClassifier(new ExtraTree());
         classifier.buildClassifier(train);
@@ -415,7 +415,7 @@ public class MachineLearningModelBuilders implements Serializable {
         Bagging classifier = new Bagging();
 
         classifier.setClassifier(new J48());
-        classifier.setNumExecutionSlots(4);
+        classifier.setNumExecutionSlots(20);
         classifier.setNumIterations(20);
         classifier.buildClassifier(train);
 
