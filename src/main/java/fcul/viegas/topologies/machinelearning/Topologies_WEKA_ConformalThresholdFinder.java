@@ -124,17 +124,17 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                     values.predictClass = 0.0d;
                     values.credibility = conformal.getPValueForNormal(inst);
                     values.confidence = 1.0f - conformal.getPValueForAttack(inst);
-                    //values.alpha = values.credibility + values.confidence;
-                    values.alpha = prob[0];
+                    values.alpha = values.credibility + values.confidence;
+                    //values.alpha = prob[0];
 
                     listValuesPredictedNormal.add(values);
                 } else {
                     values.predictClass = 1.0d;
                     values.credibility = conformal.getPValueForAttack(inst);
                     values.confidence = 1.0f - conformal.getPValueForNormal(inst);
-                    //values.alpha = values.credibility + values.confidence;
+                    values.alpha = values.credibility + values.confidence;
 
-                    values.alpha = prob[1];
+                    //values.alpha = prob[1];
                     
                     listValuesPredictedAttack.add(values);
                 }
