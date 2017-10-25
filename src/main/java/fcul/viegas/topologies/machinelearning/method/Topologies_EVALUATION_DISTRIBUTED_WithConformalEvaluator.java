@@ -75,6 +75,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator {
 
         System.out.println("building classifier");
 
+        //se nao for nem A nem B, da pau...
         final Classifier classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
                 ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
