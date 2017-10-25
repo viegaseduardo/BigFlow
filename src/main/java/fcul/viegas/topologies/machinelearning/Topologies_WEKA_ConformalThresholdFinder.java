@@ -5,23 +5,14 @@
  */
 package fcul.viegas.topologies.machinelearning;
 
-import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
-import fcul.viegas.topologies.machinelearning.flinkdistributed.EvaluateClassifierMapFunctionWithRejection;
-import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
+
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import org.apache.flink.api.common.operators.Order;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.functions.KeySelector;
-import org.apache.flink.core.fs.FileSystem;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -124,17 +115,17 @@ public class Topologies_WEKA_ConformalThresholdFinder {
                     values.predictClass = 0.0d;
                     values.credibility = conformal.getPValueForNormal(inst);
                     values.confidence = 1.0f - conformal.getPValueForAttack(inst);
-                    //values.alpha = values.credibility + values.confidence;
-                    values.alpha = prob[0];
+                    values.alpha = values.credibility + values.confidence;
+                    //values.alpha = prob[0];
 
                     listValuesPredictedNormal.add(values);
                 } else {
                     values.predictClass = 1.0d;
                     values.credibility = conformal.getPValueForAttack(inst);
                     values.confidence = 1.0f - conformal.getPValueForNormal(inst);
-                    //values.alpha = values.credibility + values.confidence;
+                    values.alpha = values.credibility + values.confidence;
 
-                    values.alpha = prob[1];
+                    //values.alpha = prob[1];
                     
                     listValuesPredictedAttack.add(values);
                 }
@@ -379,44 +370,19 @@ public class Topologies_WEKA_ConformalThresholdFinder {
             });
 
             OperationPoint bestOP = operationPointList.get(0);
-
+            
             for (OperationPoint op : operationPointList) {
-                if (op.error > 0.05f) {
-                    break;
+                if (Math.abs(op.rejection - 0.4f) < Math.abs(bestOP.rejection - 0.4f)) {
+                    bestOP = op;
                 }
-                bestOP = op;
             }
 
-            writer.println("\tError rate 5% Operation Point:");
+            writer.println("\tReject rate 40% Operation Point:");
             writer.println("Difference between objectives: " + bestOP.difference);
             writer.println("Error rate: " + bestOP.error);
             writer.println("Rejection rate: " + bestOP.rejection);
             writer.println("Normal threshold Error5%: " + bestOP.line.split(";")[10]);
             writer.println("Attack threshold Error5%: " + bestOP.line.split(";")[11]);
-            writer.println("Line: " + bestOP.line + "\n");
-
-            Collections.sort(operationPointList, new Comparator<OperationPoint>() {
-                @Override
-                public int compare(OperationPoint o1, OperationPoint o2) {
-                    return Double.compare(o2.error, o1.error);
-                }
-            });
-
-            bestOP = operationPointList.get(0);
-
-            for (OperationPoint op : operationPointList) {
-                if (op.rejection > 0.05f) {
-                    break;
-                }
-                bestOP = op;
-            }
-
-            writer.println("\tRejection rate 5% Operation Point:");
-            writer.println("Difference between objectives: " + bestOP.difference);
-            writer.println("Error rate: " + bestOP.error);
-            writer.println("Rejection rate: " + bestOP.rejection);
-            writer.println("Normal threshold Reject5%: " + bestOP.line.split(";")[10]);
-            writer.println("Attack threshold Reject5%: " + bestOP.line.split(";")[11]);
             writer.println("Line: " + bestOP.line + "\n");
 
             writer.close();

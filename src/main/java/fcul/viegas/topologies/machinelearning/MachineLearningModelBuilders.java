@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Random;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
@@ -428,24 +429,20 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public Classifier trainClassifierHoeffing(Instances train) throws Exception {
+        train.randomize(new Random(1));
 
-//        Resample resample = new Resample();
-//        resample.setBiasToUniformClass(1.0d);
-//        resample.setInputFormat(train);
-//
-//        Instances dataTrain = Filter.useFilter(train, resample);
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
 
-        FilteredClassifier filteredClassifierRandom = new FilteredClassifier();
-        filteredClassifierRandom.setFilter(new Randomize());
+        FilteredClassifier filteredClassifierBalancer = new FilteredClassifier();
+        filteredClassifierBalancer.setFilter(new ClassBalancer());
 
         HoeffdingTree classifier = new HoeffdingTree();
 
-        filteredClassifierRandom.setClassifier(classifier);
+        filteredClassifierBalancer.setClassifier(classifier);
 
-        inputMapped.setClassifier(filteredClassifierRandom);
+        inputMapped.setClassifier(filteredClassifierBalancer);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
@@ -677,7 +674,7 @@ public class MachineLearningModelBuilders implements Serializable {
                     confidence = 1.0f - conformalEvaluator.getPValueForAttack(inst);
                     alpha = credibility + confidence;
 
-                    if (alpha > normalThreshold) {
+                    if (alpha >= normalThreshold) {
                         //if correctly classified
                         if (inst.classValue() == 0.0d) {
                             nAcceptedNormal++;
@@ -742,6 +739,14 @@ public class MachineLearningModelBuilders implements Serializable {
             float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
             float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
 
+            
+            
+            
+            
+            
+            
+            
+            
             String print = path + ";";
             print = print + normalThreshold + ";";
             print = print + attackThreshold + ";";
