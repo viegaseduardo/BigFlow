@@ -41,14 +41,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Topologies_WEKA_ConformalThresholdFinder confFinder = new Topologies_WEKA_ConformalThresholdFinder();
-
-        confFinder.findOperationPoints(
-                args[0],
-                args[1]);
-        
-        System.exit(1);
-
         if (args.length == 1) {
 
             Main.startTopologies_WEKA_Tests_WithUpdateStream();
