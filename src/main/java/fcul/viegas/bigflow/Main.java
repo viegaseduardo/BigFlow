@@ -41,6 +41,14 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        Topologies_WEKA_ConformalThresholdFinder confFinder = new Topologies_WEKA_ConformalThresholdFinder();
+
+        confFinder.findOperationPoints(
+                args[0],
+                args[1]);
+        
+        System.exit(1);
+
         if (args.length == 1) {
 
             Main.startTopologies_WEKA_Tests_WithUpdateStream();
@@ -71,7 +79,6 @@ public class Main {
                 args[5] = days to use for training
                 args[6] = days to use for testing (if you want only 2007 use args[6]=300)
              */
-            
             Topologies_WEKA_ConformalThresholdFinder conformalFinder = new Topologies_WEKA_ConformalThresholdFinder();
 
             System.out.println("Generating threshold evaluation file...");
