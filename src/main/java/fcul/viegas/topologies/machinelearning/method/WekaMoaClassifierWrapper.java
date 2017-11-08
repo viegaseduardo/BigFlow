@@ -35,6 +35,12 @@ public class WekaMoaClassifierWrapper implements Serializable {
     private Transcend_ConformalPredictor conformalEvaluatorORUNADA;
 
     public WekaMoaClassifierWrapper() {
+        this.featureSetToLookMoa = new ArrayList<>();
+        this.featureSetToLookWeka = new ArrayList<>();
+        this.wekaClassifiers = new ArrayList<>();
+        this.wekaOperationPoints = new ArrayList<>();
+        this.moaClassifiers = new ArrayList<>();
+        this.moaOperationPoints = new ArrayList<>();
     }
 
     public ArrayList<String> getFeatureSetToLookWeka() {
