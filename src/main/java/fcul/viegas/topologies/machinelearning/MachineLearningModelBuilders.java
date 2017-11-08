@@ -799,8 +799,8 @@ public class MachineLearningModelBuilders implements Serializable {
             double alpha;
             double confidence;
             double credibility;
-            double normalThreshold = wekaMoa.getMoaOperationPoints().get(indexClassifier).getNormalThreshold();
-            double attackThreshold = wekaMoa.getMoaOperationPoints().get(indexClassifier).getAttackThreshold();
+            double normalThreshold = wekaMoa.getWekaOperationPoints().get(indexClassifier).getNormalThreshold();
+            double attackThreshold = wekaMoa.getWekaOperationPoints().get(indexClassifier).getAttackThreshold();
 
             //classified as normal
             if (prob[0] > prob[1]) {
