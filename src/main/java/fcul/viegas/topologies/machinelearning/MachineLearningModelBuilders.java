@@ -5,6 +5,7 @@
  */
 package fcul.viegas.topologies.machinelearning;
 
+import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import java.io.BufferedReader;
 import java.io.File;
@@ -739,14 +740,6 @@ public class MachineLearningModelBuilders implements Serializable {
             float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
             float corretamenteRej = ((nCorrectlyRejectedNormal + nCorrectlyRejectedAttack) / (float) (nRejectedNormal + nRejectedAttack));
 
-            
-            
-            
-            
-            
-            
-            
-            
             String print = path + ";";
             print = print + normalThreshold + ";";
             print = print + attackThreshold + ";";
@@ -771,6 +764,194 @@ public class MachineLearningModelBuilders implements Serializable {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    //0 rejected, 1 correctly classified, 2 incorrectly classified
+    private int evaluateInstanceConformalCascade(
+            int indexClassifier,
+            WekaMoaClassifierWrapper wekaMoa,
+            Instance instanceViegas,
+            Instance instanceNigel,
+            Instance instanceMoore,
+            Instance instanceOrunada) throws Exception {
+        if (indexClassifier < wekaMoa.getWekaClassifiers().size()) {
+            Classifier classifier = wekaMoa.getWekaClassifiers().get(indexClassifier);
+            Transcend_ConformalPredictor conformalPredictor = null;
+            Instance inst = null;
+
+            //se nao for A nem B vai dar pau....
+            if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("VIEGAS")) {
+                inst = instanceViegas;
+                conformalPredictor = wekaMoa.getConformalEvaluatorVIEGAS();
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("NIGEL")) {
+                inst = instanceNigel;
+                conformalPredictor = wekaMoa.getConformalEvaluatorNIGEL();
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("MOORE")) {
+                inst = instanceMoore;
+                conformalPredictor = wekaMoa.getConformalEvaluatorMOORE();
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("ORUNADA")) {
+                inst = instanceOrunada;
+                conformalPredictor = wekaMoa.getConformalEvaluatorORUNADA();
+            }
+
+            double prob[] = classifier.distributionForInstance(inst);
+
+            double alpha;
+            double confidence;
+            double credibility;
+            double normalThreshold = wekaMoa.getMoaOperationPoints().get(indexClassifier).getNormalThreshold();
+            double attackThreshold = wekaMoa.getMoaOperationPoints().get(indexClassifier).getAttackThreshold();
+
+            //classified as normal
+            if (prob[0] > prob[1]) {
+                //if should accept
+                credibility = conformalPredictor.getPValueForNormal(inst);
+                confidence = 1.0f - conformalPredictor.getPValueForAttack(inst);
+                alpha = credibility + confidence;
+
+                if (alpha >= normalThreshold) {
+                    //if correctly classified
+                    if (inst.classValue() == 0.0d) {
+                        //correctly classified
+                        return 1;
+                    } else {
+                        //incorrectly classified
+                        return 2;
+                    }
+                } else {
+                    //check if correctly rejected
+                    if (inst.classValue() != 0.0d) {
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    } else {
+                        //misrejected
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    }
+                }
+            } else {
+                //classified as attack
+                //if should accept
+                credibility = conformalPredictor.getPValueForAttack(inst);
+                confidence = 1.0f - conformalPredictor.getPValueForNormal(inst);
+                alpha = credibility + confidence;
+
+                if (alpha >= attackThreshold) {
+                    //correctly classified
+                    if (inst.classValue() == 1.0d) {
+                        //correctly classified
+                        return 1;
+                    } else {
+                        //incorrectly classified
+                        return 2;
+                    }
+                } else {
+                    //check if correctly rejected
+                    if (inst.classValue() != 1.0d) {
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    } else {
+                        //misrejected
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    public String evaluateClassifierWithRejectionThroughConformalAndCascade(String[] arffPaths, WekaMoaClassifierWrapper wekaMoa) throws Exception {
+
+        Instances dataTestVIEGAS = this.openFile(arffPaths[0]);
+        Instances dataTestNIGEL = this.openFile(arffPaths[1]);
+        Instances dataTestMOORE = this.openFile(arffPaths[2]);
+        Instances dataTestORUNADA = this.openFile(arffPaths[3]);
+
+        dataTestVIEGAS = this.getAsNormalizeFeatures(dataTestVIEGAS);
+        dataTestNIGEL = this.getAsNormalizeFeatures(dataTestNIGEL);
+        dataTestMOORE = this.getAsNormalizeFeatures(dataTestMOORE);
+        dataTestORUNADA = this.getAsNormalizeFeatures(dataTestORUNADA);
+
+        dataTestVIEGAS = this.removeParticularAttributesViegas(dataTestVIEGAS);
+        dataTestORUNADA = this.removeParticularAttributesOrunada(dataTestORUNADA);
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_EVEN);
+
+        int nNormal = 0; //ok
+        int nAttack = 0; //ok
+        int nRejectedNormal = 0; //ok
+        int nRejectedAttack = 0; //ok
+        int nAcceptedNormal = 0; //ok
+        int nAcceptedAttack = 0; //ok
+        int nCorrectlyAcceptedNormal = 0; //ok
+        int nCorrectlyAcceptedAttack = 0;
+
+        for (int i = 0; i < dataTestVIEGAS.size(); i++) {
+            Instance instViegas = dataTestVIEGAS.get(i);
+            Instance instMoore = dataTestMOORE.get(i);
+            Instance instNigel = dataTestNIGEL.get(i);
+            Instance instOrunada = dataTestORUNADA.get(i);
+
+            int decision = this.evaluateInstanceConformalCascade(0, wekaMoa, instViegas, instNigel, instMoore, instOrunada);
+
+            if (instViegas.classValue() == 0.0d) {
+                nNormal++;
+            } else {
+                //is attack
+                nAttack++;
+            }
+
+            if (decision == 0) {
+                if (instViegas.classValue() == 0.0d) {
+                    nRejectedNormal++;
+                } else {
+                    nRejectedAttack++;
+                }
+            }else{
+                if (instViegas.classValue() == 0.0d) {
+                    nAcceptedNormal++;
+                    if(decision == 1){
+                        nCorrectlyAcceptedNormal++;
+                    }
+                } else {
+                    nAcceptedAttack++;
+                    if(decision == 2){
+                        nCorrectlyAcceptedAttack++;
+                    }
+                }
+            }
+        }
+
+        if (nRejectedNormal == 0) {
+            nRejectedNormal = 1;
+        }
+        if (nRejectedAttack == 0) {
+            nRejectedAttack = 1;
+        }
+        if (nAcceptedNormal == 0) {
+            nAcceptedNormal = 1;
+        }
+        if (nAcceptedAttack == 0) {
+            nAcceptedAttack = 1;
+        }
+
+        float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
+        
+        
+        String print = arffPaths[0] + ";";
+        print = print + arffPaths[1] + ";";
+        print = print + arffPaths[2] + ";";
+        print = print + arffPaths[3] + ";";
+        print = print + (dataTestVIEGAS.size()) + ";";
+        print = print + nNormal + ";";
+        print = print + nAttack + ";";
+        print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
+        print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
+        print = print + accAceito + ";";
+        print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
+        print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+        print = print + ((nRejectedAttack) / (float) nAttack) + ";";
+        print = print + ((nRejectedNormal) / (float) nNormal);
+
+        return print;
     }
 
 }

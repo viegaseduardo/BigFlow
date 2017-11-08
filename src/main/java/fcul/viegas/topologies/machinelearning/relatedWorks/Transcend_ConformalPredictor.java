@@ -12,8 +12,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.TestInstances;
 
-/**
- *
+/*
  * @author viegas
  */
 public class Transcend_ConformalPredictor implements Serializable {

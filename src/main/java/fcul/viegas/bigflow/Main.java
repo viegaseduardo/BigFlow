@@ -28,6 +28,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateTh
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
+import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal;
 import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -139,6 +140,24 @@ public class Main {
                     Integer.valueOf(args[5]),
                     Float.valueOf(args[6]),
                     Float.valueOf(args[7]));
+        } else if (args[0].equals("testwithoutupdateconformalevaluatorcascade")) {
+            /*
+            note that this version is way faster than "testwithupdatedistributed" 
+                due to the need to load from disk the models
+            
+                args[1] = path to folder
+                args[2] = output
+                args[3] = days to use for training
+            
+                static classifiers, work as a loop!
+                    args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                    args[N+2] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+                    args[N+3] = normal threshold
+                    args[N+4] = attack threshold            
+             
+             */
+            new Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal().run(
+                    args);
         } else if (args[0].equals("testwithoutupdatedistributedwithrejection")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 
