@@ -28,7 +28,7 @@ public class EvaluateClassifierMapFunctionWithConformalCascadeStatic extends Ric
     public void open(Configuration cfg) {
         try {
             ObjectInputStream ois = new ObjectInputStream(
-                    new FileInputStream(Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator.PathToModel));
+                    new FileInputStream(Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal.PathToModel));
             this.wekaWrapper = (WekaMoaClassifierWrapper) ois.readObject();
             ois.close();
             System.out.println("EvaluateClassifierMapFunctionWithConformalCascadeStatic - Just loaded model: "

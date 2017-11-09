@@ -393,6 +393,11 @@ public class ParseRawOutputFlinkNoUpdate {
             ValuesDTO values = (ValuesDTO) pair.getValue();
             String s = (String) pair.getKey();
 
+            
+            
+            
+            
+            
             writer.println(s + ";"
                     + values.nNormal + ";"
                     + values.nAnomalous + ";"

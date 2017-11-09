@@ -816,7 +816,7 @@ public class MachineLearningModelBuilders implements Serializable {
                         return 1;
                     } else {
                         //incorrectly classified
-                        return 2;
+                        return 2; 
                     }
                 } else {
                     //check if correctly rejected
@@ -913,7 +913,7 @@ public class MachineLearningModelBuilders implements Serializable {
                     }
                 } else {
                     nAcceptedAttack++;
-                    if(decision == 2){
+                    if(decision == 1){
                         nCorrectlyAcceptedAttack++;
                     }
                 }
