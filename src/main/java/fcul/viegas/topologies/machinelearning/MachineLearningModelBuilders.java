@@ -1074,19 +1074,19 @@ public class MachineLearningModelBuilders implements Serializable {
             Instance instWeka = null;
 
             //se nao for A nem B vai dar pau....
-            if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("VIEGAS")) {
+            if (wekaMoa.getFeatureSetToLookMoa().get(indexClassifier).equals("VIEGAS")) {
                 instMoa = instanceMoaViegas;
                 instWeka = instanceViegas;
                 conformalPredictor = wekaMoa.getConformalEvaluatorVIEGAS();
-            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("NIGEL")) {
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(indexClassifier).equals("NIGEL")) {
                 instMoa = instanceMoaNigel;
                 instWeka = instanceNigel;
                 conformalPredictor = wekaMoa.getConformalEvaluatorNIGEL();
-            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("MOORE")) {
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(indexClassifier).equals("MOORE")) {
                 instMoa = instanceMoaMoore;
                 instWeka = instanceMoore;
                 conformalPredictor = wekaMoa.getConformalEvaluatorMOORE();
-            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("ORUNADA")) {
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(indexClassifier).equals("ORUNADA")) {
                 instMoa = instanceMoaOrunada;
                 instWeka = instanceOrunada;
                 conformalPredictor = wekaMoa.getConformalEvaluatorORUNADA();

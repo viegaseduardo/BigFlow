@@ -236,7 +236,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
                 writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
-        env.execute(this.folderPath + "_CASCADE_STATIC");
+        env.execute(this.folderPath + "_CASCADE_HYBRID");
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
                 outputPath + "_raw_output.csv",
