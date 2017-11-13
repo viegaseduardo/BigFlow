@@ -28,6 +28,7 @@ import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateTh
 import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
+import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal;
 import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal;
 import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_WithConformalEvaluator;
 import java.nio.file.Files;
@@ -181,7 +182,7 @@ public class Main {
                     args[N+4] = attack threshold 
              
              */
-            new Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal().run(
+            new Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal().run(
                     args);
         } else if (args[0].equals("testwithoutupdatedistributedwithrejection")) {
             /*
