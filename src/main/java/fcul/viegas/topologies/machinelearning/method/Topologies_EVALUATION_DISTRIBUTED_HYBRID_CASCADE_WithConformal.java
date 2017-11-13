@@ -169,6 +169,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         }
 
         //moa classifiers
+        indexToUse++;
         for (; indexToUse < params.length;) {
             String featureSet = params[indexToUse++];
             String classifierToBuild = params[indexToUse++];
