@@ -1092,7 +1092,14 @@ public class MachineLearningModelBuilders implements Serializable {
                 conformalPredictor = wekaMoa.getConformalEvaluatorORUNADA();
             }
             
-            double prob[] = classifier.getVotesForInstance(instMoa);
+//            double prob[] = classifier.getVotesForInstance(instMoa);
+            boolean correclyClassifies = classifier.correctlyClassifies(instMoa);
+            double classifiedClass = (correclyClassifies) ? instMoa.classValue() : (instMoa.classValue() == 0.0d) ? 1.0d : 0.0d;
+            
+//            if(prob.length == 0){
+//                System.out.println("a");
+//            }
+            
 
             double alpha;
             double confidence;
@@ -1101,7 +1108,7 @@ public class MachineLearningModelBuilders implements Serializable {
             double attackThreshold = wekaMoa.getMoaOperationPoints().get(indexClassifier).getAttackThreshold();
 
             //classified as normal
-            if (prob[0] > prob[1]) {
+            if (classifiedClass == 0.0d) {
                 //if should accept
                 credibility = conformalPredictor.getPValueForNormal(instWeka);
                 confidence = 1.0f - conformalPredictor.getPValueForAttack(instWeka);
