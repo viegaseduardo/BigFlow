@@ -5,6 +5,8 @@
  */
 package fcul.viegas.topologies.machinelearning;
 
+import com.github.javacliparser.IntOption;
+import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
 import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import java.io.BufferedReader;
@@ -15,6 +17,10 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
+import moa.classifiers.meta.AdaptiveRandomForest;
+import moa.classifiers.meta.OzaBag;
+import moa.classifiers.meta.OzaBoost;
+import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
@@ -449,6 +455,102 @@ public class MachineLearningModelBuilders implements Serializable {
         return inputMapped;
     }
 
+    public moa.classifiers.AbstractClassifier trainClassifierHoeffingAdaptiveTreeMOA(Instances train) throws Exception {
+        train.randomize(new Random(1));
+
+        HoeffdingAdaptiveTree classifier = new HoeffdingAdaptiveTree();
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+
+        classifier.prepareForUse();
+        classifier.resetLearningImpl();
+
+        for (int i = 0; i < train.size(); i++) {
+            classifier.trainOnInstanceImpl(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+
+    public moa.classifiers.AbstractClassifier trainClassifierHoeffingTreeMOA(Instances train) throws Exception {
+        train.randomize(new Random(1));
+
+        moa.classifiers.trees.HoeffdingTree classifier = new HoeffdingAdaptiveTree();
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+
+        classifier.prepareForUse();
+        classifier.resetLearningImpl();
+
+        for (int i = 0; i < train.size(); i++) {
+            classifier.trainOnInstanceImpl(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+
+    public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {
+        train.randomize(new Random(1));
+
+        OzaBag classifier = new OzaBag();
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+                "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+
+        classifier.prepareForUse();
+        classifier.resetLearningImpl();
+
+        for (int i = 0; i < train.size(); i++) {
+            classifier.trainOnInstanceImpl(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+
+    public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train) throws Exception {
+        train.randomize(new Random(1));
+
+        OzaBoost classifier = new OzaBoost();
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+                "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+
+        classifier.prepareForUse();
+        classifier.resetLearningImpl();
+
+        for (int i = 0; i < train.size(); i++) {
+            classifier.trainOnInstanceImpl(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+
+    public moa.classifiers.AbstractClassifier trainClassifierAdaptiveRandomForestMOA(Instances train) throws Exception {
+        train.randomize(new Random(1));
+
+        AdaptiveRandomForest classifier = new AdaptiveRandomForest();
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+                "The number of trees.", 20, 1, Integer.MAX_VALUE);
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+
+        classifier.prepareForUse();
+        classifier.resetLearningImpl();
+
+        for (int i = 0; i < train.size(); i++) {
+            classifier.trainOnInstanceImpl(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+
     public Classifier trainClassifierSMO(Instances train) throws Exception {
         weka.classifiers.functions.SMO classifier = new weka.classifiers.functions.SMO();
 
@@ -816,7 +918,7 @@ public class MachineLearningModelBuilders implements Serializable {
                         return 1;
                     } else {
                         //incorrectly classified
-                        return 2; 
+                        return 2;
                     }
                 } else {
                     //check if correctly rejected
@@ -905,15 +1007,15 @@ public class MachineLearningModelBuilders implements Serializable {
                 } else {
                     nRejectedAttack++;
                 }
-            }else{
+            } else {
                 if (instViegas.classValue() == 0.0d) {
                     nAcceptedNormal++;
-                    if(decision == 1){
+                    if (decision == 1) {
                         nCorrectlyAcceptedNormal++;
                     }
                 } else {
                     nAcceptedAttack++;
-                    if(decision == 1){
+                    if (decision == 1) {
                         nCorrectlyAcceptedAttack++;
                     }
                 }
@@ -934,8 +1036,224 @@ public class MachineLearningModelBuilders implements Serializable {
         }
 
         float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
-        
-        
+
+        String print = arffPaths[0] + ";";
+        print = print + arffPaths[1] + ";";
+        print = print + arffPaths[2] + ";";
+        print = print + arffPaths[3] + ";";
+        print = print + (dataTestVIEGAS.size()) + ";";
+        print = print + nNormal + ";";
+        print = print + nAttack + ";";
+        print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
+        print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
+        print = print + accAceito + ";";
+        print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
+        print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+        print = print + ((nRejectedAttack) / (float) nAttack) + ";";
+        print = print + ((nRejectedNormal) / (float) nNormal);
+
+        return print;
+    }
+
+    private int evaluateInstanceConformalCascadeStream(
+            int indexClassifier,
+            WekaMoaClassifierWrapper wekaMoa,
+            Instance instanceViegas,
+            Instance instanceNigel,
+            Instance instanceMoore,
+            Instance instanceOrunada,
+            com.yahoo.labs.samoa.instances.Instance instanceMoaViegas,
+            com.yahoo.labs.samoa.instances.Instance instanceMoaNigel,
+            com.yahoo.labs.samoa.instances.Instance instanceMoaMoore,
+            com.yahoo.labs.samoa.instances.Instance instanceMoaOrunada) throws Exception {
+        if (indexClassifier < wekaMoa.getMoaClassifiers().size()) {
+            
+            moa.classifiers.AbstractClassifier classifier = wekaMoa.getMoaClassifiers().get(indexClassifier);
+            Transcend_ConformalPredictor conformalPredictor = null;
+            com.yahoo.labs.samoa.instances.Instance instMoa = null;
+            Instance instWeka = null;
+
+            //se nao for A nem B vai dar pau....
+            if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("VIEGAS")) {
+                instMoa = instanceMoaViegas;
+                instWeka = instanceViegas;
+                conformalPredictor = wekaMoa.getConformalEvaluatorVIEGAS();
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("NIGEL")) {
+                instMoa = instanceMoaNigel;
+                instWeka = instanceNigel;
+                conformalPredictor = wekaMoa.getConformalEvaluatorNIGEL();
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("MOORE")) {
+                instMoa = instanceMoaMoore;
+                instWeka = instanceMoore;
+                conformalPredictor = wekaMoa.getConformalEvaluatorMOORE();
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(indexClassifier).equals("ORUNADA")) {
+                instMoa = instanceMoaOrunada;
+                instWeka = instanceOrunada;
+                conformalPredictor = wekaMoa.getConformalEvaluatorORUNADA();
+            }
+
+            double prob[] = classifier.getVotesForInstance(instMoa);
+
+            double alpha;
+            double confidence;
+            double credibility;
+            double normalThreshold = wekaMoa.getWekaOperationPoints().get(indexClassifier).getNormalThreshold();
+            double attackThreshold = wekaMoa.getWekaOperationPoints().get(indexClassifier).getAttackThreshold();
+
+            //classified as normal
+            if (prob[0] > prob[1]) {
+                //if should accept
+                credibility = conformalPredictor.getPValueForNormal(instWeka);
+                confidence = 1.0f - conformalPredictor.getPValueForAttack(instWeka);
+                alpha = credibility + confidence;
+
+                if (alpha >= normalThreshold) {
+                    //if correctly classified
+                    if (instMoa.classValue() == 0.0d) {
+                        //correctly classified
+                        return 1;
+                    } else {
+                        //incorrectly classified
+                        return 2;
+                    }
+                } else {
+                    //check if correctly rejected
+                    if (instMoa.classValue() != 0.0d) {
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    } else {
+                        //misrejected
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    }
+                }
+            } else {
+                //classified as attack
+                //if should accept
+                credibility = conformalPredictor.getPValueForAttack(instWeka);
+                confidence = 1.0f - conformalPredictor.getPValueForNormal(instWeka);
+                alpha = credibility + confidence;
+
+                if (alpha >= attackThreshold) {
+                    //correctly classified
+                    if (instMoa.classValue() == 1.0d) {
+                        //correctly classified
+                        return 1;
+                    } else {
+                        //incorrectly classified
+                        return 2;
+                    }
+                } else {
+                    //check if correctly rejected
+                    if (instMoa.classValue() != 1.0d) {
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    } else {
+                        //misrejected
+                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    public String evaluateClassifierWithRejectionThroughConformalHybrid(
+            String[] arffPaths, 
+            WekaMoaClassifierWrapper wekaMoa) throws Exception {
+
+        Instances dataTestVIEGAS = this.openFile(arffPaths[0]);
+        Instances dataTestNIGEL = this.openFile(arffPaths[1]);
+        Instances dataTestMOORE = this.openFile(arffPaths[2]);
+        Instances dataTestORUNADA = this.openFile(arffPaths[3]);
+
+        dataTestVIEGAS = this.getAsNormalizeFeatures(dataTestVIEGAS);
+        dataTestNIGEL = this.getAsNormalizeFeatures(dataTestNIGEL);
+        dataTestMOORE = this.getAsNormalizeFeatures(dataTestMOORE);
+        dataTestORUNADA = this.getAsNormalizeFeatures(dataTestORUNADA);
+
+        dataTestVIEGAS = this.removeParticularAttributesViegas(dataTestVIEGAS);
+        dataTestORUNADA = this.removeParticularAttributesOrunada(dataTestORUNADA);
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+
+        com.yahoo.labs.samoa.instances.Instances moaTrainVIEGAS = converter.samoaInstances(dataTestVIEGAS);
+        com.yahoo.labs.samoa.instances.Instances moaTrainNIGEL = converter.samoaInstances(dataTestNIGEL);
+        com.yahoo.labs.samoa.instances.Instances moaTrainORUNADA = converter.samoaInstances(dataTestORUNADA);
+        com.yahoo.labs.samoa.instances.Instances moaTrainMOORE = converter.samoaInstances(dataTestMOORE);
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_EVEN);
+
+        int nNormal = 0; //ok
+        int nAttack = 0; //ok
+        int nRejectedNormal = 0; //ok
+        int nRejectedAttack = 0; //ok
+        int nAcceptedNormal = 0; //ok
+        int nAcceptedAttack = 0; //ok
+        int nCorrectlyAcceptedNormal = 0; //ok
+        int nCorrectlyAcceptedAttack = 0;
+
+        for (int i = 0; i < moaTrainVIEGAS.size(); i++) {
+
+            com.yahoo.labs.samoa.instances.Instance instMoaViegas = moaTrainVIEGAS.get(i);
+            com.yahoo.labs.samoa.instances.Instance instMoaMoore = moaTrainMOORE.get(i);
+            com.yahoo.labs.samoa.instances.Instance instMoaNigel = moaTrainNIGEL.get(i);
+            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = moaTrainORUNADA.get(i);
+
+            Instance instViegas = dataTestVIEGAS.get(i);
+            Instance instMoore = dataTestMOORE.get(i);
+            Instance instNigel = dataTestNIGEL.get(i);
+            Instance instOrunada = dataTestORUNADA.get(i);
+
+            int decision = this.evaluateInstanceConformalCascade(0, wekaMoa, instViegas, instNigel, instMoore, instOrunada);
+
+            if (decision == 0) {
+                decision = this.evaluateInstanceConformalCascadeStream(0, wekaMoa,
+                        instViegas, instNigel, instMoore, instOrunada,
+                        instMoaViegas, instMoaNigel, instMoaMoore, instMoaOrunada);
+            }
+
+            if (instViegas.classValue() == 0.0d) {
+                nNormal++;
+            } else {
+                //is attack
+                nAttack++;
+            }
+
+            if (decision == 0) {
+                if (instViegas.classValue() == 0.0d) {
+                    nRejectedNormal++;
+                } else {
+                    nRejectedAttack++;
+                }
+            } else {
+                if (instViegas.classValue() == 0.0d) {
+                    nAcceptedNormal++;
+                    if (decision == 1) {
+                        nCorrectlyAcceptedNormal++;
+                    }
+                } else {
+                    nAcceptedAttack++;
+                    if (decision == 1) {
+                        nCorrectlyAcceptedAttack++;
+                    }
+                }
+            }
+        }
+
+        if (nRejectedNormal == 0) {
+            nRejectedNormal = 1;
+        }
+        if (nRejectedAttack == 0) {
+            nRejectedAttack = 1;
+        }
+        if (nAcceptedNormal == 0) {
+            nAcceptedNormal = 1;
+        }
+        if (nAcceptedAttack == 0) {
+            nAcceptedAttack = 1;
+        }
+
+        float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
+
         String print = arffPaths[0] + ";";
         print = print + arffPaths[1] + ";";
         print = print + arffPaths[2] + ";";

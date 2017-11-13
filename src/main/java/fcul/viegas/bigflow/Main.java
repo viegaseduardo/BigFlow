@@ -158,6 +158,31 @@ public class Main {
              */
             new Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal().run(
                     args);
+        } else if (args[0].equals("testwithoutupdateconformalevaluatorcascadehybrid")) {
+            /*
+            note that this version is way faster than "testwithupdatedistributed" 
+                due to the need to load from disk the models
+            
+                args[1] = path to folder
+                args[2] = output
+                args[3] = days to use for training
+            
+                static classifiers, work as a loop!
+                    args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                    args[N+2] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+                    args[N+3] = normal threshold
+                    args[N+4] = attack threshold  
+            
+                stream
+                stream classifiers, work as a loop!
+                    args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                    args[N+2] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting}
+                    args[N+3] = normal threshold
+                    args[N+4] = attack threshold 
+             
+             */
+            new Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal().run(
+                    args);
         } else if (args[0].equals("testwithoutupdatedistributedwithrejection")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 
