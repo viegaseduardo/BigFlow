@@ -1286,6 +1286,8 @@ public class MachineLearningModelBuilders implements Serializable {
         dataTestORUNADA = null;
         dataTestVIEGAS = null;
         
+        System.gc();
+        
         return print;
     }
 
