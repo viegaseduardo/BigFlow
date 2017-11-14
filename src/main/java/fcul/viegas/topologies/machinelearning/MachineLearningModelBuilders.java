@@ -436,7 +436,7 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public Classifier trainClassifierHoeffing(Instances train) throws Exception {
-        train.randomize(new Random(1));
+        //train.randomize(new Random(1));
 
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
@@ -456,7 +456,7 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierHoeffingAdaptiveTreeMOA(Instances train) throws Exception {
-        train.randomize(new Random(1));
+        //train.randomize(new Random(1));
 
         HoeffdingAdaptiveTree classifier = new HoeffdingAdaptiveTree();
 
@@ -474,7 +474,7 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierHoeffingTreeMOA(Instances train) throws Exception {
-        train.randomize(new Random(1));
+        //train.randomize(new Random(1));
 
         moa.classifiers.trees.HoeffdingTree classifier = new HoeffdingAdaptiveTree();
 
@@ -492,7 +492,7 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {
-        train.randomize(new Random(1));
+        //train.randomize(new Random(1));
 
         OzaBag classifier = new OzaBag();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
@@ -512,7 +512,7 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train) throws Exception {
-        train.randomize(new Random(1));
+        //train.randomize(new Random(1));
 
         OzaBoost classifier = new OzaBoost();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
@@ -532,7 +532,7 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierAdaptiveRandomForestMOA(Instances train) throws Exception {
-        train.randomize(new Random(1));
+        //train.randomize(new Random(1));
 
         AdaptiveRandomForest classifier = new AdaptiveRandomForest();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',

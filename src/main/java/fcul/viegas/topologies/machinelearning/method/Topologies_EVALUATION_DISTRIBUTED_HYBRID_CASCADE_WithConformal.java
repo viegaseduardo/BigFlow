@@ -11,6 +11,7 @@ import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPr
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -66,8 +67,10 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
 
         System.out.println("Opening training file....");
         Instances dataTrainVIEGAS = mlModelBuilder.openFile(testFilesVIEGAS.get(0));
+        dataTrainVIEGAS.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFilesVIEGAS.get(i));
+            dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTrainVIEGAS.add(inst);
             }
@@ -76,8 +79,10 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
 
         Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
+        dataTrainMOORE.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFilesMOORE.get(i));
+            dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTrainMOORE.add(inst);
             }
@@ -85,8 +90,10 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
 
         Instances dataTrainNIGEL = mlModelBuilder.openFile(testFilesNIGEL.get(0));
+        dataTrainNIGEL.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFilesNIGEL.get(i));
+            dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTrainNIGEL.add(inst);
             }
@@ -94,8 +101,10 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
 
         Instances dataTrainORUNADA = mlModelBuilder.openFile(testFilesORUNADA.get(0));
+        dataTrainORUNADA.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFilesORUNADA.get(i));
+            dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTrainORUNADA.add(inst);
             }
@@ -201,7 +210,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
             wekaWrapper.getFeatureSetToLookMoa().add(featureSet);
             wekaWrapper.getMoaClassifiers().add(classifier);
             wekaWrapper.getMoaOperationPoints().add(new OperationPoints(normalThreshold, attackThreshold));
-            
+
         }
 
         ObjectOutputStream oos = new ObjectOutputStream(

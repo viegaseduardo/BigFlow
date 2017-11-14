@@ -97,9 +97,14 @@ public class Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal {
         }
         dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
 
+        
+        
+        
         Instances dataTrainORUNADA = mlModelBuilder.openFile(testFilesORUNADA.get(0));
+        dataTrainORUNADA.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFilesORUNADA.get(i));
+            dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTrainORUNADA.add(inst);
             }
@@ -110,8 +115,28 @@ public class Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal {
         
         
         
-//        
-//        dataTrainORUNADA.randomize(new Random(1));
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 //        dataTrainVIEGAS.randomize(new Random(1));
 //        dataTrainNIGEL.randomize(new Random(1));
 //        dataTrainMOORE.randomize(new Random(1));
@@ -142,7 +167,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal {
 //        
 //        System.exit(1);
 //        
-//        
+        
         
         
         
