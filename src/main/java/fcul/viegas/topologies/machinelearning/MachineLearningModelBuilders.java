@@ -1181,11 +1181,6 @@ public class MachineLearningModelBuilders implements Serializable {
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
 
-        com.yahoo.labs.samoa.instances.Instances moaTrainVIEGAS = converter.samoaInstances(dataTestVIEGAS);
-        com.yahoo.labs.samoa.instances.Instances moaTrainNIGEL = converter.samoaInstances(dataTestNIGEL);
-        com.yahoo.labs.samoa.instances.Instances moaTrainORUNADA = converter.samoaInstances(dataTestORUNADA);
-        com.yahoo.labs.samoa.instances.Instances moaTrainMOORE = converter.samoaInstances(dataTestMOORE);
-
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.HALF_EVEN);
 
@@ -1198,12 +1193,12 @@ public class MachineLearningModelBuilders implements Serializable {
         int nCorrectlyAcceptedNormal = 0; //ok
         int nCorrectlyAcceptedAttack = 0;
 
-        for (int i = 0; i < moaTrainVIEGAS.size(); i++) {
+        for (int i = 0; i < dataTestVIEGAS.size(); i++) {
 
-            com.yahoo.labs.samoa.instances.Instance instMoaViegas = moaTrainVIEGAS.get(i);
-            com.yahoo.labs.samoa.instances.Instance instMoaMoore = moaTrainMOORE.get(i);
-            com.yahoo.labs.samoa.instances.Instance instMoaNigel = moaTrainNIGEL.get(i);
-            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = moaTrainORUNADA.get(i);
+            com.yahoo.labs.samoa.instances.Instance instMoaViegas = converter.samoaInstance(dataTestVIEGAS.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaMoore = converter.samoaInstance(dataTestMOORE.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaNigel = converter.samoaInstance(dataTestNIGEL.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = converter.samoaInstance(dataTestORUNADA.get(i));
 
             Instance instViegas = dataTestVIEGAS.get(i);
             Instance instMoore = dataTestMOORE.get(i);
@@ -1276,10 +1271,6 @@ public class MachineLearningModelBuilders implements Serializable {
         print = print + ((nRejectedAttack) / (float) nAttack) + ";";
         print = print + ((nRejectedNormal) / (float) nNormal);
 
-        moaTrainVIEGAS = null;
-        moaTrainNIGEL = null;
-        moaTrainORUNADA = null;
-        moaTrainVIEGAS = null;
         
         dataTestMOORE = null;
         dataTestNIGEL = null;
