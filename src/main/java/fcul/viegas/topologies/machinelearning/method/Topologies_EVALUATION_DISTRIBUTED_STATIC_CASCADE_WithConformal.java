@@ -9,9 +9,12 @@ import breeze.macros.expand;
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -103,6 +106,55 @@ public class Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal {
         }
         dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
         dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
+
+        
+        
+        
+//        
+//        dataTrainORUNADA.randomize(new Random(1));
+//        dataTrainVIEGAS.randomize(new Random(1));
+//        dataTrainNIGEL.randomize(new Random(1));
+//        dataTrainMOORE.randomize(new Random(1));
+//
+//        BufferedWriter writer = new BufferedWriter(new FileWriter("/home/viegas/Downloads/2007Years/ORUNADA.arff"));
+//        writer.write(dataTrainORUNADA.toString());
+//        writer.flush();
+//        writer.close();
+//        
+//        
+//        writer = new BufferedWriter(new FileWriter("/home/viegas/Downloads/2007Years/VIEGAS.arff"));
+//        writer.write(dataTrainVIEGAS.toString());
+//        writer.flush();
+//        writer.close();
+//        
+//        
+//        writer = new BufferedWriter(new FileWriter("/home/viegas/Downloads/2007Years/NIGEL.arff"));
+//        writer.write(dataTrainNIGEL.toString());
+//        writer.flush();
+//        writer.close();
+//        
+//        
+//        writer = new BufferedWriter(new FileWriter("/home/viegas/Downloads/2007Years/MOORE.arff"));
+//        writer.write(dataTrainMOORE.toString());
+//        writer.flush();
+//        writer.close();
+//        
+//        
+//        System.exit(1);
+//        
+//        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         System.out.println("building conformal");
         Transcend_ConformalPredictor conformalVIEGAS = new Transcend_ConformalPredictor();

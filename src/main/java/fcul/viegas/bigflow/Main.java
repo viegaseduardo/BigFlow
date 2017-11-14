@@ -42,6 +42,12 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        
+//        
+//        new Topologies_EVALUATION_DISTRIBUTED_STATIC_CASCADE_WithConformal().run(
+//                    args);
+//        System.exit(1);
+//        
 
         if (args.length == 1) {
 

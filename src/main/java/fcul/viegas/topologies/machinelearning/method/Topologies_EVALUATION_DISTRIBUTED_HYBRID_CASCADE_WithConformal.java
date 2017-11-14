@@ -195,11 +195,13 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
                     ? mlModelBuilder.trainClassifierHoeffingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
                     ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
                     ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain) : classifierToBuild.equals("ozaboosting")
-                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain) : null;
+                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain) : classifierToBuild.equals("adaptiveforest")
+                    ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : null;
 
             wekaWrapper.getFeatureSetToLookMoa().add(featureSet);
             wekaWrapper.getMoaClassifiers().add(classifier);
             wekaWrapper.getMoaOperationPoints().add(new OperationPoints(normalThreshold, attackThreshold));
+            
         }
 
         ObjectOutputStream oos = new ObjectOutputStream(
