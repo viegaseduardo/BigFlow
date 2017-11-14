@@ -1276,6 +1276,16 @@ public class MachineLearningModelBuilders implements Serializable {
         print = print + ((nRejectedAttack) / (float) nAttack) + ";";
         print = print + ((nRejectedNormal) / (float) nNormal);
 
+        moaTrainVIEGAS = null;
+        moaTrainNIGEL = null;
+        moaTrainORUNADA = null;
+        moaTrainVIEGAS = null;
+        
+        dataTestMOORE = null;
+        dataTestNIGEL = null;
+        dataTestORUNADA = null;
+        dataTestVIEGAS = null;
+        
         return print;
     }
 
