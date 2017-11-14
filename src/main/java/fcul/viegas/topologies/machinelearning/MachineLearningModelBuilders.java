@@ -1067,7 +1067,7 @@ public class MachineLearningModelBuilders implements Serializable {
             com.yahoo.labs.samoa.instances.Instance instanceMoaMoore,
             com.yahoo.labs.samoa.instances.Instance instanceMoaOrunada) throws Exception {
         if (indexClassifier < wekaMoa.getMoaClassifiers().size()) {
-            
+
             moa.classifiers.AbstractClassifier classifier = wekaMoa.getMoaClassifiers().get(indexClassifier);
             Transcend_ConformalPredictor conformalPredictor = null;
             com.yahoo.labs.samoa.instances.Instance instMoa = null;
@@ -1091,16 +1091,14 @@ public class MachineLearningModelBuilders implements Serializable {
                 instWeka = instanceOrunada;
                 conformalPredictor = wekaMoa.getConformalEvaluatorORUNADA();
             }
-            
+
 //            double prob[] = classifier.getVotesForInstance(instMoa);
             boolean correclyClassifies = classifier.correctlyClassifies(instMoa);
             double classifiedClass = (correclyClassifies) ? instMoa.classValue() : (instMoa.classValue() == 0.0d) ? 1.0d : 0.0d;
-            
+
 //            if(prob.length == 0){
 //                System.out.println("a");
 //            }
-            
-
             double alpha;
             double confidence;
             double credibility;
@@ -1163,7 +1161,7 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public String evaluateClassifierWithRejectionThroughConformalHybrid(
-            String[] arffPaths, 
+            String[] arffPaths,
             WekaMoaClassifierWrapper wekaMoa) throws Exception {
 
         Instances dataTestVIEGAS = this.openFile(arffPaths[0]);
@@ -1179,7 +1177,10 @@ public class MachineLearningModelBuilders implements Serializable {
         dataTestVIEGAS = this.removeParticularAttributesViegas(dataTestVIEGAS);
         dataTestORUNADA = this.removeParticularAttributesOrunada(dataTestORUNADA);
 
-        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        WekaToSamoaInstanceConverter converterViegas = new WekaToSamoaInstanceConverter();
+        WekaToSamoaInstanceConverter converterMoore = new WekaToSamoaInstanceConverter();
+        WekaToSamoaInstanceConverter converterNigel = new WekaToSamoaInstanceConverter();
+        WekaToSamoaInstanceConverter converterOrunada = new WekaToSamoaInstanceConverter();
 
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.HALF_EVEN);
@@ -1195,10 +1196,10 @@ public class MachineLearningModelBuilders implements Serializable {
 
         for (int i = 0; i < dataTestVIEGAS.size(); i++) {
 
-            com.yahoo.labs.samoa.instances.Instance instMoaViegas = converter.samoaInstance(dataTestVIEGAS.get(i));
-            com.yahoo.labs.samoa.instances.Instance instMoaMoore = converter.samoaInstance(dataTestMOORE.get(i));
-            com.yahoo.labs.samoa.instances.Instance instMoaNigel = converter.samoaInstance(dataTestNIGEL.get(i));
-            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = converter.samoaInstance(dataTestORUNADA.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaViegas = converterViegas.samoaInstance(dataTestVIEGAS.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaMoore = converterMoore.samoaInstance(dataTestMOORE.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaNigel = converterNigel.samoaInstance(dataTestNIGEL.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = converterOrunada.samoaInstance(dataTestORUNADA.get(i));
 
             Instance instViegas = dataTestVIEGAS.get(i);
             Instance instMoore = dataTestMOORE.get(i);
@@ -1271,14 +1272,13 @@ public class MachineLearningModelBuilders implements Serializable {
         print = print + ((nRejectedAttack) / (float) nAttack) + ";";
         print = print + ((nRejectedNormal) / (float) nNormal);
 
-        
         dataTestMOORE = null;
         dataTestNIGEL = null;
         dataTestORUNADA = null;
         dataTestVIEGAS = null;
-        
+
         System.gc();
-        
+
         return print;
     }
 
