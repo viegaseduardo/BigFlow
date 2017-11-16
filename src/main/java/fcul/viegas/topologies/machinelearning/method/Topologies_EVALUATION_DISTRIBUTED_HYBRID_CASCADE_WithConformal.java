@@ -210,7 +210,6 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
             wekaWrapper.getFeatureSetToLookMoa().add(featureSet);
             wekaWrapper.getMoaClassifiers().add(classifier);
             wekaWrapper.getMoaOperationPoints().add(new OperationPoints(normalThreshold, attackThreshold));
-
         }
 
         ObjectOutputStream oos = new ObjectOutputStream(
