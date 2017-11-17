@@ -476,7 +476,7 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierHoeffingTreeMOA(Instances train) throws Exception {
         //train.randomize(new Random(1));
 
-        moa.classifiers.trees.HoeffdingTree classifier = new HoeffdingAdaptiveTree();
+        moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
