@@ -485,6 +485,9 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.resetLearningImpl();
 
         for (int i = 0; i < train.size(); i++) {
+            if(i%100000 == 0){
+                System.out.println("Training on instance: " + i +"...");
+            }
             classifier.trainOnInstanceImpl(moaTrain.get(i));
         }
 
