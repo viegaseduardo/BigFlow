@@ -8,7 +8,10 @@ package fcul.viegas.topologies.machinelearning.method;
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,6 +23,7 @@ import org.apache.flink.core.fs.FileSystem;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 
 /**
  *
@@ -77,6 +81,19 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         }
         dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
         dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
+
+//        ArffSaver saver = new ArffSaver();
+//        saver.setInstances(dataTrainVIEGAS);
+//        saver.setFile(new File("/home/viegas/Downloads/2007Years/VIEGAS.arff"));
+//        //saver.setDestination(new File("./data/test.arff"));   // **not** necessary in 3.5.4 and later
+//        saver.writeBatch();
+//
+//        BufferedWriter writer = new BufferedWriter(new FileWriter("/home/viegas/Downloads/2007Years/VIEGAS.arff"));
+//        writer.write(dataTrainVIEGAS.toString());
+//        writer.flush();
+//        writer.close();
+//
+//        System.exit(1);
 
         Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
         dataTrainMOORE.randomize(new Random(1));

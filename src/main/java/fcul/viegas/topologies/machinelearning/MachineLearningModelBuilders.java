@@ -35,7 +35,6 @@ import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.RandomCommittee;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.ExtraTree;
-import weka.classifiers.trees.HoeffdingTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -46,7 +45,6 @@ import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
-import weka.filters.unsupervised.instance.Randomize;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
 /**
@@ -445,7 +443,7 @@ public class MachineLearningModelBuilders implements Serializable {
         FilteredClassifier filteredClassifierBalancer = new FilteredClassifier();
         filteredClassifierBalancer.setFilter(new ClassBalancer());
 
-        HoeffdingTree classifier = new HoeffdingTree();
+        weka.classifiers.trees.HoeffdingTree classifier = new weka.classifiers.trees.HoeffdingTree();
 
         filteredClassifierBalancer.setClassifier(classifier);
 
@@ -479,16 +477,17 @@ public class MachineLearningModelBuilders implements Serializable {
         moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
-
+        
         classifier.prepareForUse();
-        classifier.resetLearningImpl();
+        classifier.resetLearningImpl();       
+        
 
         for (int i = 0; i < train.size(); i++) {
-            //if(i%100000 == 0){
+            if(i % 10000 == 0){
                 System.out.println("Training on instance: " + i +"...");
-            //}
-            classifier.trainOnInstanceImpl(moaTrain.get(i));
+            }
+            com.yahoo.labs.samoa.instances.Instance inst = converter.samoaInstance(train.get(i));
+            classifier.trainOnInstance(inst);
         }
 
         return classifier;
