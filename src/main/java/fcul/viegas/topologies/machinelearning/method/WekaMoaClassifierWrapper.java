@@ -18,6 +18,7 @@ public class WekaMoaClassifierWrapper implements Serializable {
 
     //this array holds the featureset to use be used for each classifier 
     private ArrayList<String> featureSetToLookWeka;
+    //sae thing but for moa
     private ArrayList<String> featureSetToLookMoa;
 
     //here we hold the first subset of classifers, the static ones!
@@ -28,7 +29,7 @@ public class WekaMoaClassifierWrapper implements Serializable {
     private ArrayList<moa.classifiers.AbstractClassifier> moaClassifiers;
     //operation points for the stream learning for them
     private ArrayList<OperationPoints> moaOperationPoints;
-    //conformal evaluators
+    //conformal evaluators, different from usenix one!
     private Transcend_ConformalPredictor conformalEvaluatorVIEGAS;
     private Transcend_ConformalPredictor conformalEvaluatorMOORE;
     private Transcend_ConformalPredictor conformalEvaluatorNIGEL;

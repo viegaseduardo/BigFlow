@@ -479,7 +479,9 @@ public class MachineLearningModelBuilders implements Serializable {
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         
         classifier.prepareForUse();
-        classifier.resetLearningImpl();       
+        classifier.resetLearningImpl();
+        //just added this not sure if it is working, probably not, nothing works down here...
+        classifier.resetLearning();
         
 
         for (int i = 0; i < train.size(); i++) {
@@ -489,7 +491,6 @@ public class MachineLearningModelBuilders implements Serializable {
             com.yahoo.labs.samoa.instances.Instance inst = converter.samoaInstance(train.get(i));
             classifier.trainOnInstance(inst);
         }
-
         return classifier;
     }
 
@@ -505,11 +506,11 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.prepareForUse();
         classifier.resetLearningImpl();
+        classifier.resetLearning();
 
         for (int i = 0; i < train.size(); i++) {
-            classifier.trainOnInstanceImpl(moaTrain.get(i));
+            classifier.trainOnInstance(moaTrain.get(i));
         }
-
         return classifier;
     }
 
