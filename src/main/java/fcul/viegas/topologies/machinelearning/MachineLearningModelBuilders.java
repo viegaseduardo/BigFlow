@@ -19,6 +19,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import moa.classifiers.meta.AdaptiveRandomForest;
+import moa.classifiers.meta.LeveragingBag;
+import moa.classifiers.meta.OCBoost;
 import moa.classifiers.meta.OzaBag;
 import moa.classifiers.meta.OzaBoost;
 import moa.classifiers.trees.AdaHoeffdingOptionTree;
@@ -580,6 +582,48 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public moa.classifiers.AbstractClassifier trainClassifierAdaHoeffdingOptionTreeMOA(Instances train) throws Exception {
         AdaHoeffdingOptionTree classifier = new AdaHoeffdingOptionTree();
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
+
+        classifier.setModelContext(instH);
+        classifier.prepareForUse();
+
+        int pct = (int) (train.size() / 100.0f);
+        for (int i = 0; i < train.size(); i++) {
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+            }
+            classifier.trainOnInstance(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+    
+    public moa.classifiers.AbstractClassifier trainClassifierOCBoostMOA(Instances train) throws Exception {
+        OCBoost classifier = new OCBoost();
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
+
+        classifier.setModelContext(instH);
+        classifier.prepareForUse();
+
+        int pct = (int) (train.size() / 100.0f);
+        for (int i = 0; i < train.size(); i++) {
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+            }
+            classifier.trainOnInstance(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+    
+    public moa.classifiers.AbstractClassifier trainClassifierLeveragingBagMOA(Instances train) throws Exception {
+        LeveragingBag classifier = new LeveragingBag();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
