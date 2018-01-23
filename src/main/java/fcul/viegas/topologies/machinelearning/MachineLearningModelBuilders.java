@@ -605,8 +605,8 @@ public class MachineLearningModelBuilders implements Serializable {
         OCBoost classifier = new OCBoost();
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", Classifier.class,
-                 "moa.classifiers.trees.AdaHoeffdingOptionTree");
+                "Classifier to train.", AdaHoeffdingOptionTree.class,
+                 "trees.AdaHoeffdingOptionTree");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -630,8 +630,8 @@ public class MachineLearningModelBuilders implements Serializable {
         LeveragingBag classifier = new LeveragingBag();
         
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", Classifier.class,
-                 "moa.classifiers.trees.AdaHoeffdingOptionTree");
+                "Classifier to train.", AdaHoeffdingOptionTree.class,
+                 "trees.AdaHoeffdingOptionTree");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
