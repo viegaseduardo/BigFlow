@@ -606,7 +606,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", Classifier.class,
-                 "trees.AdaHoeffdingOptionTree");
+                 "moa.classifiers.trees.AdaHoeffdingOptionTree");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -631,7 +631,7 @@ public class MachineLearningModelBuilders implements Serializable {
         
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", Classifier.class,
-                 "trees.AdaHoeffdingOptionTree");
+                 "moa.classifiers.trees.AdaHoeffdingOptionTree");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
