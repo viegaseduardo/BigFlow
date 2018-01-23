@@ -466,62 +466,68 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierHoeffingAdaptiveTreeMOA(Instances train) throws Exception {
-        //train.randomize(new Random(1));
-
         HoeffdingAdaptiveTree classifier = new HoeffdingAdaptiveTree();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
 
+        classifier.setModelContext(instH);
         classifier.prepareForUse();
-        classifier.resetLearningImpl();
 
+        int pct = (int) (train.size() / 100.0f);
         for (int i = 0; i < train.size(); i++) {
-            classifier.trainOnInstanceImpl(moaTrain.get(i));
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+            }
+            classifier.trainOnInstance(moaTrain.get(i));
         }
 
         return classifier;
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierHoeffingTreeMOA(Instances train) throws Exception {
-        //train.randomize(new Random(1));
-
         moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
 
+        classifier.setModelContext(instH);
         classifier.prepareForUse();
-        classifier.resetLearningImpl();
-        //just added this not sure if it is working, probably not, nothing works down here...
-        classifier.resetLearning();
 
+        int pct = (int) (train.size() / 100.0f);
         for (int i = 0; i < train.size(); i++) {
-            if (i % 10000 == 0) {
-                System.out.println("Training on instance: " + i + "...");
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
             }
-            com.yahoo.labs.samoa.instances.Instance inst = converter.samoaInstance(train.get(i));
-            classifier.trainOnInstance(inst);
+            classifier.trainOnInstance(moaTrain.get(i));
         }
+
         return classifier;
     }
 
-    public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {
-        //train.randomize(new Random(1));
-
+    public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {        
         OzaBag classifier = new OzaBag();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
 
+
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
 
+        classifier.setModelContext(instH);
         classifier.prepareForUse();
-        classifier.resetLearningImpl();
-        classifier.resetLearning();
 
+        int pct = (int) (train.size() / 100.0f);
         for (int i = 0; i < train.size(); i++) {
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+            }
             classifier.trainOnInstance(moaTrain.get(i));
         }
+
         return classifier;
     }
 
