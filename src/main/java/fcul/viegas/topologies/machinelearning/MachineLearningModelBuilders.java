@@ -25,6 +25,7 @@ import moa.classifiers.meta.OzaBag;
 import moa.classifiers.meta.OzaBoost;
 import moa.classifiers.trees.AdaHoeffdingOptionTree;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
+import moa.options.ClassOption;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
@@ -509,11 +510,10 @@ public class MachineLearningModelBuilders implements Serializable {
         return classifier;
     }
 
-    public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {        
+    public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {
         OzaBag classifier = new OzaBag();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
-
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -600,9 +600,13 @@ public class MachineLearningModelBuilders implements Serializable {
 
         return classifier;
     }
-    
+
     public moa.classifiers.AbstractClassifier trainClassifierOCBoostMOA(Instances train) throws Exception {
         OCBoost classifier = new OCBoost();
+
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", Classifier.class,
+                 "trees.AdaHoeffdingOptionTree");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -621,9 +625,13 @@ public class MachineLearningModelBuilders implements Serializable {
 
         return classifier;
     }
-    
+
     public moa.classifiers.AbstractClassifier trainClassifierLeveragingBagMOA(Instances train) throws Exception {
         LeveragingBag classifier = new LeveragingBag();
+        
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", Classifier.class,
+                 "trees.AdaHoeffdingOptionTree");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -1262,7 +1270,7 @@ public class MachineLearningModelBuilders implements Serializable {
                     credibility = conformalPredictor.getPValueForAttack(instWeka);
                     confidence = 1.0f - conformalPredictor.getPValueForNormal(instWeka);
                     alpha = credibility + confidence;
-                }else{
+                } else {
                     alpha = 0;
                 }
 
