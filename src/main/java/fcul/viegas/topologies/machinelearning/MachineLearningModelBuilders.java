@@ -6,6 +6,7 @@
 package fcul.viegas.topologies.machinelearning;
 
 import com.github.javacliparser.IntOption;
+import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
 import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
@@ -20,6 +21,7 @@ import java.util.Random;
 import moa.classifiers.meta.AdaptiveRandomForest;
 import moa.classifiers.meta.OzaBag;
 import moa.classifiers.meta.OzaBoost;
+import moa.classifiers.trees.AdaHoeffdingOptionTree;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -477,16 +479,15 @@ public class MachineLearningModelBuilders implements Serializable {
         moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        
+
         classifier.prepareForUse();
         classifier.resetLearningImpl();
         //just added this not sure if it is working, probably not, nothing works down here...
         classifier.resetLearning();
-        
 
         for (int i = 0; i < train.size(); i++) {
-            if(i % 10000 == 0){
-                System.out.println("Training on instance: " + i +"...");
+            if (i % 10000 == 0) {
+                System.out.println("Training on instance: " + i + "...");
             }
             com.yahoo.labs.samoa.instances.Instance inst = converter.samoaInstance(train.get(i));
             classifier.trainOnInstance(inst);
@@ -548,6 +549,27 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.resetLearningImpl();
 
         for (int i = 0; i < train.size(); i++) {
+            classifier.trainOnInstanceImpl(moaTrain.get(i));
+        }
+
+        return classifier;
+    }
+
+    public moa.classifiers.AbstractClassifier trainClassifierAdaHoeffdingOptionTreeMOA(Instances train) throws Exception {
+        AdaHoeffdingOptionTree classifier = new AdaHoeffdingOptionTree();
+
+        WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
+
+        classifier.setModelContext(instH);
+        classifier.prepareForUse();
+
+        int pct = (int) (train.size() / 100.0f);
+        for (int i = 0; i < train.size(); i++) {
+            if(i % pct == 0){
+                System.out.println("Trained with " + (i/pct) + " % of training instances...");
+            }
             classifier.trainOnInstanceImpl(moaTrain.get(i));
         }
 

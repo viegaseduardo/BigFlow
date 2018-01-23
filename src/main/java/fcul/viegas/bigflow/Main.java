@@ -183,7 +183,7 @@ public class Main {
                 stream
                 stream classifiers, work as a loop!
                     args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
-                    args[N+2] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting}
+                    args[N+2] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting, adahoeffdingoptiontree}
                     args[N+3] = normal threshold
                     args[N+4] = attack threshold 
              

@@ -94,7 +94,6 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
 //        writer.close();
 //
 //        System.exit(1);
-
         Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
         dataTrainMOORE.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
@@ -144,7 +143,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
 
         System.out.println("building classifiers now, this will take some time...");
 
-        //aqui ainda nao usamos o moa mas who cares?
+        //aqui ainda nao usamos o moa mas who cares?, agora usamos
         WekaMoaClassifierWrapper wekaWrapper = new WekaMoaClassifierWrapper();
         wekaWrapper.setConformalEvaluatorVIEGAS(conformalVIEGAS);
         wekaWrapper.setConformalEvaluatorNIGEL(conformalNIGEL);
@@ -222,7 +221,8 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
                     ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
                     ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain) : classifierToBuild.equals("ozaboosting")
                     ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain) : classifierToBuild.equals("adaptiveforest")
-                    ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : null;
+                    ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
+                    ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : null;
 
             wekaWrapper.getFeatureSetToLookMoa().add(featureSet);
             wekaWrapper.getMoaClassifiers().add(classifier);
