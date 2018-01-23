@@ -1179,7 +1179,7 @@ public class MachineLearningModelBuilders implements Serializable {
             //classified as normal
             if (classifiedClass == 0.0d) {
                 //if should accept
-                if (!(normalThreshold == 0.0d && attackThreshold == 0.0d)) {
+                if (!(normalThreshold <= 0.0001d && attackThreshold <= 0.0001d)) {
                     credibility = conformalPredictor.getPValueForNormal(instWeka);
                     confidence = 1.0f - conformalPredictor.getPValueForAttack(instWeka);
                     alpha = credibility + confidence;
@@ -1208,7 +1208,7 @@ public class MachineLearningModelBuilders implements Serializable {
             } else {
                 //classified as attack
                 //if should accept
-                if (!(normalThreshold == 0.0d && attackThreshold == 0.0d)) {
+                if (!(normalThreshold <= 0.0001d && attackThreshold <= 0.0001d)) {
                     credibility = conformalPredictor.getPValueForAttack(instWeka);
                     confidence = 1.0f - conformalPredictor.getPValueForNormal(instWeka);
                     alpha = credibility + confidence;
