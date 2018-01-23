@@ -56,12 +56,18 @@ import weka.filters.unsupervised.instance.RemoveWithValues;
 public class MachineLearningModelBuilders implements Serializable {
 
     public Instances removeParticularAttributesViegas(Instances data) {
+        if (data == null) {
+            return data;
+        }
         data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentDestinations_A").index());
         data.deleteAttributeAt(data.attribute("VIEGAS_numberOfDifferentServices_A").index());
         return data;
     }
 
     public Instances removeParticularAttributesOrunada(Instances data) {
+        if (data == null) {
+            return data;
+        }
         data.deleteAttributeAt(data.attribute("ORUNADA_numberOfDifferentDestinations").index());
         data.deleteAttributeAt(data.attribute("ORUNADA_numberOfDifferentServices").index());
         return data;
@@ -96,6 +102,10 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public Instances getAsNormalizeFeatures(Instances path) throws Exception {
+
+        if (path == null) {
+            return path;
+        }
 
 //        throw new Exception();
         Normalize norm = new Normalize();
@@ -516,27 +526,29 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train) throws Exception {
-        //train.randomize(new Random(1));
-
         OzaBoost classifier = new OzaBoost();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
 
+        classifier.setModelContext(instH);
         classifier.prepareForUse();
-        classifier.resetLearningImpl();
 
+        int pct = (int) (train.size() / 100.0f);
         for (int i = 0; i < train.size(); i++) {
-            classifier.trainOnInstanceImpl(moaTrain.get(i));
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+            }
+            classifier.trainOnInstance(moaTrain.get(i));
         }
 
         return classifier;
     }
 
     public moa.classifiers.AbstractClassifier trainClassifierAdaptiveRandomForestMOA(Instances train) throws Exception {
-        //train.randomize(new Random(1));
 
         AdaptiveRandomForest classifier = new AdaptiveRandomForest();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
@@ -544,12 +556,17 @@ public class MachineLearningModelBuilders implements Serializable {
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        InstancesHeader instH = new InstancesHeader(moaTrain);
 
+        classifier.setModelContext(instH);
         classifier.prepareForUse();
-        classifier.resetLearningImpl();
 
+        int pct = (int) (train.size() / 100.0f);
         for (int i = 0; i < train.size(); i++) {
-            classifier.trainOnInstanceImpl(moaTrain.get(i));
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+            }
+            classifier.trainOnInstance(moaTrain.get(i));
         }
 
         return classifier;
@@ -567,8 +584,8 @@ public class MachineLearningModelBuilders implements Serializable {
 
         int pct = (int) (train.size() / 100.0f);
         for (int i = 0; i < train.size(); i++) {
-            if(i % pct == 0){
-                System.out.println("Trained with " + (i/pct) + " % of training instances...");
+            if (i % pct == 0) {
+                System.out.println("Trained with " + (i / pct) + " % of training instances...");
             }
             classifier.trainOnInstance(moaTrain.get(i));
         }
@@ -986,10 +1003,39 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public String evaluateClassifierWithRejectionThroughConformalAndCascade(String[] arffPaths, WekaMoaClassifierWrapper wekaMoa) throws Exception {
 
-        Instances dataTestVIEGAS = this.openFile(arffPaths[0]);
-        Instances dataTestNIGEL = this.openFile(arffPaths[1]);
-        Instances dataTestMOORE = this.openFile(arffPaths[2]);
-        Instances dataTestORUNADA = this.openFile(arffPaths[3]);
+        boolean willUseViegas = false;
+        boolean willUseNigel = false;
+        boolean willUseMoore = false;
+        boolean willUseOrunada = false;
+
+        for (int i = 0; i < wekaMoa.getFeatureSetToLookWeka().size(); i++) {
+            if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("VIEGAS")) {
+                willUseViegas = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("NIGEL")) {
+                willUseNigel = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("MOORE")) {
+                willUseMoore = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("ORUNADA")) {
+                willUseOrunada = true;
+            }
+        }
+
+        for (int i = 0; i < wekaMoa.getFeatureSetToLookMoa().size(); i++) {
+            if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("VIEGAS")) {
+                willUseViegas = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("NIGEL")) {
+                willUseNigel = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("MOORE")) {
+                willUseMoore = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("ORUNADA")) {
+                willUseOrunada = true;
+            }
+        }
+
+        Instances dataTestVIEGAS = (willUseViegas) ? this.openFile(arffPaths[0]) : null;
+        Instances dataTestNIGEL = (willUseNigel) ? this.openFile(arffPaths[1]) : null;
+        Instances dataTestMOORE = (willUseMoore) ? this.openFile(arffPaths[2]) : null;
+        Instances dataTestORUNADA = (willUseOrunada) ? this.openFile(arffPaths[3]) : null;
 
         dataTestVIEGAS = this.getAsNormalizeFeatures(dataTestVIEGAS);
         dataTestNIGEL = this.getAsNormalizeFeatures(dataTestNIGEL);
@@ -1012,10 +1058,10 @@ public class MachineLearningModelBuilders implements Serializable {
         int nCorrectlyAcceptedAttack = 0;
 
         for (int i = 0; i < dataTestVIEGAS.size(); i++) {
-            Instance instViegas = dataTestVIEGAS.get(i);
-            Instance instMoore = dataTestMOORE.get(i);
-            Instance instNigel = dataTestNIGEL.get(i);
-            Instance instOrunada = dataTestORUNADA.get(i);
+            Instance instViegas = (willUseViegas) ? dataTestVIEGAS.get(i) : null;
+            Instance instMoore = (willUseMoore) ? dataTestMOORE.get(i) : null;
+            Instance instNigel = (willUseNigel) ? dataTestNIGEL.get(i) : null;
+            Instance instOrunada = (willUseOrunada) ? dataTestORUNADA.get(i) : null;
 
             int decision = this.evaluateInstanceConformalCascade(0, wekaMoa, instViegas, instNigel, instMoore, instOrunada);
 
@@ -1189,10 +1235,39 @@ public class MachineLearningModelBuilders implements Serializable {
             String[] arffPaths,
             WekaMoaClassifierWrapper wekaMoa) throws Exception {
 
-        Instances dataTestVIEGAS = this.openFile(arffPaths[0]);
-        Instances dataTestNIGEL = this.openFile(arffPaths[1]);
-        Instances dataTestMOORE = this.openFile(arffPaths[2]);
-        Instances dataTestORUNADA = this.openFile(arffPaths[3]);
+        boolean willUseViegas = false;
+        boolean willUseNigel = false;
+        boolean willUseMoore = false;
+        boolean willUseOrunada = false;
+
+        for (int i = 0; i < wekaMoa.getFeatureSetToLookWeka().size(); i++) {
+            if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("VIEGAS")) {
+                willUseViegas = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("NIGEL")) {
+                willUseNigel = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("MOORE")) {
+                willUseMoore = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("ORUNADA")) {
+                willUseOrunada = true;
+            }
+        }
+
+        for (int i = 0; i < wekaMoa.getFeatureSetToLookMoa().size(); i++) {
+            if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("VIEGAS")) {
+                willUseViegas = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("NIGEL")) {
+                willUseNigel = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("MOORE")) {
+                willUseMoore = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("ORUNADA")) {
+                willUseOrunada = true;
+            }
+        }
+
+        Instances dataTestVIEGAS = (willUseViegas) ? this.openFile(arffPaths[0]) : null;
+        Instances dataTestNIGEL = (willUseNigel) ? this.openFile(arffPaths[1]) : null;
+        Instances dataTestMOORE = (willUseMoore) ? this.openFile(arffPaths[2]) : null;
+        Instances dataTestORUNADA = (willUseOrunada) ? this.openFile(arffPaths[3]) : null;
 
         dataTestVIEGAS = this.getAsNormalizeFeatures(dataTestVIEGAS);
         dataTestNIGEL = this.getAsNormalizeFeatures(dataTestNIGEL);
@@ -1221,15 +1296,15 @@ public class MachineLearningModelBuilders implements Serializable {
 
         for (int i = 0; i < dataTestVIEGAS.size(); i++) {
 
-            com.yahoo.labs.samoa.instances.Instance instMoaViegas = converterViegas.samoaInstance(dataTestVIEGAS.get(i));
-            com.yahoo.labs.samoa.instances.Instance instMoaMoore = converterMoore.samoaInstance(dataTestMOORE.get(i));
-            com.yahoo.labs.samoa.instances.Instance instMoaNigel = converterNigel.samoaInstance(dataTestNIGEL.get(i));
-            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = converterOrunada.samoaInstance(dataTestORUNADA.get(i));
+            com.yahoo.labs.samoa.instances.Instance instMoaViegas = (willUseViegas) ? converterViegas.samoaInstance(dataTestVIEGAS.get(i)) : null;
+            com.yahoo.labs.samoa.instances.Instance instMoaMoore = (willUseMoore) ? converterMoore.samoaInstance(dataTestMOORE.get(i)) : null;
+            com.yahoo.labs.samoa.instances.Instance instMoaNigel = (willUseNigel) ? converterNigel.samoaInstance(dataTestNIGEL.get(i)) : null;
+            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = (willUseOrunada) ? converterOrunada.samoaInstance(dataTestORUNADA.get(i)) : null;
 
-            Instance instViegas = dataTestVIEGAS.get(i);
-            Instance instMoore = dataTestMOORE.get(i);
-            Instance instNigel = dataTestNIGEL.get(i);
-            Instance instOrunada = dataTestORUNADA.get(i);
+            Instance instViegas = (willUseViegas) ? dataTestVIEGAS.get(i) : null;
+            Instance instMoore = (willUseMoore) ? dataTestMOORE.get(i) : null;
+            Instance instNigel = (willUseNigel) ? dataTestNIGEL.get(i) : null;
+            Instance instOrunada = (willUseOrunada) ? dataTestORUNADA.get(i) : null;
 
             int decision = this.evaluateInstanceConformalCascade(0, wekaMoa, instViegas, instNigel, instMoore, instOrunada);
 
