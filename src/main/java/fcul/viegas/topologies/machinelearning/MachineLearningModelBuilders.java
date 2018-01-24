@@ -495,6 +495,8 @@ public class MachineLearningModelBuilders implements Serializable {
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
+        
+        classifier.gracePeriodOption.setValue(250);
 
         classifier.setModelContext(instH);
         classifier.prepareForUse();
