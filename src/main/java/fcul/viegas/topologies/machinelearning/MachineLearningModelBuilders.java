@@ -489,14 +489,14 @@ public class MachineLearningModelBuilders implements Serializable {
         return classifier;
     }
 
-    public moa.classifiers.AbstractClassifier trainClassifierHoeffingTreeMOA(Instances train) throws Exception {
+    public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
         moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
         
-        classifier.gracePeriodOption.setValue(250);
+        classifier.gracePeriodOption.setValue(201);
 
         classifier.setModelContext(instH);
         classifier.prepareForUse();

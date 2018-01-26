@@ -141,7 +141,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         Transcend_ConformalPredictor conformalORUNADA = new Transcend_ConformalPredictor();
         conformalORUNADA.setDataset(dataTrainORUNADA);
 
-        System.out.println("building classifiers now, this will take some time...");
+        System.out.println("building classifiers now, this will take some time.........");
 
         //aqui ainda nao usamos o moa mas who cares?, agora usamos
         WekaMoaClassifierWrapper wekaWrapper = new WekaMoaClassifierWrapper();
@@ -217,7 +217,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
             System.out.println("STREAM - Building " + classifierToBuild + " classifier...");
             //se nao for nem A nem B, da pau...
             classifier = classifierToBuild.equals("hoeffding")
-                    ? mlModelBuilder.trainClassifierHoeffingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
+                    ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
                     ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
                     ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain) : classifierToBuild.equals("ozaboosting")
                     ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain) : classifierToBuild.equals("adaptiveforest")
