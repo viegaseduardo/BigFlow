@@ -539,8 +539,10 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train) throws Exception {
         OzaBoost classifier = new OzaBoost();
-        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
-                "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
+
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
+                "moa.classifiers.trees.HoeffdingTree -g 201");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -624,7 +626,6 @@ public class MachineLearningModelBuilders implements Serializable {
         for (int i = 0; i < train.size(); i++) {
             if (i % pct == 0) {
                 System.out.println("Trained with " + (i / pct) + " % of training instances...");
-                System.out.println(classifier.baseLearnerOption.getValueAsCLIString());
             }
             classifier.trainOnInstance(moaTrain.get(i));
         }
@@ -634,10 +635,10 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public moa.classifiers.AbstractClassifier trainClassifierLeveragingBagMOA(Instances train) throws Exception {
         LeveragingBag classifier = new LeveragingBag();
-        
+
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
-                 "moa.classifiers.trees.HoeffdingTree -g 201");
+                "moa.classifiers.trees.HoeffdingTree -g 201");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -653,17 +654,6 @@ public class MachineLearningModelBuilders implements Serializable {
             }
             classifier.trainOnInstance(moaTrain.get(i));
         }
-
-        return classifier;
-    }
-
-    public Classifier trainClassifierSMO(Instances train) throws Exception {
-        weka.classifiers.functions.SMO classifier = new weka.classifiers.functions.SMO();
-
-        classifier.setKernel(new RBFKernel());
-        classifier.setFilterType(new SelectedTag(SMO.FILTER_NONE, SMO.TAGS_FILTER));
-
-        classifier.buildClassifier(train);
 
         return classifier;
     }
