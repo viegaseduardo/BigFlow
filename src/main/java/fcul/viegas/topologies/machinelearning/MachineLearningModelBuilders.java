@@ -491,6 +491,9 @@ public class MachineLearningModelBuilders implements Serializable {
         return classifier;
     }
 
+    //should be working now...
+    //  there is an error with weka API that internally uses grace period + 1 instead of chosen grace period
+    //  the fix here is to adjust grace period + 1 also to match weka results...
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
         moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
 
@@ -498,7 +501,7 @@ public class MachineLearningModelBuilders implements Serializable {
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
         
-        classifier.gracePeriodOption.setValue(210);
+        classifier.gracePeriodOption.setValue(201);
 
         classifier.setModelContext(instH);
         classifier.prepareForUse();
@@ -514,6 +517,7 @@ public class MachineLearningModelBuilders implements Serializable {
         return classifier;
     }
 
+    //funcionando teoricamente...
     public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {
         OzaBag classifier = new OzaBag();
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
@@ -607,6 +611,7 @@ public class MachineLearningModelBuilders implements Serializable {
         return classifier;
     }
 
+    //theoricaly it is working now
     public moa.classifiers.AbstractClassifier trainClassifierOCBoostMOA(Instances train) throws Exception {
 
         OCBoost classifier = new OCBoost();
