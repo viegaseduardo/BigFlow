@@ -496,7 +496,7 @@ public class MachineLearningModelBuilders implements Serializable {
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
         
-        classifier.gracePeriodOption.setValue(201);
+        classifier.gracePeriodOption.setValue(210);
 
         classifier.setModelContext(instH);
         classifier.prepareForUse();
