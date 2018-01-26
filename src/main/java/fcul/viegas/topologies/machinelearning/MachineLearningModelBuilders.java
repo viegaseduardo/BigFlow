@@ -607,16 +607,11 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public moa.classifiers.AbstractClassifier trainClassifierOCBoostMOA(Instances train) throws Exception {
 
-        moa.classifiers.trees.HoeffdingTree baseTree = new moa.classifiers.trees.HoeffdingTree();
-        baseTree.gracePeriodOption.setValue(201);
-        baseTree.prepareForUse();
-
         OCBoost classifier = new OCBoost();
-        classifier.baseLearnerOption.setCurrentObject(baseTree);
 
-//        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-//                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
-//                 "moa.classifiers.trees.HoeffdingTree -g 201");
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", AdaHoeffdingOptionTree.class,
+                "moa.classifiers.trees.AdaHoeffdingOptionTree");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -624,7 +619,6 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.setModelContext(instH);
         classifier.prepareForUse();
-
 
         int pct = (int) (train.size() / 100.0f);
         for (int i = 0; i < train.size(); i++) {
@@ -642,8 +636,8 @@ public class MachineLearningModelBuilders implements Serializable {
         LeveragingBag classifier = new LeveragingBag();
         
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", AdaHoeffdingOptionTree.class,
-                 "moa.classifiers.trees.AdaHoeffdingOptionTree");
+                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
+                 "moa.classifiers.trees.HoeffdingTree -g 201");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
