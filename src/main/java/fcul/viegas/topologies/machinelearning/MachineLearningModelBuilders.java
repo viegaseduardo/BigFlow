@@ -1361,7 +1361,15 @@ public class MachineLearningModelBuilders implements Serializable {
         int nCorrectlyAcceptedNormal = 0; //ok
         int nCorrectlyAcceptedAttack = 0;
 
-        for (int i = 0; i < dataTestVIEGAS.size(); i++) {
+        int nInstances =    (dataTestVIEGAS == null) ?
+                                (dataTestMOORE == null) ?
+                                    (dataTestNIGEL == null) ?
+                                            dataTestORUNADA.size() :
+                                     dataTestNIGEL.size() :
+                                dataTestMOORE.size() :
+                            dataTestVIEGAS.size();
+
+        for (int i = 0; i < nInstances; i++) {
 
             com.yahoo.labs.samoa.instances.Instance instMoaViegas = (willUseViegas) ? converterViegas.samoaInstance(dataTestVIEGAS.get(i)) : null;
             com.yahoo.labs.samoa.instances.Instance instMoaMoore = (willUseMoore) ? converterMoore.samoaInstance(dataTestMOORE.get(i)) : null;
@@ -1381,7 +1389,15 @@ public class MachineLearningModelBuilders implements Serializable {
                         instMoaViegas, instMoaNigel, instMoaMoore, instMoaOrunada);
             }
 
-            if (instViegas.classValue() == 0.0d) {
+            double classValue =    (dataTestVIEGAS == null) ?
+                                        (dataTestMOORE == null) ?
+                                            (dataTestNIGEL == null) ?
+                                                instOrunada.classValue() :
+                                            instNigel.classValue() :
+                                        instMoore.classValue() :
+                                    instViegas.classValue();
+
+            if (classValue == 0.0d) {
                 nNormal++;
             } else {
                 //is attack
@@ -1389,13 +1405,13 @@ public class MachineLearningModelBuilders implements Serializable {
             }
 
             if (decision == 0) {
-                if (instViegas.classValue() == 0.0d) {
+                if (classValue == 0.0d) {
                     nRejectedNormal++;
                 } else {
                     nRejectedAttack++;
                 }
             } else {
-                if (instViegas.classValue() == 0.0d) {
+                if (classValue == 0.0d) {
                     nAcceptedNormal++;
                     if (decision == 1) {
                         nCorrectlyAcceptedNormal++;
@@ -1432,7 +1448,7 @@ public class MachineLearningModelBuilders implements Serializable {
         print = print + arffPaths[1] + ";";
         print = print + arffPaths[2] + ";";
         print = print + arffPaths[3] + ";";
-        print = print + (dataTestVIEGAS.size()) + ";";
+        print = print + (nInstances) + ";";
         print = print + nNormal + ";";
         print = print + nAttack + ";";
         print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
