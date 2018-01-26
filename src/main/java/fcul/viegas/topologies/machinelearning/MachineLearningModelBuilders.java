@@ -614,15 +614,9 @@ public class MachineLearningModelBuilders implements Serializable {
         OCBoost classifier = new OCBoost();
         classifier.baseLearnerOption.setCurrentObject(baseTree);
 
-
-
-
-//
 //        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
 //                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
 //                 "moa.classifiers.trees.HoeffdingTree -g 201");
-
-
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -636,6 +630,7 @@ public class MachineLearningModelBuilders implements Serializable {
         for (int i = 0; i < train.size(); i++) {
             if (i % pct == 0) {
                 System.out.println("Trained with " + (i / pct) + " % of training instances...");
+                System.out.println(classifier.baseLearnerOption.getValueAsCLIString());
             }
             classifier.trainOnInstance(moaTrain.get(i));
         }
