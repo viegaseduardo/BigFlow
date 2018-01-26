@@ -609,7 +609,7 @@ public class MachineLearningModelBuilders implements Serializable {
         OCBoost classifier = new OCBoost();
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", HoeffdingTree.class,
+                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
                  "moa.classifiers.trees.HoeffdingTree -g 201");
 
 
