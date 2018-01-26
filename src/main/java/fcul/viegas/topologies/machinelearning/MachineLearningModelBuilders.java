@@ -610,7 +610,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", HoeffdingTree.class,
-                 "trees.HoeffdingTree -g 201");
+                 "moa.classifiers.trees.HoeffdingTree -g 201");
 
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
