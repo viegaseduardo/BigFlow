@@ -26,6 +26,7 @@ import moa.classifiers.meta.OzaBoost;
 import moa.classifiers.trees.AdaHoeffdingOptionTree;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.options.ClassOption;
+import org.apache.hadoop.util.Options;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
@@ -40,6 +41,7 @@ import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.RandomCommittee;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.ExtraTree;
+import weka.classifiers.trees.HoeffdingTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -607,8 +609,9 @@ public class MachineLearningModelBuilders implements Serializable {
         OCBoost classifier = new OCBoost();
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", AdaHoeffdingOptionTree.class,
-                 "moa.classifiers.trees.AdaHoeffdingOptionTree");
+                "Classifier to train.", HoeffdingTree.class,
+                 "trees.HoeffdingTree -g 201");
+
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
