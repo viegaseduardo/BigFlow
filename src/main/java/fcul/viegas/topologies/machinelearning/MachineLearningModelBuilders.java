@@ -520,10 +520,10 @@ public class MachineLearningModelBuilders implements Serializable {
         OzaBag classifier = new OzaBag();
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
-                "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
+                "The number of models in the bag.", 10, 1, Integer.MAX_VALUE);
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", moa.classifiers.trees.AdaHoeffdingOptionTree.class,
-                "moa.classifiers.trees.AdaHoeffdingOptionTree");
+                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
+                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
 
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
@@ -548,8 +548,8 @@ public class MachineLearningModelBuilders implements Serializable {
         OzaBoost classifier = new OzaBoost();
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
-                "moa.classifiers.trees.HoeffdingTree -g 201");
+                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
+                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -620,8 +620,8 @@ public class MachineLearningModelBuilders implements Serializable {
         OCBoost classifier = new OCBoost();
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", AdaHoeffdingOptionTree.class,
-                "moa.classifiers.trees.AdaHoeffdingOptionTree");
+                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
+                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -645,8 +645,8 @@ public class MachineLearningModelBuilders implements Serializable {
         LeveragingBag classifier = new LeveragingBag();
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
-                "moa.classifiers.trees.HoeffdingTree -g 201");
+                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
+                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
