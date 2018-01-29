@@ -524,8 +524,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
-                "moa.classifiers.trees.HoeffdingTree -g 201");
+                "Classifier to train.", moa.classifiers.trees.AdaHoeffdingOptionTree.class,
+                "moa.classifiers.trees.AdaHoeffdingOptionTree");
 
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
