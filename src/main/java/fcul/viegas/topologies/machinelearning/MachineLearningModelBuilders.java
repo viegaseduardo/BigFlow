@@ -520,8 +520,13 @@ public class MachineLearningModelBuilders implements Serializable {
     //funcionando teoricamente...
     public moa.classifiers.AbstractClassifier trainClassifierOzaBaggingMOA(Instances train) throws Exception {
         OzaBag classifier = new OzaBag();
+
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", moa.classifiers.trees.HoeffdingTree.class,
+                "moa.classifiers.trees.HoeffdingTree -g 201");
+
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
