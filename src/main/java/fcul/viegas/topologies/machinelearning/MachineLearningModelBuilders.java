@@ -451,20 +451,19 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public Classifier trainClassifierHoeffing(Instances train) throws Exception {
-        //train.randomize(new Random(1));
-
         InputMappedClassifier inputMapped = new InputMappedClassifier();
         inputMapped.setSuppressMappingReport(true);
         inputMapped.setModelHeader(train);
 
-        FilteredClassifier filteredClassifierBalancer = new FilteredClassifier();
-        filteredClassifierBalancer.setFilter(new ClassBalancer());
+        //FilteredClassifier filteredClassifierBalancer = new FilteredClassifier();
+        //filteredClassifierBalancer.setFilter(new ClassBalancer());
 
         weka.classifiers.trees.HoeffdingTree classifier = new weka.classifiers.trees.HoeffdingTree();
 
-        filteredClassifierBalancer.setClassifier(classifier);
+        //filteredClassifierBalancer.setClassifier(classifier);
 
-        inputMapped.setClassifier(filteredClassifierBalancer);
+        //inputMapped.setClassifier(filteredClassifierBalancer);
+        inputMapped.setClassifier(classifier);
         inputMapped.buildClassifier(train);
 
         return inputMapped;
