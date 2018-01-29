@@ -238,8 +238,8 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         oos.close();
 
         ArrayList<String[]> testFiles = new ArrayList<>();
-        //for (int i = 0; i < testFilesVIEGAS.size(); i++) {
-        for (int i = 0; i < 600; i++) {
+        for (int i = 0; i < testFilesVIEGAS.size(); i++) {
+        //for (int i = 0; i < 600; i++) {
 
             String[] array = new String[4];
             array[0] = testFilesVIEGAS.get(i);
