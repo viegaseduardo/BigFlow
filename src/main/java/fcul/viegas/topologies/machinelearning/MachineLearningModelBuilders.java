@@ -8,6 +8,7 @@ package fcul.viegas.topologies.machinelearning;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
+import fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper;
 import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import java.io.BufferedReader;
@@ -494,13 +495,11 @@ public class MachineLearningModelBuilders implements Serializable {
     //  there is an error with weka API that internally uses grace period + 1 instead of chosen grace period
     //  the fix here is to adjust grace period + 1 also to match weka results...
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
-        moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
+        moa.classifiers.AbstractClassifier classifier = new HoeffdingTreeWekaWrapper();
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
-        
-        classifier.gracePeriodOption.setValue(201);
 
         classifier.setModelContext(instH);
         classifier.prepareForUse();
