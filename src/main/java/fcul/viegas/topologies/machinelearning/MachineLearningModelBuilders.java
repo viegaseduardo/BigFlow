@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Random;
 import moa.classifiers.meta.AdaptiveRandomForest;
 import moa.classifiers.meta.LeveragingBag;
 import moa.classifiers.meta.OCBoost;
@@ -27,27 +26,22 @@ import moa.classifiers.meta.OzaBoost;
 import moa.classifiers.trees.AdaHoeffdingOptionTree;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.options.ClassOption;
-import org.apache.hadoop.util.Options;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.functions.SMO;
-import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.meta.RandomCommittee;
 import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.ExtraTree;
-import weka.classifiers.trees.HoeffdingTree;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.SelectedTag;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
@@ -1269,10 +1263,12 @@ public class MachineLearningModelBuilders implements Serializable {
                 } else {
                     //check if correctly rejected
                     if (instMoa.classValue() != 0.0d) {
-                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                        return evaluateInstanceConformalCascadeStream(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada,
+                                instanceMoaViegas, instanceMoaNigel, instanceMoaMoore, instanceMoaOrunada);
                     } else {
                         //misrejected
-                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                        return evaluateInstanceConformalCascadeStream(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada,
+                                instanceMoaViegas, instanceMoaNigel, instanceMoaMoore, instanceMoaOrunada);
                     }
                 }
             } else {
@@ -1298,10 +1294,12 @@ public class MachineLearningModelBuilders implements Serializable {
                 } else {
                     //check if correctly rejected
                     if (instMoa.classValue() != 1.0d) {
-                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                        return evaluateInstanceConformalCascadeStream(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada,
+                                instanceMoaViegas, instanceMoaNigel, instanceMoaMoore, instanceMoaOrunada);
                     } else {
                         //misrejected
-                        return evaluateInstanceConformalCascade(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada);
+                        return evaluateInstanceConformalCascadeStream(indexClassifier + 1, wekaMoa, instanceViegas, instanceNigel, instanceMoore, instanceOrunada,
+                                instanceMoaViegas, instanceMoaNigel, instanceMoaMoore, instanceMoaOrunada);
                     }
                 }
             }
