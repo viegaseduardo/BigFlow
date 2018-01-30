@@ -515,7 +515,7 @@ public class MachineLearningModelBuilders implements Serializable {
         OzaBag classifier = new OzaBag();
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
-                "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
+                "The number of models in the bag.", 100, 1, Integer.MAX_VALUE);
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
