@@ -258,7 +258,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         //Collections.shuffle(testFiles);
         DataSet<String[]> testFilesDataset = env.fromCollection(testFiles);
 
-        testFilesDataset.map(new EvaluateClassifierMapFunctionWithConformalCascadeHybrid(mlModelBuilder))
+        testFilesDataset.map(new EvaluateClassifierMapFunctionWithConformalCascadeHybrid(mlModelBuilder, Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel))
                 .setParallelism(env.getParallelism())
                 .sortPartition(new KeySelector<String, String>() {
                     @Override

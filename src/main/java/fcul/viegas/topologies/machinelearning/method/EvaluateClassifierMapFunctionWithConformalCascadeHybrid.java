@@ -19,16 +19,18 @@ public class EvaluateClassifierMapFunctionWithConformalCascadeHybrid extends Ric
     
     private MachineLearningModelBuilders mlModelBuilder;
     private WekaMoaClassifierWrapper wekaWrapper;
+    private String path;
     
-    public EvaluateClassifierMapFunctionWithConformalCascadeHybrid(MachineLearningModelBuilders mlModelBuilder){
+    public EvaluateClassifierMapFunctionWithConformalCascadeHybrid(MachineLearningModelBuilders mlModelBuilder, String path){
         this.mlModelBuilder = mlModelBuilder;
+        this.path = path;
     }
     
     @Override
     public void open(Configuration cfg) {
         try {
             ObjectInputStream ois = new ObjectInputStream(
-                    new FileInputStream(Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel));
+                    new FileInputStream(this.path));
             this.wekaWrapper = (WekaMoaClassifierWrapper) ois.readObject();
             ois.close();
             System.out.println("EvaluateClassifierMapFunctionWithConformalCascadeStatic - Just loaded model: "
