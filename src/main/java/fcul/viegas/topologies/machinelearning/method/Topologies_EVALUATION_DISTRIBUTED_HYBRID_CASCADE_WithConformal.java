@@ -229,6 +229,8 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
             wekaWrapper.getFeatureSetToLookMoa().add(featureSet);
             wekaWrapper.getMoaClassifiers().add(classifier);
             wekaWrapper.getMoaOperationPoints().add(new OperationPoints(normalThreshold, attackThreshold));
+
+            Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel += Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel + "_" + classifierToBuild;
         }
 
         ObjectOutputStream oos = new ObjectOutputStream(
@@ -238,8 +240,8 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         oos.close();
 
         ArrayList<String[]> testFiles = new ArrayList<>();
-        for (int i = 0; i < testFilesVIEGAS.size(); i++) {
-        //for (int i = 0; i < 600; i++) {
+        //for (int i = 0; i < testFilesVIEGAS.size(); i++) {
+        for (int i = 0; i < 600; i++) {
 
             String[] array = new String[4];
             array[0] = testFilesVIEGAS.get(i);
@@ -266,7 +268,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
                 writeAsText(outputPath + "_raw_output.csv", FileSystem.WriteMode.OVERWRITE).
                 setParallelism(1);
 
-        env.execute(this.folderPath + "_CASCADE_HYBRID");
+        env.execute(this.folderPath + "_CASCADE_HYBRID_" + Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel);
 
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
                 outputPath + "_raw_output.csv",

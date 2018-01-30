@@ -71,11 +71,6 @@
     <orderEntry type="library" name="Maven: org.apache.flink:flink-connector-kafka-0.9_2.11:1.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-connector-kafka-base_2.11:1.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.kafka:kafka-clients:0.9.0.1" level="project" />
-    <orderEntry type="library" name="Maven: nz.ac.waikato.cms.moa:moa:2017.06" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.sizeofag:sizeofag:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: net.sf.meka:meka:1.9.0" level="project" />
-    <orderEntry type="library" name="Maven: gov.nist.math:jama:1.0.3" level="project" />
-    <orderEntry type="library" name="Maven: net.sf.trove4j:trove4j:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: nz.ac.waikato.cms.weka:weka-dev:3.9.1" level="project" />
     <orderEntry type="library" name="Maven: nz.ac.waikato.cms.weka.thirdparty:java-cup-11b:2015.03.26" level="project" />
     <orderEntry type="library" name="Maven: nz.ac.waikato.cms.weka.thirdparty:java-cup-11b-runtime:2015.03.26" level="project" />
@@ -215,5 +210,14 @@
     <orderEntry type="library" name="Maven: org.apache.parquet:parquet-format:2.3.0-incubating" level="project" />
     <orderEntry type="library" name="Maven: org.apache.parquet:parquet-jackson:1.8.1" level="project" />
     <orderEntry type="library" name="Maven: nz.ac.waikato.cms.weka:extraTrees:1.0.1" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: nz.ac.waikato.cms.moa:moa:2017.10">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/moa-2017.10-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

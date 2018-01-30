@@ -494,6 +494,7 @@ public class MachineLearningModelBuilders implements Serializable {
     //should be working now...
     //  there is an error with weka API that internally uses grace period + 1 instead of chosen grace period
     //  the fix here is to adjust grace period + 1 also to match weka results...
+    //  actually the fix was to make a wekatreewrapper, we are internally using weka o.O
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
         moa.classifiers.AbstractClassifier classifier = new HoeffdingTreeWekaWrapper();
 
@@ -520,7 +521,7 @@ public class MachineLearningModelBuilders implements Serializable {
         OzaBag classifier = new OzaBag();
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
-                "The number of models in the bag.", 10, 1, Integer.MAX_VALUE);
+                "The number of models in the bag.", 20, 1, Integer.MAX_VALUE);
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
@@ -550,6 +551,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+                "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -572,6 +575,7 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierAdaptiveRandomForestMOA(Instances train) throws Exception {
 
         AdaptiveRandomForest classifier = new AdaptiveRandomForest();
+
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of trees.", 20, 1, Integer.MAX_VALUE);
 
@@ -622,6 +626,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+                "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
@@ -647,6 +653,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+                "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
