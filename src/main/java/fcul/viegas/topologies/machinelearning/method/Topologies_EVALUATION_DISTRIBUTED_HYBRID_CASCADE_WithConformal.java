@@ -200,6 +200,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
             String classifierToBuild = params[indexToUse++];
             float normalThreshold = Float.valueOf(params[indexToUse++]);
             float attackThreshold = Float.valueOf(params[indexToUse++]);
+            int numberEnsemble = Integer.valueOf(params[indexToUse++]);
 
             moa.classifiers.AbstractClassifier classifier = null;
             Instances dataTrain = null;
@@ -220,7 +221,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
                     ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
                     ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
                     ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain) : classifierToBuild.equals("ozaboosting")
-                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain) : classifierToBuild.equals("adaptiveforest")
+                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("adaptiveforest")
                     ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
                     ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
                     ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain) : classifierToBuild.equals("leveragingbag")
@@ -242,7 +243,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
 
         ArrayList<String[]> testFiles = new ArrayList<>();
         //for (int i = 0; i < testFilesVIEGAS.size(); i++) {
-        for (int i = 0; i < 600; i++) {
+        for (int i = 0; i < 450; i++) {
 
             String[] array = new String[4];
             array[0] = testFilesVIEGAS.get(i);

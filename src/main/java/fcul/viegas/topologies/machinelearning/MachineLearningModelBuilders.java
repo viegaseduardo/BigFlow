@@ -539,14 +539,14 @@ public class MachineLearningModelBuilders implements Serializable {
         return classifier;
     }
 
-    public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train) throws Exception {
+    public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train, int numberEnsemble) throws Exception {
         OzaBoost classifier = new OzaBoost();
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
-                "The number of models to boost.", 100, 1, Integer.MAX_VALUE);
+                "The number of models to boost.", numberEnsemble, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
