@@ -113,8 +113,7 @@ public class Main {
             System.out.println("Generating non-dominated file...");
 
             conformalFinder.getNonDominatedSolutions(
-                    args[3] + "_threshold_file.csv",
-                    args[3] + "_non_dominated.csv");
+                    args[3] + "_threshold_file.csv",                    args[3] + "_non_dominated.csv");
 
             System.out.println("Generating operation points file...");
 

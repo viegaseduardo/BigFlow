@@ -127,19 +127,19 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
                 if (prob[0] > prob[1]) {
                     values.predictClass = 0.0d;
-                    //values.credibility = conformal.getPValueForNormal(inst);
-                    //values.confidence = 1.0f - conformal.getPValueForAttack(inst);
+                    values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
+                    values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
                     values.alpha = values.credibility + values.confidence;
-                    values.alpha = prob[0];
+                    //values.alpha = prob[0];
 
                     listValuesPredictedNormal.add(values);
                 } else {
                     values.predictClass = 1.0d;
-                    //values.credibility = conformal.getPValueForAttack(inst);
-                    //values.confidence = 1.0f - conformal.getPValueForNormal(inst);
+                    values.credibility = conformal.getPValueForAttack(dataTest.get(counter));
+                    values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
                     values.alpha = values.credibility + values.confidence;
 
-                    values.alpha = prob[1];
+                    //values.alpha = prob[1];
 
                     listValuesPredictedAttack.add(values);
                 }
