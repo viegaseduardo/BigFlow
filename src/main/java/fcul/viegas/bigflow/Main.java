@@ -8,24 +8,8 @@ package fcul.viegas.bigflow;
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_FOREST;
-import fcul.viegas.topologies.machinelearning.Topologies_BATCH_No_Update;
+import fcul.viegas.topologies.machinelearning.*;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_CREATE_CLUSTERS;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_GRADIENT;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_NAIVE;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_OBTAIN_MODEL_SVM;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_FOREST;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_GRADIENT;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_NAIVE;
-import fcul.viegas.topologies.machinelearning.Topologies_SPARK_TEST_MODEL_SVM;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_RejectionThresholds;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Rejection_Evaluation;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_ConformalThresholdFinder;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdate;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateStream;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithUpdateThreaded;
-import fcul.viegas.topologies.machinelearning.Topologies_WEKA_Tests_WithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
 import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal;
@@ -69,7 +53,7 @@ public class Main {
             Main.startTopologies_WEKA_Tests_WithoutUpdate(
                     args[1],
                     args[2]);
-        } else if (args[0].equals("evaluateconformal")) {
+        } else if (args[0].equals("evaluateconformalweka")) {
 
             /*
                 args[1] = path to folder
@@ -90,6 +74,41 @@ public class Main {
                     args[4],
                     Integer.valueOf(args[5]),
                     Integer.valueOf(args[6]));
+
+            System.out.println("Generating non-dominated file...");
+
+            conformalFinder.getNonDominatedSolutions(
+                    args[3] + "_threshold_file.csv",
+                    args[3] + "_non_dominated.csv");
+
+            System.out.println("Generating operation points file...");
+
+            conformalFinder.findOperationPoints(
+                    args[3] + "_non_dominated.csv",
+                    args[3] + "_operation_points");
+
+        }else if (args[0].equals("evaluateconformalmoa")) {
+
+            /*
+                args[1] = path to folder
+                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[3] = output
+                args[4] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting, adahoeffdingoptiontree}
+                args[5] = days to use for training
+                args[6] = days to use for testing (if you want only 2007 use args[6]=300)
+             */
+            Topologies_MOA_ConformalThresholdFinder conformalFinder = new Topologies_MOA_ConformalThresholdFinder();
+
+            System.out.println("Generating threshold evaluation file...");
+
+            conformalFinder.generateThresholdEvaluationFile(
+                    args[1],
+                    args[2],
+                    args[3] + "_threshold_file.csv",
+                    args[4],
+                    Integer.valueOf(args[5]),
+                    Integer.valueOf(args[6]),
+                    Integer.valueOf(args[7]));
 
             System.out.println("Generating non-dominated file...");
 
