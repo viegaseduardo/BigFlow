@@ -113,7 +113,7 @@ public class Transcend_ConformalPredictor implements Serializable {
 
     private double distance(double[] a, double[] b) {
         double diff_square_sum = 0.0;
-        for (int i = 0; i < a.length && i < b.length; i++) {
+        for (int i = 0; i < (a.length  - 1) && i < (b.length - 1); i++) {
             diff_square_sum += (a[i] - b[i]) * (a[i] - b[i]);
         }
         return Math.sqrt(diff_square_sum);
