@@ -8,6 +8,7 @@ package fcul.viegas.topologies.machinelearning.relatedWorks;
 import java.io.Serializable;
 import java.util.Arrays;
 import weka.clusterers.SimpleKMeans;
+import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.TestInstances;
@@ -69,23 +70,23 @@ public class Transcend_ConformalPredictor implements Serializable {
         System.out.println("attack size " + dataAttack.size());
         System.out.println("normal size " + dataNormal.size());
 
-        dataNormal.setClassIndex(TestInstances.NO_CLASS);
-        dataAttack.setClassIndex(TestInstances.NO_CLASS);
+        this.centroidNormal = new double[dataNormal.get(0).toDoubleArray().length];
+        this.centroidAttack = new double[dataNormal.get(0).toDoubleArray().length];
+        for(int i = 0; i < this.centroidNormal.length; i++){
+            this.centroidNormal[i] = 0.0d;
+            this.centroidAttack[i] = 0.0d;
+        }
 
-        System.out.println("building normal cluster");
-        kmeansNormal.setNumClusters(1);
-        kmeansNormal.setNumExecutionSlots(4);
-        kmeansNormal.setMaxIterations(1000);
-        kmeansNormal.buildClusterer(dataNormal);
-
-        System.out.println("building attack cluster");
-        kmeansAttack.setNumClusters(1);
-        kmeansAttack.setNumExecutionSlots(4);
-        kmeansAttack.setMaxIterations(1000);
-        kmeansAttack.buildClusterer(dataAttack);
-
-        this.centroidNormal = kmeansNormal.getClusterCentroids().get(0).toDoubleArray();
-        this.centroidAttack = kmeansAttack.getClusterCentroids().get(0).toDoubleArray();
+        for (Instance inst : dataNormal) {
+            for(int i = 0; i < inst.toDoubleArray().length; i++) {
+                this.centroidNormal[i] += (inst.toDoubleArray()[i] / (double) dataNormal.size());
+            }
+        }
+        for (Instance inst : dataAttack) {
+            for(int i = 0; i < inst.toDoubleArray().length; i++) {
+                this.centroidAttack[i] += (inst.toDoubleArray()[i] / (double) dataAttack.size());
+            }
+        }
 
         this.pvaluesNormal = new double[dataNormal.size()];
         this.pvaluesAttack = new double[dataAttack.size()];
