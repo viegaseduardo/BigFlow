@@ -49,6 +49,7 @@ import weka.filters.supervised.instance.ClassBalancer;
 import weka.filters.supervised.instance.SpreadSubsample;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.instance.Randomize;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
 /**
@@ -505,6 +506,10 @@ public class MachineLearningModelBuilders implements Serializable {
         subsample.setDistributionSpread(1.0d);
         Instances newTrain = Filter.useFilter(train, subsample);
 
+        Randomize randomTrain = new Randomize();
+        randomTrain.setInputFormat(newTrain);
+        newTrain = Filter.useFilter(newTrain, randomTrain);
+
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
         InstancesHeader instH = new InstancesHeader(moaTrain);
@@ -563,6 +568,10 @@ public class MachineLearningModelBuilders implements Serializable {
         subsample.setInputFormat(train);
         subsample.setDistributionSpread(1.0d);
         Instances newTrain = Filter.useFilter(train, subsample);
+
+        Randomize randomTrain = new Randomize();
+        randomTrain.setInputFormat(newTrain);
+        newTrain = Filter.useFilter(newTrain, randomTrain);
 
       /*  classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
@@ -646,6 +655,10 @@ public class MachineLearningModelBuilders implements Serializable {
         subsample.setInputFormat(train);
         subsample.setDistributionSpread(1.0d);
         Instances newTrain = Filter.useFilter(train, subsample);
+
+        Randomize randomTrain = new Randomize();
+        randomTrain.setInputFormat(newTrain);
+        newTrain = Filter.useFilter(newTrain, randomTrain);
 
         /*classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
