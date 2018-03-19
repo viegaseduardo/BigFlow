@@ -145,10 +145,15 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
 
         //aqui ainda nao usamos o moa mas who cares?, agora usamos
         WekaMoaClassifierWrapper wekaWrapper = new WekaMoaClassifierWrapper();
-        wekaWrapper.setConformalEvaluatorVIEGAS(conformalVIEGAS);
-        wekaWrapper.setConformalEvaluatorNIGEL(conformalNIGEL);
-        wekaWrapper.setConformalEvaluatorORUNADA(conformalORUNADA);
-        wekaWrapper.setConformalEvaluatorMOORE(conformalMOORE);
+        //wekaWrapper.setConformalEvaluatorVIEGAS(conformalVIEGAS);
+        //wekaWrapper.setConformalEvaluatorNIGEL(conformalNIGEL);
+        //wekaWrapper.setConformalEvaluatorORUNADA(conformalORUNADA);
+        //wekaWrapper.setConformalEvaluatorMOORE(conformalMOORE);
+
+        wekaWrapper.setConformalEvaluatorVIEGAS(null);
+        wekaWrapper.setConformalEvaluatorNIGEL(null);
+        wekaWrapper.setConformalEvaluatorORUNADA(null);
+        wekaWrapper.setConformalEvaluatorMOORE(null);
 
         //weka classifiers
         int indexToUse = 4;
