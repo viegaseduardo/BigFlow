@@ -502,6 +502,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         SpreadSubsample subsample = new SpreadSubsample();
         subsample.setInputFormat(train);
+        subsample.setDistributionSpread(1.0d);
         Instances newTrain = Filter.useFilter(train, subsample);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
@@ -560,6 +561,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         SpreadSubsample subsample = new SpreadSubsample();
         subsample.setInputFormat(train);
+        subsample.setDistributionSpread(1.0d);
         Instances newTrain = Filter.useFilter(train, subsample);
 
       /*  classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
@@ -642,6 +644,7 @@ public class MachineLearningModelBuilders implements Serializable {
         //Instances newTrain = Filter.useFilter(train, balancer);
         SpreadSubsample subsample = new SpreadSubsample();
         subsample.setInputFormat(train);
+        subsample.setDistributionSpread(1.0d);
         Instances newTrain = Filter.useFilter(train, subsample);
 
         /*classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
