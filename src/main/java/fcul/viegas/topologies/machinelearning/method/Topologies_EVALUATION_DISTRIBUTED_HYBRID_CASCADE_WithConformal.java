@@ -130,16 +130,16 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
 
         System.out.println("building conformal");
         Transcend_ConformalPredictor conformalVIEGAS = new Transcend_ConformalPredictor();
-        conformalVIEGAS.setDataset(dataTrainVIEGAS);
+        //conformalVIEGAS.setDataset(dataTrainVIEGAS);
 
         Transcend_ConformalPredictor conformalNIGEL = new Transcend_ConformalPredictor();
-        conformalNIGEL.setDataset(dataTrainNIGEL);
+        //conformalNIGEL.setDataset(dataTrainNIGEL);
 
         Transcend_ConformalPredictor conformalMOORE = new Transcend_ConformalPredictor();
-        conformalMOORE.setDataset(dataTrainMOORE);
+        //conformalMOORE.setDataset(dataTrainMOORE);
 
         Transcend_ConformalPredictor conformalORUNADA = new Transcend_ConformalPredictor();
-        conformalORUNADA.setDataset(dataTrainORUNADA);
+        //conformalORUNADA.setDataset(dataTrainORUNADA);
 
         System.out.println("building classifiers now, this will take some time.........");
 
