@@ -467,6 +467,8 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierHoeffingAdaptiveTreeMOA(Instances train) throws Exception {
         HoeffdingAdaptiveTree classifier = new HoeffdingAdaptiveTree();
 
+
+
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
@@ -492,8 +494,11 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
         moa.classifiers.AbstractClassifier classifier = new HoeffdingTreeWekaWrapper();
 
+        ClassBalancer balancer = new ClassBalancer();
+        Instances newTrain = Filter.useFilter(train, balancer);
+
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
@@ -542,6 +547,9 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train, int numberEnsemble) throws Exception {
         OzaBoost classifier = new OzaBoost();
 
+        ClassBalancer balancer = new ClassBalancer();
+        Instances newTrain = Filter.useFilter(train, balancer);
+
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
@@ -549,7 +557,7 @@ public class MachineLearningModelBuilders implements Serializable {
                 "The number of models to boost.", numberEnsemble, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
@@ -617,6 +625,9 @@ public class MachineLearningModelBuilders implements Serializable {
 
         OCBoost classifier = new OCBoost();
 
+        ClassBalancer balancer = new ClassBalancer();
+        Instances newTrain = Filter.useFilter(train, balancer);
+
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
@@ -624,7 +635,7 @@ public class MachineLearningModelBuilders implements Serializable {
                 "The number of models to boost.", nEnsemble, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
