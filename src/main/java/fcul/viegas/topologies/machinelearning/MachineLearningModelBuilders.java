@@ -495,6 +495,7 @@ public class MachineLearningModelBuilders implements Serializable {
         moa.classifiers.AbstractClassifier classifier = new HoeffdingTreeWekaWrapper();
 
         ClassBalancer balancer = new ClassBalancer();
+        balancer.setInputFormat(train);
         Instances newTrain = Filter.useFilter(train, balancer);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
@@ -548,7 +549,9 @@ public class MachineLearningModelBuilders implements Serializable {
         OzaBoost classifier = new OzaBoost();
 
         ClassBalancer balancer = new ClassBalancer();
+        balancer.setInputFormat(train);
         Instances newTrain = Filter.useFilter(train, balancer);
+
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
@@ -626,6 +629,7 @@ public class MachineLearningModelBuilders implements Serializable {
         OCBoost classifier = new OCBoost();
 
         ClassBalancer balancer = new ClassBalancer();
+        balancer.setInputFormat(train);
         Instances newTrain = Filter.useFilter(train, balancer);
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
