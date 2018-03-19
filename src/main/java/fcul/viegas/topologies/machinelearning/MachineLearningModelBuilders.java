@@ -25,6 +25,7 @@ import moa.classifiers.meta.OzaBag;
 import moa.classifiers.meta.OzaBoost;
 import moa.classifiers.trees.AdaHoeffdingOptionTree;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
+import moa.classifiers.trees.HoeffdingTree;
 import moa.options.ClassOption;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -492,14 +493,14 @@ public class MachineLearningModelBuilders implements Serializable {
     //  the fix here is to adjust grace period + 1 also to match weka results...
     //  actually the fix was to make a wekatreewrapper, we are internally using weka o.O
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
-        moa.classifiers.AbstractClassifier classifier = new HoeffdingTreeWekaWrapper();
+        moa.classifiers.AbstractClassifier classifier = new HoeffdingTree();
 
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(train);
-        Instances newTrain = Filter.useFilter(train, balancer);
+       // ClassBalancer balancer = new ClassBalancer();
+      //  balancer.setInputFormat(train);
+      //  Instances newTrain = Filter.useFilter(train, balancer);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
@@ -548,19 +549,19 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train, int numberEnsemble) throws Exception {
         OzaBoost classifier = new OzaBoost();
 
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(train);
-        Instances newTrain = Filter.useFilter(train, balancer);
+    //    ClassBalancer balancer = new ClassBalancer();
+  //      balancer.setInputFormat(train);
+//        Instances newTrain = Filter.useFilter(train, balancer);
 
 
-        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+      /*  classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
-        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+       */ classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", numberEnsemble, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
@@ -628,18 +629,18 @@ public class MachineLearningModelBuilders implements Serializable {
 
         OCBoost classifier = new OCBoost();
 
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(train);
-        Instances newTrain = Filter.useFilter(train, balancer);
+        //ClassBalancer balancer = new ClassBalancer();
+        //balancer.setInputFormat(train);
+        //Instances newTrain = Filter.useFilter(train, balancer);
 
-        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+        /*classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
-        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+        */classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", nEnsemble, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
@@ -1465,8 +1466,6 @@ public class MachineLearningModelBuilders implements Serializable {
 
         float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
 
-        
-        
         
         
         String print = arffPaths[0] + ";";
