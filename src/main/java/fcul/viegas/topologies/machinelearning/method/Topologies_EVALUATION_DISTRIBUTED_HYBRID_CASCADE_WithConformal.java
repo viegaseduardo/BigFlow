@@ -200,7 +200,6 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
             String classifierToBuild = params[indexToUse++];
             float normalThreshold = Float.valueOf(params[indexToUse++]);
             float attackThreshold = Float.valueOf(params[indexToUse++]);
-            int numberEnsemble = Integer.valueOf(params[indexToUse++]);
 
             moa.classifiers.AbstractClassifier classifier = null;
             Instances dataTrain = null;
@@ -221,10 +220,10 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
                     ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
                     ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
                     ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain) : classifierToBuild.equals("ozaboosting")
-                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("adaptiveforest")
+                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain,  Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("adaptiveforest")
                     ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
                     ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
-                    ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("leveragingbag")
+                    ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain,  Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("leveragingbag")
                     ? mlModelBuilder.trainClassifierLeveragingBagMOA(dataTrain) : null;
 
             wekaWrapper.getFeatureSetToLookMoa().add(featureSet);
