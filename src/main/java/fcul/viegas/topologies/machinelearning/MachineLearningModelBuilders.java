@@ -512,8 +512,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.setModelContext(instH);
         classifier.prepareForUse();
 
-        int pct = (int) (train.size() / 100.0f);
-        for (int i = 0; i < train.size(); i++) {
+        int pct = (int) (moaTrain.size() / 100.0f);
+        for (int i = 0; i < moaTrain.size(); i++) {
             if (i % pct == 0) {
                 System.out.println("Trained with " + (i / pct) + " % of training instances...");
             }
@@ -577,8 +577,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.setModelContext(instH);
         classifier.prepareForUse();
 
-        int pct = (int) (train.size() / 100.0f);
-        for (int i = 0; i < train.size(); i++) {
+        int pct = (int) (moaTrain.size() / 100.0f);
+        for (int i = 0; i < moaTrain.size(); i++) {
             if (i % pct == 0) {
                 System.out.println("Trained with " + (i / pct) + " % of training instances...");
             }
@@ -660,8 +660,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.setModelContext(instH);
         classifier.prepareForUse();
 
-        int pct = (int) (train.size() / 100.0f);
-        for (int i = 0; i < train.size(); i++) {
+        int pct = (int) (moaTrain.size() / 100.0f);
+        for (int i = 0; i < moaTrain.size(); i++) {
             if (i % pct == 0) {
                 System.out.println("Trained with " + (i / pct) + " % of training instances...");
             }
