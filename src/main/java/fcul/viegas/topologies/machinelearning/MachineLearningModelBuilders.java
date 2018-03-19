@@ -687,8 +687,8 @@ public class MachineLearningModelBuilders implements Serializable {
                     + dataTest[2].size() + ";"
                     + dataTest[1].size() + ";"
                     + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
-                            + evalSuspicious.pctCorrect() * dataTest[1].size()
-                            + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
+                    + evalSuspicious.pctCorrect() * dataTest[1].size()
+                    + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
                     + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
                     + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
                     + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
@@ -697,6 +697,7 @@ public class MachineLearningModelBuilders implements Serializable {
             return ex.getStackTrace().toString();
         }
     }
+
 
     public ArrayList<String> evaluateClassifierWithRejection(String path, Classifier classifier) {
         try {
