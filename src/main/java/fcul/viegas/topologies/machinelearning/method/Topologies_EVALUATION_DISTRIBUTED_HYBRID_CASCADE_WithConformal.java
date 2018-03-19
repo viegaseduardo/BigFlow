@@ -224,11 +224,11 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
             classifier = classifierToBuild.equals("hoeffding")
                     ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
                     ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
-                    ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain) : classifierToBuild.equals("ozaboosting")
+                    ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("ozaboosting")
                     ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain,  Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("adaptiveforest")
                     ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
                     ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
-                    ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain,  Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("leveragingbag")
+                    ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("leveragingbag")
                     ? mlModelBuilder.trainClassifierLeveragingBagMOA(dataTrain) : null;
 
             wekaWrapper.getFeatureSetToLookMoa().add(featureSet);

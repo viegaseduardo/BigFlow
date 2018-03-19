@@ -90,7 +90,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         classifier = classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
                 ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
-                ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain) : classifierToBuild.equals("ozaboosting")
+                ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("ozaboosting")
                 ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("adaptiveforest")
                 ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
                 ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
