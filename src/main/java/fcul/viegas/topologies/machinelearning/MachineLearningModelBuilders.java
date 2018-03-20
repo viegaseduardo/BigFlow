@@ -701,7 +701,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
-                "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
+                "The number of models to boost.", nEnsemble, 1, Integer.MAX_VALUE);
 
         SpreadSubsample subsample = new SpreadSubsample();
         subsample.setInputFormat(train);
