@@ -95,7 +95,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
                 ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
                 ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("leveragingbag")
-                ? mlModelBuilder.trainClassifierLeveragingBagMOA(dataTrain) : null;
+                ? mlModelBuilder.trainClassifierLeveragingBagMOA(dataTrain, numberEnsemble) : null;
 
         ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<>();
         ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();

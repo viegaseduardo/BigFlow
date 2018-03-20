@@ -693,24 +693,36 @@ public class MachineLearningModelBuilders implements Serializable {
         return classifier;
     }
 
-    public moa.classifiers.AbstractClassifier trainClassifierLeveragingBagMOA(Instances train) throws Exception {
+    public moa.classifiers.AbstractClassifier trainClassifierLeveragingBagMOA(Instances train, int nEnsemble) throws Exception {
         LeveragingBag classifier = new LeveragingBag();
 
-        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
-                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+        //classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+         //       "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
+         //       "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+
+
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", 20, 1, Integer.MAX_VALUE);
 
+        SpreadSubsample subsample = new SpreadSubsample();
+        subsample.setInputFormat(train);
+        subsample.setDistributionSpread(1.0d);
+        Instances newTrain = Filter.useFilter(train, subsample);
+
+        Randomize randomTrain = new Randomize();
+        randomTrain.setInputFormat(newTrain);
+        newTrain = Filter.useFilter(newTrain, randomTrain);
+
+
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
         classifier.prepareForUse();
 
-        int pct = (int) (train.size() / 100.0f);
-        for (int i = 0; i < train.size(); i++) {
+        int pct = (int) (moaTrain.size() / 100.0f);
+        for (int i = 0; i < moaTrain.size(); i++) {
             if (i % pct == 0) {
                 System.out.println("Trained with " + (i / pct) + " % of training instances...");
             }
