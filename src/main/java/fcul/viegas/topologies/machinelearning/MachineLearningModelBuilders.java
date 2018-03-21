@@ -494,7 +494,8 @@ public class MachineLearningModelBuilders implements Serializable {
     //  the fix here is to adjust grace period + 1 also to match weka results...
     //  actually the fix was to make a wekatreewrapper, we are internally using weka o.O
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
-        moa.classifiers.AbstractClassifier classifier = new HoeffdingTree();
+        moa.classifiers.AbstractClassifier classifier = new fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper();
+
 
        // ClassBalancer balancer = new ClassBalancer();
       //  balancer.setInputFormat(train);
