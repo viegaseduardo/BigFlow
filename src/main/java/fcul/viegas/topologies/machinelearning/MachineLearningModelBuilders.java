@@ -533,9 +533,9 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", numberEnsemble, 1, Integer.MAX_VALUE);
-        //classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-        //        "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
-        //        "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
+                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
 
 
         SpreadSubsample subsample = new SpreadSubsample();
@@ -581,10 +581,10 @@ public class MachineLearningModelBuilders implements Serializable {
         randomTrain.setInputFormat(newTrain);
         newTrain = Filter.useFilter(newTrain, randomTrain);
 
-      /*  classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
-       */ classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", numberEnsemble, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
@@ -668,10 +668,10 @@ public class MachineLearningModelBuilders implements Serializable {
         randomTrain.setInputFormat(newTrain);
         newTrain = Filter.useFilter(newTrain, randomTrain);
 
-        /*classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
                 "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
-        */classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
+        classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", nEnsemble, 1, Integer.MAX_VALUE);
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
@@ -695,9 +695,9 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierLeveragingBagMOA(Instances train, int nEnsemble) throws Exception {
         LeveragingBag classifier = new LeveragingBag();
 
-        //classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-         //       "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
-         //       "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
+                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
 
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
