@@ -101,6 +101,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
 
         int j = 0;
+        int acertou = 0;
         for (String s : testFiles.subList(0, daysToUseForTest)) {
 
             Instances dataTest = mlModelBuilder.openFile(s);
@@ -125,12 +126,17 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 double[] prob = classifier.getVotesForInstance(inst);
                 //prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
 
+                boolean correctlyClassifies = classifier.correctlyClassifies(inst);
+                if (correctlyClassifies) {
+                    acertou++;
+                }
 
                 if (prob.length == 1 || prob[0] > prob[1]) {
                     values.predictClass = 0.0d;
                     //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
                     //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
                     //values.alpha = values.credibility + values.confidence;
+
                     values.alpha = prob[0];
 
                     listValuesPredictedNormal.add(values);
@@ -167,6 +173,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
         System.out.println("listValuesPredictedNormal.size(): " + listValuesPredictedNormal.size());
         System.out.println("listValuesPredictedAttack.size(): " + listValuesPredictedAttack.size());
+        System.out.println("Acertou: " + acertou);
 
         int pingNormal = (int) (listValuesPredictedNormal.size() / 100.0f);
         int pingAttack = (int) (listValuesPredictedAttack.size() / 100.0f);
