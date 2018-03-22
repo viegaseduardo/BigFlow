@@ -260,7 +260,7 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
 
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
-        //Collections.shuffle(testFiles);
+        //Collections.shuffle(testFiles);a
         DataSet<String[]> testFilesDataset = env.fromCollection(testFiles);
 
         testFilesDataset.map(new EvaluateClassifierMapFunctionWithConformalCascadeHybrid(mlModelBuilder, Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel))
