@@ -42,7 +42,7 @@ public class EvaluateClassifierMapFunctionWithConformalCascadeHybrid extends Ric
 
     @Override
     public String map(String[] in) throws Exception {
-        return mlModelBuilder.evaluateClassifierWithRejectionThroughConformalHybrid(in, wekaWrapper);
+        return mlModelBuilder.evaluateClassifierWithRejectionThroughConformalHybridEnsemble(in, wekaWrapper);
     }
     
 }
