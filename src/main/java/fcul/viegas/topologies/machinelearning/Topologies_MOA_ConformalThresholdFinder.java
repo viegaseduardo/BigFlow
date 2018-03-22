@@ -123,7 +123,6 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
                 values.instClass = inst.classValue();
 
-                classifier.getPredictionForInstance(inst).
                 double[] prob = classifier.getVotesForInstance(inst);
                 //prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
 
