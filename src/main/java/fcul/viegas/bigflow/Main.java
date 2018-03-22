@@ -32,11 +32,11 @@ public class Main {
 //                    args);
 //        System.exit(1);
 //
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
-                "/home/viegas/testes/INFOCOM/withoutrejection/ensemble_raw_output.csv",
-                 "/home/viegas/testes/INFOCOM/withoutrejection/ensemble_summarized_monthly.csv",
-                ParseRawOutputFlinkNoUpdate.MonthRange
-        );
+      //  ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
+      //          "/home/viegas/testes/INFOCOM/withoutrejection/ensemble_raw_output.csv",
+      //           "/home/viegas/testes/INFOCOM/withoutrejection/ensemble_summarized_monthly.csv",
+      //          ParseRawOutputFlinkNoUpdate.MonthRange
+      //  );
 
 
         if (args.length == 1) {
