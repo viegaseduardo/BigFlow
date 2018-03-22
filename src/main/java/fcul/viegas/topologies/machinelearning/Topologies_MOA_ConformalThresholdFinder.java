@@ -123,9 +123,10 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 values.instClass = inst.classValue();
 
                 double[] prob = classifier.getVotesForInstance(inst);
-                prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
+                //prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
 
-                if (prob[0] > prob[1]) {
+
+                if (prob.length == 1 || prob[0] > prob[1]) {
                     values.predictClass = 0.0d;
                     //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
                     //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
