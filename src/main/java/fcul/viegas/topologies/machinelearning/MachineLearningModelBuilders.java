@@ -1436,12 +1436,12 @@ public class MachineLearningModelBuilders implements Serializable {
         int nCorrectlyAcceptedAttack = 0;
 
         int nInstances =    (dataTestVIEGAS == null) ?
-                                (dataTestMOORE == null) ?
-                                    (dataTestNIGEL == null) ?
-                                            dataTestORUNADA.size() :
-                                     dataTestNIGEL.size() :
-                                dataTestMOORE.size() :
-                            dataTestVIEGAS.size();
+                (dataTestMOORE == null) ?
+                        (dataTestNIGEL == null) ?
+                                dataTestORUNADA.size() :
+                                dataTestNIGEL.size() :
+                        dataTestMOORE.size() :
+                dataTestVIEGAS.size();
 
         for (int i = 0; i < nInstances; i++) {
 
@@ -1464,12 +1464,12 @@ public class MachineLearningModelBuilders implements Serializable {
             }
 
             double classValue =    (dataTestVIEGAS == null) ?
-                                        (dataTestMOORE == null) ?
-                                            (dataTestNIGEL == null) ?
-                                                instOrunada.classValue() :
-                                            instNigel.classValue() :
-                                        instMoore.classValue() :
-                                    instViegas.classValue();
+                    (dataTestMOORE == null) ?
+                            (dataTestNIGEL == null) ?
+                                    instOrunada.classValue() :
+                                    instNigel.classValue() :
+                            instMoore.classValue() :
+                    instViegas.classValue();
 
             if (classValue == 0.0d) {
                 nNormal++;
@@ -1514,8 +1514,202 @@ public class MachineLearningModelBuilders implements Serializable {
 
         float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
 
-        
-        
+
+
+        String print = arffPaths[0] + ";";
+        print = print + arffPaths[1] + ";";
+        print = print + arffPaths[2] + ";";
+        print = print + arffPaths[3] + ";";
+        print = print + (nInstances) + ";";
+        print = print + nNormal + ";";
+        print = print + nAttack + ";";
+        print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
+        print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
+        print = print + accAceito + ";";
+        print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
+        print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+        print = print + ((nRejectedAttack) / (float) nAttack) + ";";
+        print = print + ((nRejectedNormal) / (float) nNormal);
+
+        dataTestMOORE = null;
+        dataTestNIGEL = null;
+        dataTestORUNADA = null;
+        dataTestVIEGAS = null;
+
+        System.gc();
+
+        return print;
+    }
+
+    public String evaluateClassifierWithRejectionThroughConformalHybridEnsemble(
+            String[] arffPaths,
+            WekaMoaClassifierWrapper wekaMoa) throws Exception {
+
+        boolean willUseViegas = false;
+        boolean willUseNigel = false;
+        boolean willUseMoore = false;
+        boolean willUseOrunada = false;
+
+        for (int i = 0; i < wekaMoa.getFeatureSetToLookWeka().size(); i++) {
+            if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("VIEGAS")) {
+                willUseViegas = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("NIGEL")) {
+                willUseNigel = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("MOORE")) {
+                willUseMoore = true;
+            } else if (wekaMoa.getFeatureSetToLookWeka().get(i).equals("ORUNADA")) {
+                willUseOrunada = true;
+            }
+        }
+
+        for (int i = 0; i < wekaMoa.getFeatureSetToLookMoa().size(); i++) {
+            if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("VIEGAS")) {
+                willUseViegas = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("NIGEL")) {
+                willUseNigel = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("MOORE")) {
+                willUseMoore = true;
+            } else if (wekaMoa.getFeatureSetToLookMoa().get(i).equals("ORUNADA")) {
+                willUseOrunada = true;
+            }
+        }
+
+        Instances dataTestVIEGAS = (willUseViegas) ? this.openFile(arffPaths[0]) : null;
+        Instances dataTestNIGEL = (willUseNigel) ? this.openFile(arffPaths[1]) : null;
+        Instances dataTestMOORE = (willUseMoore) ? this.openFile(arffPaths[2]) : null;
+        Instances dataTestORUNADA = (willUseOrunada) ? this.openFile(arffPaths[3]) : null;
+
+        dataTestVIEGAS = this.getAsNormalizeFeatures(dataTestVIEGAS);
+        dataTestNIGEL = this.getAsNormalizeFeatures(dataTestNIGEL);
+        dataTestMOORE = this.getAsNormalizeFeatures(dataTestMOORE);
+        dataTestORUNADA = this.getAsNormalizeFeatures(dataTestORUNADA);
+
+        dataTestVIEGAS = this.removeParticularAttributesViegas(dataTestVIEGAS);
+        dataTestORUNADA = this.removeParticularAttributesOrunada(dataTestORUNADA);
+
+        WekaToSamoaInstanceConverter converterViegas = new WekaToSamoaInstanceConverter();
+        WekaToSamoaInstanceConverter converterMoore = new WekaToSamoaInstanceConverter();
+        WekaToSamoaInstanceConverter converterNigel = new WekaToSamoaInstanceConverter();
+        WekaToSamoaInstanceConverter converterOrunada = new WekaToSamoaInstanceConverter();
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_EVEN);
+
+        int nNormal = 0; //ok
+        int nAttack = 0; //ok
+        int nRejectedNormal = 0; //ok
+        int nRejectedAttack = 0; //ok
+        int nAcceptedNormal = 0; //ok
+        int nAcceptedAttack = 0; //ok
+        int nCorrectlyAcceptedNormal = 0; //ok
+        int nCorrectlyAcceptedAttack = 0;
+
+        int nInstances =    (dataTestVIEGAS == null) ?
+                (dataTestMOORE == null) ?
+                        (dataTestNIGEL == null) ?
+                                dataTestORUNADA.size() :
+                                dataTestNIGEL.size() :
+                        dataTestMOORE.size() :
+                dataTestVIEGAS.size();
+
+        for (int i = 0; i < nInstances; i++) {
+
+            com.yahoo.labs.samoa.instances.Instance instMoaViegas = (willUseViegas) ? converterViegas.samoaInstance(dataTestVIEGAS.get(i)) : null;
+            com.yahoo.labs.samoa.instances.Instance instMoaMoore = (willUseMoore) ? converterMoore.samoaInstance(dataTestMOORE.get(i)) : null;
+            com.yahoo.labs.samoa.instances.Instance instMoaNigel = (willUseNigel) ? converterNigel.samoaInstance(dataTestNIGEL.get(i)) : null;
+            com.yahoo.labs.samoa.instances.Instance instMoaOrunada = (willUseOrunada) ? converterOrunada.samoaInstance(dataTestORUNADA.get(i)) : null;
+
+            Instance instViegas = (willUseViegas) ? dataTestVIEGAS.get(i) : null;
+            Instance instMoore = (willUseMoore) ? dataTestMOORE.get(i) : null;
+            Instance instNigel = (willUseNigel) ? dataTestNIGEL.get(i) : null;
+            Instance instOrunada = (willUseOrunada) ? dataTestORUNADA.get(i) : null;
+
+
+            int nClassifiedAsAttack = 0;
+            int nClassifiedAsNormal = 0;
+            for(int j = 0; j < wekaMoa.getMoaClassifiers().size(); j++){
+                moa.classifiers.AbstractClassifier classifier = wekaMoa.getMoaClassifiers().get(j);
+
+                boolean correclyClassifies = classifier.correctlyClassifies(instMoaViegas);
+                double classifiedClass = (correclyClassifies) ? instMoaViegas.classValue() : (instMoaViegas.classValue() == 0.0d) ? 1.0d : 0.0d;
+
+                if(classifiedClass == 0.0d){
+                    nClassifiedAsNormal++;
+                }else{
+                    nClassifiedAsAttack++;
+                }
+            }
+
+
+            int decision = 0;
+            if(nClassifiedAsNormal > nClassifiedAsAttack){
+                if(instMoaViegas.classValue() == 0.0d){
+                    decision = 1;
+                }else{
+                    decision = 2;
+                }
+            }else{
+                if(instMoaViegas.classValue() == 1.0d){
+                    decision = 1;
+                }else{
+                    decision = 2;
+                }
+            }
+
+
+            double classValue =    (dataTestVIEGAS == null) ?
+                    (dataTestMOORE == null) ?
+                            (dataTestNIGEL == null) ?
+                                    instOrunada.classValue() :
+                                    instNigel.classValue() :
+                            instMoore.classValue() :
+                    instViegas.classValue();
+
+            if (classValue == 0.0d) {
+                nNormal++;
+            } else {
+                //is attack
+                nAttack++;
+            }
+
+            if (decision == 0) {
+                if (classValue == 0.0d) {
+                    nRejectedNormal++;
+                } else {
+                    nRejectedAttack++;
+                }
+            } else {
+                if (classValue == 0.0d) {
+                    nAcceptedNormal++;
+                    if (decision == 1) {
+                        nCorrectlyAcceptedNormal++;
+                    }
+                } else {
+                    nAcceptedAttack++;
+                    if (decision == 1) {
+                        nCorrectlyAcceptedAttack++;
+                    }
+                }
+            }
+        }
+
+        if (nRejectedNormal == 0) {
+            nRejectedNormal = 1;
+        }
+        if (nRejectedAttack == 0) {
+            nRejectedAttack = 1;
+        }
+        if (nAcceptedNormal == 0) {
+            nAcceptedNormal = 1;
+        }
+        if (nAcceptedAttack == 0) {
+            nAcceptedAttack = 1;
+        }
+
+        float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
+
+
+
         String print = arffPaths[0] + ";";
         print = print + arffPaths[1] + ";";
         print = print + arffPaths[2] + ";";
