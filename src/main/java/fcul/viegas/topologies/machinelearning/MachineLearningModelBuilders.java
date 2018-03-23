@@ -498,6 +498,11 @@ public class MachineLearningModelBuilders implements Serializable {
         moa.classifiers.AbstractClassifier classifier = new moa.classifiers.trees.HoeffdingTree();
 
 //a
+
+
+
+
+
        // ClassBalancer balancer = new ClassBalancer();
       //  balancer.setInputFormat(train);
       //  Instances newTrain = Filter.useFilter(train, balancer);

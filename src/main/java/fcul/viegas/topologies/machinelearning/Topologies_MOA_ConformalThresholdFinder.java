@@ -156,7 +156,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                     //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
                     //values.alpha = values.credibility + values.confidence;
 
-                    values.alpha = prob[Utils.maxIndex(prob)];
+                    values.alpha = prob[0];
 
                     listValuesPredictedNormal.add(values);
                 } else {
@@ -165,7 +165,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                     //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
                     //values.alpha = values.credibility + values.confidence;
 
-                    values.alpha = prob[Utils.maxIndex(prob)];
+                    values.alpha = prob[1];
 
                     listValuesPredictedAttack.add(values);
                 }
