@@ -104,7 +104,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         int j = 0;
         int acertou = 0;
         int nTotalAttack = 0;
-        int nTotalNormal = 0
+        int nTotalNormal = 0;
         for (String s : testFiles.subList(0, daysToUseForTest)) {
 
             Instances dataTest = mlModelBuilder.openFile(s);
