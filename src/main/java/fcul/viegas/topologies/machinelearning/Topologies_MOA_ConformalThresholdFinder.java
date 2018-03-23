@@ -18,6 +18,7 @@ import java.util.Comparator;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Utils;
 
 /**
  *
@@ -124,20 +125,30 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 values.instClass = inst.classValue();
 
                 double[] prob = classifier.getVotesForInstance(inst);
-                //prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
+                prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
 
                 boolean correctlyClassifies = classifier.correctlyClassifies(inst);
                 if (correctlyClassifies) {
                     acertou++;
                 }
+                boolean choosenAttack = false;
+                if(correctlyClassifies && inst.classValue() == 0.0d){
+                    choosenAttack = false
+                }else if(correctlyClassifies && inst.classValue() == 1.0d){
+                    choosenAttack = true;
+                }else if(!correctlyClassifies && inst.classValue() == 0.0d){
+                    choosenAttack = true;
+                }else{
+                    choosenAttack = false;
+                }
 
-                if (prob.length == 1 || prob[0] >= prob[1]) {
+                if (!choosenAttack) {
                     values.predictClass = 0.0d;
                     //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
                     //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
                     //values.alpha = values.credibility + values.confidence;
 
-                    values.alpha = prob[0];
+                    values.alpha = prob[Utils.maxIndex(prob)];
 
                     listValuesPredictedNormal.add(values);
                 } else {
@@ -146,7 +157,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                     //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
                     //values.alpha = values.credibility + values.confidence;
 
-                    values.alpha = prob[1];
+                    values.alpha = prob[Utils.maxIndex(prob)];
 
                     listValuesPredictedAttack.add(values);
                 }
@@ -249,6 +260,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 if (n == 0) {
                     n = 1;
                 }
+
+
 
 
 
