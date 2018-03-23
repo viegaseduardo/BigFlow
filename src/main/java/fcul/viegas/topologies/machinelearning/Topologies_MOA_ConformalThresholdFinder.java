@@ -103,6 +103,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
         int j = 0;
         int acertou = 0;
+        int nTotalAttack = 0;
+        int nTotalNormal = 0
         for (String s : testFiles.subList(0, daysToUseForTest)) {
 
             Instances dataTest = mlModelBuilder.openFile(s);
@@ -119,6 +121,12 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
             for (int counter = 0; counter < insts.size(); counter++) {
                 com.yahoo.labs.samoa.instances.Instance inst = insts.get(counter);
+
+                if(inst.classValue() == 0.0d){
+                    nTotalNormal++;
+                }else{
+                    nTotalAttack++;
+                }
 
                 ValueForRejectEvaluation values = new ValueForRejectEvaluation();
 
@@ -279,6 +287,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
                         + nAtkAcc + ";"
                         + nAtk + ";"
                         + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())) + ";"
+                        + (nAtk/(float)nTotalAttack) + ";"
+                        + (nNormal/(float)nTotalNormal) + ";"
                         + listValuesPredictedNormal.get(pingNormal * iNormal).alpha + ";"
                         + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
             }
