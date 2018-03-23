@@ -570,6 +570,8 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierOzaBoostingMOA(Instances train, int numberEnsemble) throws Exception {
         OzaBoost classifier = new OzaBoost();
 
+        System.out.println("Ozaboost, training: " + numberEnsemble + " of models");
+
     //    ClassBalancer balancer = new ClassBalancer();
   //      balancer.setInputFormat(train);
 //        Instances newTrain = Filter.useFilter(train, balancer);
