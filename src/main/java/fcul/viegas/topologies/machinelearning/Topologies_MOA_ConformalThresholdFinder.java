@@ -11,10 +11,8 @@ import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPr
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
+
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -65,19 +63,16 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
         System.out.println("Opening training file....");
         Instances dataTrain = mlModelBuilder.openFile(testFiles.get(0));
+        dataTrain.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
+            dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTrain.add(inst);
             }
         }
         dataTrain = mlModelBuilder.getAsNormalizeFeatures(dataTrain);
-
-        if (featureSet.equals("VIEGAS")) {
-            dataTrain = mlModelBuilder.removeParticularAttributesViegas(dataTrain);
-        } else if (featureSet.equals("ORUNADA")) {
-            dataTrain = mlModelBuilder.removeParticularAttributesOrunada(dataTrain);
-        }
+        dataTrain = mlModelBuilder.removeParticularAttributesViegas(dataTrain);
 
         System.out.println("building conformal");
         Transcend_ConformalPredictor conformal = new Transcend_ConformalPredictor();
