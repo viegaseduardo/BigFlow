@@ -133,7 +133,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 }
                 boolean choosenAttack = false;
                 if(correctlyClassifies && inst.classValue() == 0.0d){
-                    choosenAttack = false
+                    choosenAttack = false;
                 }else if(correctlyClassifies && inst.classValue() == 1.0d){
                     choosenAttack = true;
                 }else if(!correctlyClassifies && inst.classValue() == 0.0d){
