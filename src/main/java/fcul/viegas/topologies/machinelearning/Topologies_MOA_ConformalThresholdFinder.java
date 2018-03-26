@@ -34,7 +34,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         public ArrayList<Double> predictClassClassifier;
         public ArrayList<Double> credibility;
         public ArrayList<Double> confidence;
-        public ArrayList<Double> alphaEachClassifier;
+        public ArrayList<double[]> alphaEachClassifier;
         public double alpha;
         public int votesForAttack;
         public int votesForNormal;
@@ -290,7 +290,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                         //values.alpha = values.credibility + values.confidene;
 
                         values.votesForNormal++;
-                        values.alphaEachClassifier.add(prob[0]);
+                        values.alphaEachClassifier.add(prob);
 
                     } else {
                         values.predictClassClassifier.add(1.0d);
@@ -299,7 +299,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                         //values.alpha = values.credibility + values.confidence;
 
                         values.votesForAttack++;
-                        values.alphaEachClassifier.add(prob[1]);
+                        values.alphaEachClassifier.add(prob);
                     }
                 }
 
@@ -319,11 +319,23 @@ public class Topologies_MOA_ConformalThresholdFinder {
             double minProb = 1000000.0d;
             double maxProb = 0.0d;
             for(ValueForRejectEvaluation values: listValuesAll){
-                if(values.alphaEachClassifier.get(k) < minProb){
-                    minProb = values.alphaEachClassifier.get(k);
+                double alpha = values.alphaEachClassifier.get(k)[0];
+                if(!Double.isNaN(alpha)) {
+                    if (alpha < minProb) {
+                        minProb = alpha;
+                    }
+                    if (alpha > maxProb) {
+                        maxProb = alpha;
+                    }
                 }
-                if(values.alphaEachClassifier.get(k) > maxProb){
-                    maxProb = values.alphaEachClassifier.get(k);
+                alpha = values.alphaEachClassifier.get(k)[1];
+                if(!Double.isNaN(alpha)) {
+                    if (alpha < minProb) {
+                        minProb = alpha;
+                    }
+                    if (alpha > maxProb) {
+                        maxProb = alpha;
+                    }
                 }
             }
             minProbClassifier.add(minProb);
@@ -335,15 +347,11 @@ public class Topologies_MOA_ConformalThresholdFinder {
             values.averageNormalProb = 1.0d;
             for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
                 if(values.predictClassClassifier.get(k) == 0.0d){
-                    double normalizedProb = values.alphaEachClassifier.get(k) / maxProbClassifier.get(k);
-                    if(normalizedProb > 0.0d) {
-                        values.averageNormalProb = values.averageNormalProb * normalizedProb;
-                    }
+                    double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
+                    values.averageNormalProb = values.averageNormalProb * normalizedProb;
                 }else{
-                    double normalizedProb = values.alphaEachClassifier.get(k) / maxProbClassifier.get(k);
-                    if(normalizedProb > 0.0d) {
-                        values.averageAttackProb = values.averageAttackProb * normalizedProb;
-                    }
+                    double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
+                    values.averageAttackProb = values.averageAttackProb * normalizedProb;
                 }
             }//a
 
