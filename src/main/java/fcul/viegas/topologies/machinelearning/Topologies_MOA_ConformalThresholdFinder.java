@@ -358,91 +358,116 @@ public class Topologies_MOA_ConformalThresholdFinder {
             System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
         }
 
-        ArrayList<String> outputList = new ArrayList<>();
+        List<String> outputList = Collections.synchronizedList(new ArrayList<String>());
 
-        for (int iNormal = 0; iNormal < 100; iNormal++) {
-            System.out.println("Classifier: percentage done: " + iNormal);
-            for (int iAttack = 0; iAttack < 100; iAttack++) {
 
-                int n = 0;
-                int nAcc = 0;
-                int nAtk = 0;
-                int nAtkAcc = 0;
-                int nNormal = 0;
-                int nNormalAcc = 0;
+        class ParameterClass implements Runnable {
+            int iNormal;
+            int iNormalUpper;
+            int nTotalAttack;
+            int nTotalNormal;
+            ParameterClass(int iNorm, int iNormUpper, int nTotalAtk, int nTotalNorm) {
+                iNormal = iNorm;
+                iNormalUpper = iNormUpper;
+                nTotalAttack = nTotalAtk;
+                nTotalNormal = nTotalNorm;
+            }
+            public void run() {
+                System.out.println("iNormal: " + iNormal + " iNormalUpper: " + iNormalUpper);
+                for (; iNormal < iNormalUpper; iNormal++) {
+                    System.out.println("Classifier: percentage done: " + iNormal);
+                    for (int iAttack = 0; iAttack < 100; iAttack++) {
 
-                int nToUseNormal = pingNormal * iNormal;
-                int nToUseAttack = pingAttack * iAttack;
+                        int n = 0;
+                        int nAcc = 0;
+                        int nAtk = 0;
+                        int nAtkAcc = 0;
+                        int nNormal = 0;
+                        int nNormalAcc = 0;
 
-                for (j = 0; j < nToUseNormal; j++) {
-                    n++;
+                        int nToUseNormal = pingNormal * iNormal;
+                        int nToUseAttack = pingAttack * iAttack;
 
-                    if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
-                        nNormal++;
-                    } else {
-                        nAtk++;
-                    }
+                        for (int j = 0; j < nToUseNormal; j++) {
+                            n++;
 
-                    if (Double.compare(listValuesPredictedNormal.get(j).instClass, listValuesPredictedNormal.get(j).predictClass) == 0) {
-                        nAcc++;
-                        if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
-                            nNormalAcc++;
-                        } else {
-                            nAtkAcc++;
+                            if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
+                                nNormal++;
+                            } else {
+                                nAtk++;
+                            }
+
+                            if (Double.compare(listValuesPredictedNormal.get(j).instClass, listValuesPredictedNormal.get(j).predictClass) == 0) {
+                                nAcc++;
+                                if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
+                                    nNormalAcc++;
+                                } else {
+                                    nAtkAcc++;
+                                }
+                            }
+
                         }
-                    }
 
-                }
+                        for (int j = 0; j < nToUseAttack; j++) {
+                            n++;
 
-                for (j = 0; j < nToUseAttack; j++) {
-                    n++;
+                            if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
+                                nNormal++;
+                            } else {
+                                nAtk++;
+                            }
 
-                    if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
-                        nNormal++;
-                    } else {
-                        nAtk++;
-                    }
+                            if (Double.compare(listValuesPredictedAttack.get(j).instClass, listValuesPredictedAttack.get(j).predictClass) == 0) {
+                                nAcc++;
+                                if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
+                                    nNormalAcc++;
+                                } else {
+                                    nAtkAcc++;
+                                }
+                            }
 
-                    if (Double.compare(listValuesPredictedAttack.get(j).instClass, listValuesPredictedAttack.get(j).predictClass) == 0) {
-                        nAcc++;
-                        if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
-                            nNormalAcc++;
-                        } else {
-                            nAtkAcc++;
                         }
+
+                        if (nNormal == 0) {
+                            nNormal = 1;
+                        }
+                        if (nAtk == 0) {
+                            nAtk = 1;
+                        }
+                        if (n == 0) {
+                            n = 1;
+                        }
+                        outputList.add(iAttack + ";"
+                                + iNormal + ";"
+                                + (1 - (nAcc / (float) n)) + ";"
+                                + (1 - (nNormalAcc / (float) nNormal)) + ";"
+                                + (1 - (nAtkAcc / (float) nAtk)) + ";"
+                                + nNormalAcc + ";"
+                                + nNormal + ";"
+                                + nAtkAcc + ";"
+                                + nAtk + ";"
+                                + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())) + ";"
+                                + (nAtk/(float)nTotalAttack) + ";"
+                                + (nNormal/(float)nTotalNormal) + ";"
+                                + listValuesPredictedNormal.get(pingNormal * iNormal).alpha + ";"
+                                + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
                     }
-
                 }
 
-                if (nNormal == 0) {
-                    nNormal = 1;
-                }
-                if (nAtk == 0) {
-                    nAtk = 1;
-                }
-                if (n == 0) {
-                    n = 1;
-                }
-
-
-
-
-                outputList.add(iAttack + ";"
-                        + iNormal + ";"
-                        + (1 - (nAcc / (float) n)) + ";"
-                        + (1 - (nNormalAcc / (float) nNormal)) + ";"
-                        + (1 - (nAtkAcc / (float) nAtk)) + ";"
-                        + nNormalAcc + ";"
-                        + nNormal + ";"
-                        + nAtkAcc + ";"
-                        + nAtk + ";"
-                        + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())) + ";"
-                        + (nAtk/(float)nTotalAttack) + ";"
-                        + (nNormal/(float)nTotalNormal) + ";"
-                        + listValuesPredictedNormal.get(pingNormal * iNormal).alpha + ";"
-                        + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
             }
         }
+
+        ArrayList<Thread> threads = new ArrayList<>();
+        for(int nThreads = 0; nThreads < 15; nThreads++){
+            Thread t = new Thread(new ParameterClass((int)((100.0f/15.0f)*nThreads), (int)(((100.0f/15.0f)*(nThreads+1))), nTotalAttack, nTotalNormal));
+            t.start();
+            threads.add(t);
+        }
+
+        for(Thread t: threads) {
+            t.join();
+        }
+
 
         PrintWriter writer = new PrintWriter(outputPath, "UTF-8");
 
