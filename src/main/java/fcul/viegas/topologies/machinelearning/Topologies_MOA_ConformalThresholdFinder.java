@@ -58,7 +58,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
 
         this.folderPath = params[1];
-        this.outputPath = params[2];
+        this.outputPath = params[2] + "_threshold_file.csv";
         this.daysToUseForTraining = Integer.valueOf(params[3]);
 
         System.out.println("Path to test directory: " + this.folderPath);
@@ -302,8 +302,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 }
 
 
-                values.averageAttackProb = 1.0d;
-                values.averageNormalProb = 1.0d;
+                values.averageAttackProb = 0.0d;
+                values.averageNormalProb = 0.0d;
                 for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
                     if(values.predictClassClassifier.get(k) == 0.0d){
                         values.averageNormalProb = values.averageNormalProb * values.alphaEachClassifier.get(k);
@@ -311,13 +311,20 @@ public class Topologies_MOA_ConformalThresholdFinder {
                         values.averageAttackProb = values.averageAttackProb * values.alphaEachClassifier.get(k);
                     }
                 }
+
                 if(values.votesForNormal >= values.votesForAttack){
                     values.alpha = values.averageNormalProb;
                     values.predictClass = 0.0d;
+                    if(values.votesForNormal != wekaWrapper.getMoaClassifiers().size()){
+                        values.alpha = 0.0d;
+                    }
                     listValuesPredictedNormal.add(values);
                 }else{
                     values.alpha = values.averageAttackProb;
                     values.predictClass = 1.0d;
+                    if(values.votesForAttack != wekaWrapper.getMoaClassifiers().size()){
+                        values.alpha = 0.0d;
+                    }
                     listValuesPredictedAttack.add(values);
                 }
 
