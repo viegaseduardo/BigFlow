@@ -343,7 +343,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 }
             }//a
 
-            if(values.votesForNormal > values.votesForAttack){
+            if(values.votesForNormal > wekaWrapper.getMoaClassifiers().size()){
                 values.alpha = values.averageNormalProb;
                 values.predictClass = 0.0d;
                 listValuesPredictedNormal.add(values);
