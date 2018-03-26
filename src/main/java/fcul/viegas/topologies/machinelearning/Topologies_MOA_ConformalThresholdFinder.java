@@ -375,7 +375,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
             public void run() {
                 System.out.println("iNormal: " + iNormal + " iNormalUpper: " + iNormalUpper);
                 for (; iNormal < iNormalUpper; iNormal++) {
-                    System.out.println("Classifier: percentage done: " + iNormal);
+                    System.out.println("Classifier: percentage done: " + iNormal + "/" + iNormalUpper);
                     for (int iAttack = 0; iAttack < 100; iAttack++) {
 
                         int n = 0;
