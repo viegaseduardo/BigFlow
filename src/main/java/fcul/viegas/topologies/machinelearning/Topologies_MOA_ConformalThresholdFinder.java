@@ -250,6 +250,10 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
                 ValueForRejectEvaluation values = new ValueForRejectEvaluation();
 
+                values.predictClassClassifier = new ArrayList<>();
+                values.credibility = new ArrayList<>();
+                values.confidence = new ArrayList<>();
+                values.alphaEachClassifier = new ArrayList<>();
                 values.votesForAttack = 0;
                 values.votesForNormal = 0;
                 values.instClass = inst.classValue();
@@ -274,6 +278,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
                     }else{
                         choosenAttack = false;
                     }
+
+
 
                     if (!choosenAttack) {
                         values.predictClassClassifier.add(0.0d);
