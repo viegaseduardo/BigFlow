@@ -348,12 +348,12 @@ public class Topologies_MOA_ConformalThresholdFinder {
             for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
                 if(values.predictClassClassifier.get(k) == 0.0d){
                     double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
-                    if(normalizedProb < values.averageNormalProb){
+                    if(normalizedProb < values.averageNormalProb && normalizedProb != 0.0d){
                         values.averageNormalProb = normalizedProb;
                     }
                 }else{
                     double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
-                    if(normalizedProb < values.averageNormalProb){
+                    if(normalizedProb < values.averageNormalProb && normalizedProb != 0.0d){
                         values.averageNormalProb = normalizedProb;
                     }
                 }
