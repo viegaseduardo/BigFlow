@@ -121,18 +121,18 @@ public class Main {
 
             System.out.println("Generating threshold evaluation file...");
 
-            conformalFinder.generateThresholdEvaluationFile(args);
+//            conformalFinder.generateThresholdEvaluationFile(args);
 
             System.out.println("Generating non-dominated file...");
 
             conformalFinder.getNonDominatedSolutions(
-                    args[3] + "_threshold_file.csv",                    args[3] + "_non_dominated.csv");
+                    args[2] + "_threshold_file.csv",                    args[2] + "_non_dominated.csv");
 
             System.out.println("Generating operation points file...");
 
             conformalFinder.findOperationPoints(
-                    args[3] + "_non_dominated.csv",
-                    args[3] + "_operation_points");
+                    args[2] + "_non_dominated.csv",
+                    args[2] + "_operation_points");
 
         } else if (args[0].equals("testwithoutupdatedistributed")) {
             /*

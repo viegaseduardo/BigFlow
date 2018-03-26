@@ -258,7 +258,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 values.votesForNormal = 0;
                 values.instClass = inst.classValue();
 
-                for(int k = 0; k <  wekaWrapper.getMoaClassifiers().size(); k++){
+                for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
                     moa.classifiers.AbstractClassifier classifier = wekaWrapper.getMoaClassifiers().get(k);
 
                     double[] prob = classifier.getVotesForInstance(inst);
