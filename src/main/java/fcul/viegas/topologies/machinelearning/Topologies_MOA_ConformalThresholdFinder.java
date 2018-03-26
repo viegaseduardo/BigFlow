@@ -15,6 +15,7 @@ import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPr
 import java.io.*;
 import java.util.*;
 
+import sun.awt.SunHints;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -224,6 +225,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         String featureSet = "VIEGAS";
         ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<>();
         ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
+        ArrayList<ValueForRejectEvaluation> listValuesAll = new ArrayList<>();
 
 
         for (String[] s1 : testFiles.subList(0, daysToUseForTest)) {
@@ -301,29 +303,55 @@ public class Topologies_MOA_ConformalThresholdFinder {
                     }
                 }
 
+                listValuesAll.add(values);
 
-                values.averageAttackProb = 1.0d;
-                values.averageNormalProb = 1.0d;
-                for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
-                    if(values.predictClassClassifier.get(k) == 0.0d){
-                        values.averageNormalProb = values.averageNormalProb * values.alphaEachClassifier.get(k);
-                    }else{
-                        values.averageAttackProb = values.averageAttackProb * values.alphaEachClassifier.get(k);
-                    }
-                }//a
 
-                if(values.votesForNormal > values.votesForAttack){
-                    values.alpha = values.averageNormalProb;
-                    values.predictClass = 0.0d;
-                    listValuesPredictedNormal.add(values);
-                }else{
-                    values.alpha = values.averageAttackProb;
-                    values.predictClass = 1.0d;
-                    listValuesPredictedAttack.add(values);
-                }
 
             }
+
             System.out.println(s);
+        }
+
+        ArrayList<Double> minProbClassifier = new ArrayList<>();
+        ArrayList<Double> maxProbClassifier = new ArrayList<>();
+
+        for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
+            double minProb = 1000000.0d;
+            double maxProb = 0.0d;
+            for(ValueForRejectEvaluation values: listValuesAll){
+                if(values.alphaEachClassifier.get(k) < minProb){
+                    minProb = values.alphaEachClassifier.get(k);
+                }
+                if(values.alphaEachClassifier.get(k) > maxProb){
+                    maxProb = values.alphaEachClassifier.get(k);
+                }
+            }
+            minProbClassifier.add(minProb);
+            maxProbClassifier.add(maxProb);
+        }
+
+        for(ValueForRejectEvaluation values: listValuesAll){
+            values.averageAttackProb = 1.0d;
+            values.averageNormalProb = 1.0d;
+            for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
+                if(values.predictClassClassifier.get(k) == 0.0d){
+                    double normalizedProb = values.alphaEachClassifier.get(k) / maxProbClassifier.get(k);
+                    values.averageNormalProb = values.averageNormalProb * normalizedProb;
+                }else{
+                    double normalizedProb = values.alphaEachClassifier.get(k) / maxProbClassifier.get(k);
+                    values.averageAttackProb = values.averageAttackProb * normalizedProb;
+                }
+            }//a
+
+            if(values.votesForNormal > values.votesForAttack){
+                values.alpha = values.averageNormalProb;
+                values.predictClass = 0.0d;
+                listValuesPredictedNormal.add(values);
+            }else{
+                values.alpha = values.averageAttackProb;
+                values.predictClass = 1.0d;
+                listValuesPredictedAttack.add(values);
+            }
         }
 
 
