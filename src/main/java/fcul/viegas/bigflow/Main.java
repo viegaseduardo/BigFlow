@@ -96,25 +96,32 @@ public class Main {
         }else if (args[0].equals("evaluateconformalmoa")) {
 
             /*
+            note that this version is way faster than "testwithupdatedistributed"
+                due to the need to load from disk the models
+
                 args[1] = path to folder
-                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
-                args[3] = output
-                args[4] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting, adahoeffdingoptiontree}
-                args[5] = days to use for training
-                args[6] = days to use for testing (if you want only 2007 use args[6]=300)
+                args[2] = output
+                args[3] = days to use for training
+
+                static classifiers, work as a loop!
+                    args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                    args[N+2] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+                    args[N+3] = normal threshold
+                    args[N+4] = attack threshold
+
+                stream
+                stream classifiers, work as a loop!
+                    args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                    args[N+2] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting, adahoeffdingoptiontree}
+                    args[N+3] = normal threshold
+                    args[N+4] = attack threshold
+
              */
             Topologies_MOA_ConformalThresholdFinder conformalFinder = new Topologies_MOA_ConformalThresholdFinder();
 
             System.out.println("Generating threshold evaluation file...");
 
-            conformalFinder.generateThresholdEvaluationFile(
-                    args[1],
-                    args[2],
-                    args[3] + "_threshold_file.csv",
-                    args[4],
-                    Integer.valueOf(args[5]),
-                    Integer.valueOf(args[6]),
-                    Integer.valueOf(args[7]));
+            conformalFinder.generateThresholdEvaluationFile(args);
 
             System.out.println("Generating non-dominated file...");
 

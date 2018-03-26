@@ -7,10 +7,12 @@ package fcul.viegas.topologies.machinelearning;
 
 
 import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
+import fcul.viegas.topologies.machinelearning.method.OperationPoints;
+import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal;
+import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.util.*;
 
 import weka.classifiers.Classifier;
@@ -28,87 +30,210 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
         public double instClass;
         public double predictClass;
-        public double credibility;
-        public double confidence;
+        public ArrayList<Double> predictClassClassifier;
+        public ArrayList<Double> credibility;
+        public ArrayList<Double> confidence;
+        public ArrayList<Double> alphaEachClassifier;
         public double alpha;
+        public int votesForAttack;
+        public int votesForNormal;
+        public double choosenClass;
+        public double averageAttackProb;
+        public double averageNormalProb;
     }
 
     public String folderPath;
-    public String featureSET;
-    //public static String PathToModel = "/home/viegas/Bases2/model/model";
-    public static String PathToModel = "/home/viegas/Downloads/model/model";
+    public String outputPath;
+    public int daysToUseForTraining;
+    public ArrayList<String> testFilesVIEGAS = new ArrayList();
+    public ArrayList<String> testFilesMOORE = new ArrayList();
+    public ArrayList<String> testFilesNIGEL = new ArrayList();
+    public ArrayList<String> testFilesORUNADA = new ArrayList();
+
+    public static String PathToModel = "/home/viegas/Bases2/model/model";
 
     public void generateThresholdEvaluationFile(
-            String pathArffs,
-            String featureSet,
-            String outputPath,
-            String classifierToBuild,
-            int daysToUseForTraining,
-            int daysToUseForTest,
-            int numberEnsemble) throws Exception {
+            String[] params) throws Exception {
 
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
-        ArrayList<String> testFiles = new ArrayList();
 
-        this.folderPath = pathArffs;
-        this.featureSET = featureSet;
+        this.folderPath = params[1];
+        this.outputPath = params[2];
+        this.daysToUseForTraining = Integer.valueOf(params[3]);
 
-        System.out.println("Path to test directory: " + this.folderPath + " searching for feature set: " + this.featureSET);
-        mlModelBuilder.findFilesForTest(this.folderPath, featureSET, testFiles);
-        java.util.Collections.sort(testFiles);
+        System.out.println("Path to test directory: " + this.folderPath);
+        mlModelBuilder.findFilesForTest(this.folderPath, "VIEGAS", testFilesVIEGAS);
+        mlModelBuilder.findFilesForTest(this.folderPath, "MOORE", testFilesMOORE);
+        mlModelBuilder.findFilesForTest(this.folderPath, "NIGEL", testFilesNIGEL);
+        mlModelBuilder.findFilesForTest(this.folderPath, "ORUNADA", testFilesORUNADA);
 
-        for (String s : testFiles) {
-            System.out.println("\t" + s);
+        java.util.Collections.sort(testFilesVIEGAS);
+        java.util.Collections.sort(testFilesMOORE);
+        java.util.Collections.sort(testFilesNIGEL);
+        java.util.Collections.sort(testFilesORUNADA);
+
+        for (int i = 0; i < testFilesVIEGAS.size(); i++) {
+            System.out.println("\t" + testFilesVIEGAS.get(i) + " "
+                    + testFilesMOORE.get(i) + " "
+                    + testFilesNIGEL.get(i) + " "
+                    + testFilesORUNADA.get(i) + " ");
         }
 
         System.out.println("Opening training file....");
-        Instances dataTrain = mlModelBuilder.openFile(testFiles.get(0));
-        dataTrain.randomize(new Random(1));
+        Instances dataTrainVIEGAS = mlModelBuilder.openFile(testFilesVIEGAS.get(0));
+        dataTrainVIEGAS.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
-            Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
+            Instances dataTrainInc = mlModelBuilder.openFile(testFilesVIEGAS.get(i));
             dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
-                dataTrain.add(inst);
+                dataTrainVIEGAS.add(inst);
             }
         }
-        dataTrain = mlModelBuilder.getAsNormalizeFeatures(dataTrain);
-        dataTrain = mlModelBuilder.removeParticularAttributesViegas(dataTrain);
+        dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
+        dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
+
+//        ArffSaver saver = new ArffSaver();
+//        saver.setInstances(dataTrainVIEGAS);
+//        saver.setFile(new File("/home/viegas/Downloads/2007Years/VIEGAS.arff"));
+//        //saver.setDestination(new File("./data/test.arff"));   // **not** necessary in 3.5.4 and later
+//        saver.writeBatch();
+//
+//        BufferedWriter writer = new BufferedWriter(new FileWriter("/home/viegas/Downloads/2007Years/VIEGAS.arff"));
+//        writer.write(dataTrainVIEGAS.toString());
+//        writer.flush();
+//        writer.close();
+//
+//        System.exit(1);
+
 
         System.out.println("building conformal");
-        Transcend_ConformalPredictor conformal = new Transcend_ConformalPredictor();
-        //conformal.setDataset(dataTrain);
-
-        System.out.println("building classifier");
+        Transcend_ConformalPredictor conformalVIEGAS = new Transcend_ConformalPredictor();
+        //conformalVIEGAS.setDataset(dataTrainVIEGAS);
 
 
-        moa.classifiers.AbstractClassifier classifier = null;
+        System.out.println("building classifiers now, this will take some time.........");
 
-        classifier = classifierToBuild.equals("hoeffding")
-                ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
-                ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
-                ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("ozaboosting")
-                ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("adaptiveforest")
-                ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
-                ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
-                ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain, numberEnsemble) : classifierToBuild.equals("leveragingbag")
-                ? mlModelBuilder.trainClassifierLeveragingBagMOA(dataTrain, numberEnsemble) : null;
+        //aqui ainda nao usamos o moa mas who cares?, agora usamos
+        WekaMoaClassifierWrapper wekaWrapper = new WekaMoaClassifierWrapper();
+        //wekaWrapper.setConformalEvaluatorVIEGAS(conformalVIEGAS);
+        //wekaWrapper.setConformalEvaluatorNIGEL(conformalNIGEL);
+        //wekaWrapper.setConformalEvaluatorORUNADA(conformalORUNADA);
+        //wekaWrapper.setConformalEvaluatorMOORE(conformalMOORE);
 
-        ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<>();
-        ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
+        wekaWrapper.setConformalEvaluatorVIEGAS(null);
+        wekaWrapper.setConformalEvaluatorNIGEL(null);
+        wekaWrapper.setConformalEvaluatorORUNADA(null);
+        wekaWrapper.setConformalEvaluatorMOORE(null);
+
+        //weka classifiers
+        int indexToUse = 4;
+        if (indexToUse < params.length && !params[indexToUse].equals("stream")) {
+            for (; indexToUse < params.length;) {
+                String featureSet = params[indexToUse++];
+                String classifierToBuild = params[indexToUse++];
+                float normalThreshold = Float.valueOf(params[indexToUse++]);
+                float attackThreshold = Float.valueOf(params[indexToUse++]);
+
+                Classifier classifier = null;
+                Instances dataTrain = null;
+                //se nao for nem A nem B, da pau...
+                if (featureSet.equals("VIEGAS")) {
+                    dataTrain = dataTrainVIEGAS;
+                }
+
+                System.out.println("STATIC - Building " + classifierToBuild + " classifier...");
+                //se nao for nem A nem B, da pau...
+                classifier = classifierToBuild.equals("naive")
+                        ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
+                        ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
+                        ? mlModelBuilder.trainClassifierForest(dataTrain) : classifierToBuild.equals("bagging")
+                        ? mlModelBuilder.trainClassifierBagging(dataTrain) : classifierToBuild.equals("extratrees")
+                        ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
+                        ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
+                        ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
+
+                wekaWrapper.getFeatureSetToLookWeka().add(featureSet);
+                wekaWrapper.getWekaClassifiers().add(classifier);
+                wekaWrapper.getWekaOperationPoints().add(new OperationPoints(normalThreshold, attackThreshold));
+
+                if (indexToUse == params.length || params[indexToUse].equals("stream")) {
+                    break;
+                }
+            }
+        }
+
+        //moa classifiers
+        indexToUse++;
+        for (; indexToUse < params.length;) {
+            String featureSet = params[indexToUse++];
+            String classifierToBuild = params[indexToUse++];
+            float normalThreshold = Float.valueOf(params[indexToUse++]);
+            float attackThreshold = Float.valueOf(params[indexToUse++]);
+
+            moa.classifiers.AbstractClassifier classifier = null;
+            Instances dataTrain = null;
+            //se nao for nem A nem B, da pau...
+            if (featureSet.equals("VIEGAS")) {
+                dataTrain = dataTrainVIEGAS;
+            }
+
+            System.out.println("STREAM - Building " + classifierToBuild + " classifier...");
+            //se nao for nem A nem B, da pau...
+            classifier = classifierToBuild.equals("hoeffding")
+                    ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
+                    ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
+                    ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("ozaboosting")
+                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain,  Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("adaptiveforest")
+                    ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
+                    ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
+                    ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("leveragingbag")
+                    ? mlModelBuilder.trainClassifierLeveragingBagMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : null;
+
+            wekaWrapper.getFeatureSetToLookMoa().add(featureSet);
+            wekaWrapper.getMoaClassifiers().add(classifier);
+            wekaWrapper.getMoaOperationPoints().add(new OperationPoints(normalThreshold, attackThreshold));
+
+            Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel = Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel + "_" +
+                    classifierToBuild + "_" + featureSet;
+        }
+
+        ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal.PathToModel));
+        oos.writeObject(wekaWrapper);
+        oos.flush();
+        oos.close();
+
+        ArrayList<String[]> testFiles = new ArrayList<>();
+        for (int i = 0; i < testFilesVIEGAS.size(); i++) {
+            //for (int i = 0; i < 600; i++) {
+
+            String[] array = new String[4];
+            array[0] = testFilesVIEGAS.get(i);
+            array[1] = testFilesNIGEL.get(i);
+            array[2] = testFilesMOORE.get(i);
+            array[3] = testFilesORUNADA.get(i);
+
+            testFiles.add(array);
+        }
 
         int j = 0;
         int acertou = 0;
         int nTotalAttack = 0;
         int nTotalNormal = 0;
-        for (String s : testFiles.subList(0, daysToUseForTest)) {
+        int daysToUseForTest = 30;
+        String featureSet = "VIEGAS";
+        ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<>();
+        ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
+
+
+        for (String[] s1 : testFiles.subList(0, daysToUseForTest)) {
+            String s = s1[0];
 
             Instances dataTest = mlModelBuilder.openFile(s);
             dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
 
             if (featureSet.equals("VIEGAS")) {
                 dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
-            } else if (featureSet.equals("ORUNADA")) {
-                dataTest = mlModelBuilder.removeParticularAttributesOrunada(dataTest);
             }
 
             WekaToSamoaInstanceConverter converterViegas = new WekaToSamoaInstanceConverter();
@@ -125,48 +250,74 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
                 ValueForRejectEvaluation values = new ValueForRejectEvaluation();
 
+                values.votesForAttack = 0;
+                values.votesForNormal = 0;
                 values.instClass = inst.classValue();
 
-                double[] prob = classifier.getVotesForInstance(inst);
-                prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
+                for(int k = 0; k <  wekaWrapper.getMoaClassifiers().size(); k++){
+                    moa.classifiers.AbstractClassifier classifier = wekaWrapper.getMoaClassifiers().get(k);
 
-                boolean correctlyClassifies = classifier.correctlyClassifies(inst);
-                if (correctlyClassifies) {
-                    acertou++;
-                }
-                boolean choosenAttack = false;
-                if(correctlyClassifies && inst.classValue() == 0.0d){
-                    choosenAttack = false;
-                }else if(correctlyClassifies && inst.classValue() == 1.0d){
-                    choosenAttack = true;
-                }else if(!correctlyClassifies && inst.classValue() == 0.0d){
-                    choosenAttack = true;
-                }else{
-                    choosenAttack = false;
+                    double[] prob = classifier.getVotesForInstance(inst);
+                    prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
+
+                    boolean correctlyClassifies = classifier.correctlyClassifies(inst);
+                    if (correctlyClassifies) {
+                        acertou++;
+                    }
+                    boolean choosenAttack = false;
+                    if(correctlyClassifies && inst.classValue() == 0.0d){
+                        choosenAttack = false;
+                    }else if(correctlyClassifies && inst.classValue() == 1.0d){
+                        choosenAttack = true;
+                    }else if(!correctlyClassifies && inst.classValue() == 0.0d){
+                        choosenAttack = true;
+                    }else{
+                        choosenAttack = false;
+                    }
+
+                    if (!choosenAttack) {
+                        values.predictClassClassifier.add(0.0d);
+                        //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
+                        //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
+                        //values.alpha = values.credibility + values.confidene;
+
+                        values.votesForNormal++;
+                        values.alphaEachClassifier.add(prob[0]);
+
+                    } else {
+                        values.predictClassClassifier.add(1.0d);
+                        //values.credibility = conformal.getPValueForAttack(dataTest.get(counter));
+                        //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
+                        //values.alpha = values.credibility + values.confidence;
+
+                        values.votesForAttack++;
+                        values.alphaEachClassifier.add(prob[1]);
+                    }
                 }
 
-                if (!choosenAttack) {
+
+                values.averageAttackProb = 1.0d;
+                values.averageNormalProb = 1.0d;
+                for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
+                    if(values.predictClassClassifier.get(k) == 0.0d){
+                        values.averageNormalProb = values.averageNormalProb * values.alphaEachClassifier.get(k);
+                    }else{
+                        values.averageAttackProb = values.averageAttackProb * values.alphaEachClassifier.get(k);
+                    }
+                }
+                if(values.votesForNormal >= values.votesForAttack){
                     values.predictClass = 0.0d;
-                    //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
-                    //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
-                    //values.alpha = values.credibility + values.confidence;
-
-                    values.alpha = prob[0];
-
                     listValuesPredictedNormal.add(values);
-                } else {
+                }else{
                     values.predictClass = 1.0d;
-                    //values.credibility = conformal.getPValueForAttack(dataTest.get(counter));
-                    //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
-                    //values.alpha = values.credibility + values.confidence;
-
-                    values.alpha = prob[1];
-
                     listValuesPredictedAttack.add(values);
                 }
+
             }
             System.out.println(s);
         }
+
+
 
         Collections.sort(listValuesPredictedNormal, new Comparator<ValueForRejectEvaluation>() {
             @Override
@@ -201,7 +352,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         ArrayList<String> outputList = new ArrayList<>();
 
         for (int iNormal = 0; iNormal < 100; iNormal++) {
-            System.out.println("Classifier: " + classifierToBuild + " " + this.featureSET +" percentage done: " + iNormal);
+            System.out.println("Classifier: percentage done: " + iNormal);
             for (int iAttack = 0; iAttack < 100; iAttack++) {
 
                 int n = 0;
