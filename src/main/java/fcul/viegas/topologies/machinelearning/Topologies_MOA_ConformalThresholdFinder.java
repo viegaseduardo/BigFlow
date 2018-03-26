@@ -310,7 +310,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                     }else{
                         values.averageAttackProb = values.averageAttackProb * values.alphaEachClassifier.get(k);
                     }
-                }
+                }//a
 
                 if(values.votesForNormal > values.votesForAttack){
                     values.alpha = values.averageNormalProb;
