@@ -302,8 +302,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 }
 
 
-                values.averageAttackProb = 0.0d;
-                values.averageNormalProb = 0.0d;
+                values.averageAttackProb = 1.0d;
+                values.averageNormalProb = 1.0d;
                 for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
                     if(values.predictClassClassifier.get(k) == 0.0d){
                         values.averageNormalProb = values.averageNormalProb * values.alphaEachClassifier.get(k);
