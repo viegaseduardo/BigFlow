@@ -481,6 +481,13 @@ public class Topologies_MOA_ConformalThresholdFinder {
                         if (n == 0) {
                             n = 1;
                         }
+
+
+
+
+
+
+
                         outputList.add(iAttack + ";"
                                 + iNormal + ";"
                                 + (1 - (nAcc / (float) n)) + ";"
