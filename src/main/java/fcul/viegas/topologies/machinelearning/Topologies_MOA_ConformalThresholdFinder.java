@@ -347,8 +347,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
             values.averageNormalProb = 0.0d;
             for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
                 if(values.predictClassClassifier.get(k) == 0.0d){
-                    double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
-                    if(normalizedProb > values.averageNormalProb || values.averageNormalProb == 1.0d){
+                    double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
+                    if(normalizedProb > values.averageNormalProb || values.averageNormalProb == 0.0d){
                         values.averageNormalProb = normalizedProb;
                     }
                 }else{
@@ -375,7 +375,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         Collections.sort(listValuesPredictedNormal, new Comparator<ValueForRejectEvaluation>() {
             @Override
             public int compare(ValueForRejectEvaluation o1, ValueForRejectEvaluation o2) {
-                return Double.compare(o1.alpha, o2.alpha);
+                return Double.compare(o2.alpha, o1.alpha);
             }
         });
 
