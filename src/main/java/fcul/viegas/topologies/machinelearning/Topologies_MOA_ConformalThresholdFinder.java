@@ -348,14 +348,16 @@ public class Topologies_MOA_ConformalThresholdFinder {
             for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
                 if(values.predictClassClassifier.get(k) == 0.0d){
                     double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
-                    if(normalizedProb > values.averageNormalProb || values.averageNormalProb == 0.0d){
-                        values.averageNormalProb = normalizedProb;
-                    }
+                    values.averageNormalProb = values.averageNormalProb * normalizedProb;
+                    //if(normalizedProb > values.averageNormalProb || values.averageNormalProb == 0.0d){
+                    //    values.averageNormalProb = normalizedProb;
+                    //}
                 }else{
                     double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
-                    if(normalizedProb > values.averageAttackProb || values.averageAttackProb == 0.0d){
-                        values.averageAttackProb = normalizedProb;
-                    }
+                    values.averageAttackProb = values.averageAttackProb * normalizedProb;
+                    //if(normalizedProb > values.averageAttackProb || values.averageAttackProb == 0.0d){
+                    //    values.averageAttackProb = normalizedProb;
+                    //}
                 }
             }
 
@@ -555,15 +557,15 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 //float rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11]))/2.0f);
                 //rejection = 1.0f - rejection;
 
-                //float error = Float.valueOf(split[4]);
-                //error = error / 1.0f;
-                //float rejection = ((Float.valueOf(split[11]))/1.0f);
-                //rejection = 1.0f - rejection;
-
-                float error = Float.valueOf(split[3]);
+                float error = Float.valueOf(split[4]);
                 error = error / 1.0f;
-                float rejection = ((Float.valueOf(split[10]))/1.0f);
+                float rejection = ((Float.valueOf(split[11]))/1.0f);
                 rejection = 1.0f - rejection;
+
+                //float error = Float.valueOf(split[3]);
+                //error = error / 1.0f;
+                //float rejection = ((Float.valueOf(split[10]))/1.0f);
+                //rejection = 1.0f - rejection;
 
                 NonDominated nonDominated = new NonDominated();
                 nonDominated.error = error;
