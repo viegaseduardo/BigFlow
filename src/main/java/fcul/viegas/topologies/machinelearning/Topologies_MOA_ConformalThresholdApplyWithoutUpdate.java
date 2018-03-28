@@ -532,6 +532,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
             print = print + ((nRejectedAttack) / (float) nAttack) + ";";
             print = print + ((nRejectedNormal) / (float) nNormal);
 
+            outputList.add(print);
 
             System.out.println(s);
         }
