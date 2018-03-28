@@ -47,6 +47,7 @@ import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
+import weka.filters.supervised.instance.Resample;
 import weka.filters.supervised.instance.SpreadSubsample;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
@@ -509,9 +510,14 @@ public class MachineLearningModelBuilders implements Serializable {
                 "Naive Bayes",
                 "Naive Bayes Adaptive"}, 2);
 
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(train);
-        Instances newTrain = Filter.useFilter(train, balancer);
+        //ClassBalancer balancer = new ClassBalancer();
+        //balancer.setInputFormat(train);
+        //Instances newTrain = Filter.useFilter(train, balancer);
+
+        Resample resample = new Resample();
+        resample.setBiasToUniformClass(1.0f);
+        resample.setNoReplacement(true);
+        Instances newTrain = Filter.useFilter(train, resample);
 
         //SpreadSubsample subsample = new SpreadSubsample();
         //subsample.setInputFormat(train);
