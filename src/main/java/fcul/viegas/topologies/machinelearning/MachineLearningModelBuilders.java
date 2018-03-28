@@ -502,13 +502,13 @@ public class MachineLearningModelBuilders implements Serializable {
                 "gracePeriod",
                 'g',
                 "The number of instances a leaf should observe between split attempts.",
-                1000, 0, Integer.MAX_VALUE);
+                100, 0, Integer.MAX_VALUE);
         classifier.leafpredictionOption = new MultiChoiceOption(
                 "leafprediction", 'l', "Leaf prediction to use.", new String[]{
                 "MC", "NB", "NBAdaptive"}, new String[]{
                 "Majority class",
                 "Naive Bayes",
-                "Naive Bayes Adaptive"}, 1);
+                "Naive Bayes Adaptive"}, 2);
 
         //ClassBalancer balancer = new ClassBalancer();
         //balancer.setInputFormat(train);
@@ -536,12 +536,19 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.setModelContext(instH);
         classifier.prepareForUse();
 
+        int nAttack = 0;
+        int nNormal = 0;
         int pct = (int) (moaTrain.size() / 100.0f);
         for (int i = 0; i < moaTrain.size(); i++) {
             if (i % pct == 0) {
-                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+                System.out.println("Trained with " + (i / pct) + " % of training instances... Normal: " + nNormal + " attack: " + nAttack);
             }
             classifier.trainOnInstance(moaTrain.get(i));
+            if(moaTrain.get(i).classValue() == 0.0d){
+                nNormal++;
+            }else{
+                nAttack++;
+            }
         }
 
         System.out.println(classifier.toString());
