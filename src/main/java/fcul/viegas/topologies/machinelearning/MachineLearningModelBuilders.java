@@ -495,7 +495,12 @@ public class MachineLearningModelBuilders implements Serializable {
     //  actually the fix was to make a wekatreewrapper, we are internally using weka o.O
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
         //moa.classifiers.AbstractClassifier classifier = new fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper();
-        moa.classifiers.AbstractClassifier classifier = new moa.classifiers.trees.HoeffdingTree();
+        moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
+        classifier.gracePeriodOption = new IntOption(
+                "gracePeriod",
+                'g',
+                "The number of instances a leaf should observe between split attempts.",
+                1000, 0, Integer.MAX_VALUE);
 
        // ClassBalancer balancer = new ClassBalancer();
       //  balancer.setInputFormat(train);
