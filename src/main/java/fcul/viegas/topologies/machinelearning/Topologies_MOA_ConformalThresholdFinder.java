@@ -280,13 +280,13 @@ public class Topologies_MOA_ConformalThresholdFinder {
                     }
 
 
-
                     if (!choosenAttack) {
                         values.predictClassClassifier.add(0.0d);
                         //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
                         //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
                         //values.alpha = values.credibility + values.confidene;
 
+                        values.alpha = prob[0];
                         values.votesForNormal++;
                         values.alphaEachClassifier.add(prob);
 
@@ -296,6 +296,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
                         //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
                         //values.alpha = values.credibility + values.confidence;
 
+                        values.alpha = prob[1];
                         values.votesForAttack++;
                         values.alphaEachClassifier.add(prob);
                     }
@@ -394,7 +395,7 @@ public class Topologies_MOA_ConformalThresholdFinder {
         int pingNormal = (int) (listValuesPredictedNormal.size() / 100.0f);
         int pingAttack = (int) (listValuesPredictedAttack.size() / 100.0f);
         for (int iNormal = 0; iNormal < 100; iNormal++) {
-            System.out.println("Normal: [" + iNormal + "]: " + listValuesPredictedNormal.get(pingNormal * iNormal).alpha);
+            System.out.println("Normal: [" + iNormal + "]: " + listValuesPredictedNormal.get(pingNormal * iNormal));
         }
         for (int iAttack = 0; iAttack < 100; iAttack++) {
             System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
