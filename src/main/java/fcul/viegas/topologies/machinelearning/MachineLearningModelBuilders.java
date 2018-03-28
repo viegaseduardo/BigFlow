@@ -507,7 +507,7 @@ public class MachineLearningModelBuilders implements Serializable {
                 "MC", "NB", "NBAdaptive"}, new String[]{
                 "Majority class",
                 "Naive Bayes",
-                "Naive Bayes Adaptive"}, 1);
+                "Naive Bayes Adaptive"}, 2);
 
        // ClassBalancer balancer = new ClassBalancer();
       //  balancer.setInputFormat(train);
