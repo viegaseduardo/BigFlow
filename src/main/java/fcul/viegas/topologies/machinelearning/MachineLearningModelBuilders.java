@@ -530,6 +530,8 @@ public class MachineLearningModelBuilders implements Serializable {
             classifier.trainOnInstance(moaTrain.get(i));
         }
 
+        System.out.println(classifier.toString());
+
         return classifier;
     }
 
