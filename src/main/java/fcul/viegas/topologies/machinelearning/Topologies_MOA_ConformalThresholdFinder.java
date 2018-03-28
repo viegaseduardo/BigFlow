@@ -395,10 +395,16 @@ public class Topologies_MOA_ConformalThresholdFinder {
         int pingNormal = (int) (listValuesPredictedNormal.size() / 100.0f);
         int pingAttack = (int) (listValuesPredictedAttack.size() / 100.0f);
         for (int iNormal = 0; iNormal < 100; iNormal++) {
-            System.out.println("Normal: [" + iNormal + "]: " + listValuesPredictedNormal.get(pingNormal * iNormal).alpha);
+            System.out.println("Normal: [" + iNormal + "]: " + listValuesPredictedNormal.get(pingNormal * iNormal).alpha + " prob [" +
+                    listValuesPredictedNormal.get(pingNormal * iNormal).alphaEachClassifier.get(0)[0] + "] - [" +
+                    listValuesPredictedNormal.get(pingNormal * iNormal).alphaEachClassifier.get(0)[1] + "]"
+            );
         }
         for (int iAttack = 0; iAttack < 100; iAttack++) {
-            System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
+            System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha+ " prob [" +
+                    listValuesPredictedAttack.get(pingNormal * iAttack).alphaEachClassifier.get(0)[0] + "] - [" +
+                    listValuesPredictedAttack.get(pingNormal * iAttack).alphaEachClassifier.get(0)[1] + "]"
+            );
         }
 
         List<String> outputList = Collections.synchronizedList(new ArrayList<String>());
