@@ -515,6 +515,7 @@ public class MachineLearningModelBuilders implements Serializable {
         //Instances newTrain = Filter.useFilter(train, balancer);
 
         Resample resample = new Resample();
+        resample.setInputFormat(train);
         resample.setBiasToUniformClass(1.0f);
         resample.setNoReplacement(true);
         Instances newTrain = Filter.useFilter(train, resample);
