@@ -6,6 +6,7 @@
 package fcul.viegas.topologies.machinelearning;
 
 import com.github.javacliparser.IntOption;
+import com.github.javacliparser.MultiChoiceOption;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
 import fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper;
@@ -501,6 +502,12 @@ public class MachineLearningModelBuilders implements Serializable {
                 'g',
                 "The number of instances a leaf should observe between split attempts.",
                 1000, 0, Integer.MAX_VALUE);
+        classifier.leafpredictionOption = new MultiChoiceOption(
+                "leafprediction", 'l', "Leaf prediction to use.", new String[]{
+                "MC", "NB", "NBAdaptive"}, new String[]{
+                "Majority class",
+                "Naive Bayes",
+                "Naive Bayes Adaptive"}, 0);
 
        // ClassBalancer balancer = new ClassBalancer();
       //  balancer.setInputFormat(train);
