@@ -1,29 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fcul.viegas.topologies.machinelearning;
-
 
 import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
 import fcul.viegas.topologies.machinelearning.method.OperationPoints;
 import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal;
 import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
-
-import java.io.*;
-import java.util.*;
-
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
 
-/**
- *
- * @author viegas
- */
-public class Topologies_MOA_ConformalThresholdFinder {
+import java.io.*;
+import java.util.*;
+
+public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
+
 
     public class ValueForRejectEvaluation {
 
@@ -55,6 +45,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
             String[] params) throws Exception {
 
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
+        double thresholdAttack = 0.0000000001d;
+        double thresholdNormal = 0.0000000001d;
 
         this.folderPath = params[1];
         this.outputPath = params[2] + "_threshold_file.csv";
@@ -302,9 +294,6 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 }
 
                 listValuesAll.add(values);
-
-
-
             }
 
             System.out.println(s);
@@ -340,175 +329,210 @@ public class Topologies_MOA_ConformalThresholdFinder {
             maxProbClassifier.add(maxProb);
         }
 
-        for(ValueForRejectEvaluation values: listValuesAll){
-            values.averageAttackProb = 0.0d;
-            values.averageNormalProb = 0.0d;
-            for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
-                if(values.predictClassClassifier.get(k) == 0.0d){
-                    double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
-                    if(normalizedProb > values.averageNormalProb || values.averageNormalProb == 0.0d){
-                        values.averageNormalProb = normalizedProb;
-                    }
-                }else{
-                    double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
-                    if(normalizedProb > values.averageAttackProb || values.averageAttackProb == 0.0d){
-                        values.averageAttackProb = normalizedProb;
-                    }
-                }
-            }
-
-            if(values.votesForNormal >= wekaWrapper.getMoaClassifiers().size()){
-                values.alpha = values.averageNormalProb;
-                values.predictClass = 0.0d;
-                listValuesPredictedNormal.add(values);
-            }else{
-                values.alpha = values.averageAttackProb;
-                values.predictClass = 1.0d;
-                listValuesPredictedAttack.add(values);
-            }
-        }
-
-
-
-        Collections.sort(listValuesPredictedNormal, new Comparator<ValueForRejectEvaluation>() {
-            @Override
-            public int compare(ValueForRejectEvaluation o1, ValueForRejectEvaluation o2) {
-                return Double.compare(o2.alpha, o1.alpha);
-            }
-        });
-
-        Collections.sort(listValuesPredictedAttack, new Comparator<ValueForRejectEvaluation>() {
-            @Override
-            public int compare(ValueForRejectEvaluation o1, ValueForRejectEvaluation o2) {
-                return Double.compare(o2.alpha, o1.alpha);
-            }
-        });
-
-        System.out.println("Primeiro alpha: " + listValuesPredictedNormal.get(0).alpha);
-        System.out.println("Ultimo alpha: " + listValuesPredictedNormal.get(listValuesPredictedNormal.size() - 1).alpha);
-
-        System.out.println("listValuesPredictedNormal.size(): " + listValuesPredictedNormal.size());
-        System.out.println("listValuesPredictedAttack.size(): " + listValuesPredictedAttack.size());
-        System.out.println("Acertou: " + acertou);
-
-        int pingNormal = (int) (listValuesPredictedNormal.size() / 100.0f);
-        int pingAttack = (int) (listValuesPredictedAttack.size() / 100.0f);
-        for (int iNormal = 0; iNormal < 100; iNormal++) {
-            System.out.println("Normal: [" + iNormal + "]: " + listValuesPredictedNormal.get(pingNormal * iNormal).alpha);
-        }
-        for (int iAttack = 0; iAttack < 100; iAttack++) {
-            System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
-        }
-
+        System.out.println("Computing daily now");
         List<String> outputList = Collections.synchronizedList(new ArrayList<String>());
 
+        for (String[] s1 : testFiles) {
+            String s = s1[0];
 
-        class ParameterClass implements Runnable {
-            int iNormal;
-            int iNormalUpper;
-            int nTotalAttack;
-            int nTotalNormal;
-            ParameterClass(int iNorm, int iNormUpper, int nTotalAtk, int nTotalNorm) {
-                iNormal = iNorm;
-                iNormalUpper = iNormUpper;
-                nTotalAttack = nTotalAtk;
-                nTotalNormal = nTotalNorm;
+            Instances dataTest = mlModelBuilder.openFile(s);
+            dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
+
+            if (featureSet.equals("VIEGAS")) {
+                dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
             }
-            public void run() {
-                System.out.println("iNormal: " + iNormal + " iNormalUpper: " + iNormalUpper);
-                for (; iNormal < iNormalUpper; iNormal++) {
-                    System.out.println("Classifier: percentage done: " + iNormal + "/" + iNormalUpper);
-                    for (int iAttack = 0; iAttack < 100; iAttack++) {
 
-                        int n = 0;
-                        int nAcc = 0;
-                        int nAtk = 0;
-                        int nAtkAcc = 0;
-                        int nNormal = 0;
-                        int nNormalAcc = 0;
+            WekaToSamoaInstanceConverter converterViegas = new WekaToSamoaInstanceConverter();
+            com.yahoo.labs.samoa.instances.Instances insts = converterViegas.samoaInstances(dataTest);
 
-                        int nToUseNormal = pingNormal * iNormal;
-                        int nToUseAttack = pingAttack * iAttack;
+            listValuesAll = new ArrayList<>();
+            for (int counter = 0; counter < insts.size(); counter++) {
+                com.yahoo.labs.samoa.instances.Instance inst = insts.get(counter);
 
-                        for (int j = 0; j < nToUseNormal; j++) {
-                            n++;
+                if(inst.classValue() == 0.0d){
+                    nTotalNormal++;
+                }else{
+                    nTotalAttack++;
+                }
 
-                            if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
-                                nNormal++;
-                            } else {
-                                nAtk++;
+                ValueForRejectEvaluation values = new ValueForRejectEvaluation();
+
+                values.predictClassClassifier = new ArrayList<>();
+                values.credibility = new ArrayList<>();
+                values.confidence = new ArrayList<>();
+                values.alphaEachClassifier = new ArrayList<>();
+                values.votesForAttack = 0;
+                values.votesForNormal = 0;
+                values.instClass = inst.classValue();
+
+                for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
+                    moa.classifiers.AbstractClassifier classifier = wekaWrapper.getMoaClassifiers().get(k);
+
+                    double[] prob = classifier.getVotesForInstance(inst);
+                    prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
+
+                    boolean correctlyClassifies = classifier.correctlyClassifies(inst);
+                    if (correctlyClassifies) {
+                        acertou++;
+                    }
+                    boolean choosenAttack = false;
+                    if(correctlyClassifies && inst.classValue() == 0.0d){
+                        choosenAttack = false;
+                    }else if(correctlyClassifies && inst.classValue() == 1.0d){
+                        choosenAttack = true;
+                    }else if(!correctlyClassifies && inst.classValue() == 0.0d){
+                        choosenAttack = true;
+                    }else{
+                        choosenAttack = false;
+                    }
+
+
+
+                    if (!choosenAttack) {
+                        values.predictClassClassifier.add(0.0d);
+                        //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
+                        //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
+                        //values.alpha = values.credibility + values.confidene;
+
+                        values.votesForNormal++;
+                        values.alphaEachClassifier.add(prob);
+
+                    } else {
+                        values.predictClassClassifier.add(1.0d);
+                        //values.credibility = conformal.getPValueForAttack(dataTest.get(counter));
+                        //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
+                        //values.alpha = values.credibility + values.confidence;
+
+                        values.votesForAttack++;
+                        values.alphaEachClassifier.add(prob);
+                    }
+
+
+                }
+
+                listValuesAll.add(values);
+            }
+
+
+
+            int n = 0;
+            int nNormal = 0; //ok
+            int nAttack = 0; //ok
+            int nRejectedNormal = 0; //ok
+            int nRejectedAttack = 0; //ok
+            int nAcceptedNormal = 0; //ok
+            int nAcceptedAttack = 0; //ok
+            int nCorrectlyAcceptedNormal = 0; //ok
+            int nCorrectlyAcceptedAttack = 0;
+
+
+            for(ValueForRejectEvaluation values: listValuesAll){
+                n++;
+
+                if(values.instClass == 0.0d){
+                    nNormal++;
+                }else{
+                    nAttack++;
+                }
+
+                values.averageAttackProb = 0.0d;
+                values.averageNormalProb = 0.0d;
+                for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
+                    if(values.predictClassClassifier.get(k) == 0.0d){
+                        double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
+                        if(normalizedProb > values.averageNormalProb || values.averageNormalProb == 0.0d){
+                            values.averageNormalProb = normalizedProb;
+                        }
+                    }else{
+                        double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
+                        if(normalizedProb > values.averageAttackProb || values.averageAttackProb == 0.0d){
+                            values.averageAttackProb = normalizedProb;
+                        }
+                    }
+                }
+
+                if(values.votesForNormal >= wekaWrapper.getMoaClassifiers().size()){
+                    values.alpha = values.averageNormalProb;
+                    values.predictClass = 0.0d;
+                }else{
+                    values.alpha = values.averageAttackProb;
+                    values.predictClass = 1.0d;
+                }
+
+                if(values.predictClass == 0.0d){
+                    if(values.alpha >= thresholdNormal){
+                        if(values.instClass == 0.0d){
+                            nAcceptedNormal++;
+                        }else{
+                            nAcceptedAttack++;
+                        }
+                        if(values.predictClass == values.instClass){
+                            if(values.instClass == 0.0d){
+                                nCorrectlyAcceptedNormal++;
+                            }else{
+                                nCorrectlyAcceptedAttack++;
                             }
-
-                            if (Double.compare(listValuesPredictedNormal.get(j).instClass, listValuesPredictedNormal.get(j).predictClass) == 0) {
-                                nAcc++;
-                                if (listValuesPredictedNormal.get(j).instClass == 0.0d) {
-                                    nNormalAcc++;
-                                } else {
-                                    nAtkAcc++;
-                                }
+                        }
+                    }else{
+                        if(values.instClass == 0.0d){
+                            nRejectedNormal++;
+                        }else{
+                            nRejectedAttack++;
+                        }
+                    }
+                }else{
+                    if(values.alpha >= thresholdAttack){
+                        if(values.instClass == 0.0d){
+                            nAcceptedNormal++;
+                        }else{
+                            nAcceptedAttack++;
+                        }
+                        if(values.predictClass == values.instClass){
+                            if(values.instClass == 0.0d){
+                                nCorrectlyAcceptedNormal++;
+                            }else{
+                                nCorrectlyAcceptedAttack++;
                             }
-
                         }
-
-                        for (int j = 0; j < nToUseAttack; j++) {
-                            n++;
-
-                            if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
-                                nNormal++;
-                            } else {
-                                nAtk++;
-                            }
-
-                            if (Double.compare(listValuesPredictedAttack.get(j).instClass, listValuesPredictedAttack.get(j).predictClass) == 0) {
-                                nAcc++;
-                                if (listValuesPredictedAttack.get(j).instClass == 0.0d) {
-                                    nNormalAcc++;
-                                } else {
-                                    nAtkAcc++;
-                                }
-                            }
-
+                    }else{
+                        if(values.instClass == 0.0d){
+                            nRejectedNormal++;
+                        }else{
+                            nRejectedAttack++;
                         }
-
-                        if (nNormal == 0) {
-                            nNormal = 1;
-                        }
-                        if (nAtk == 0) {
-                            nAtk = 1;
-                        }
-                        if (n == 0) {
-                            n = 1;
-                        }
-
-                        outputList.add(iAttack + ";"
-                                + iNormal + ";"
-                                + (1 - (nAcc / (float) n)) + ";"
-                                + (1 - (nNormalAcc / (float) nNormal)) + ";"
-                                + (1 - (nAtkAcc / (float) nAtk)) + ";"
-                                + nNormalAcc + ";"
-                                + nNormal + ";"
-                                + nAtkAcc + ";"
-                                + nAtk + ";"
-                                + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())) + ";"
-                                + (nAtk/(float)nTotalAttack) + ";"
-                                + (nNormal/(float)nTotalNormal) + ";"
-                                + listValuesPredictedNormal.get(pingNormal * iNormal).alpha + ";"
-                                + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
                     }
                 }
 
             }
-        }
+            if (nNormal == 0) {
+                nNormal = 1;
+            }
+            if (nAttack == 0) {
+                nAttack = 1;
+            }
+            if (n == 0) {
+                n = 1;
+            }
 
-        ArrayList<Thread> threads = new ArrayList<>();
-        for(int nThreads = 0; nThreads < 15; nThreads++){
-            Thread t = new Thread(new ParameterClass((int)((100.0f/15.0f)*nThreads), (int)(((100.0f/15.0f)*(nThreads+1))), nTotalAttack, nTotalNormal));
-            t.start();
-            threads.add(t);
-        }
+            float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
 
-        for(Thread t: threads) {
-            t.join();
+            String print = s1[0] + ";";
+            print = print + s1[1] + ";";
+            print = print + s1[2] + ";";
+            print = print + s1[3] + ";";
+            print = print + (n) + ";";
+            print = print + nNormal + ";";
+            print = print + nAttack + ";";
+            print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
+            print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
+            print = print + accAceito + ";";
+            print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
+            print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+            print = print + ((nRejectedAttack) / (float) nAttack) + ";";
+            print = print + ((nRejectedNormal) / (float) nNormal);
+
+
+            System.out.println(s);
         }
 
 
@@ -519,156 +543,6 @@ public class Topologies_MOA_ConformalThresholdFinder {
         }
         writer.close();
 
-    }
-
-    public class NonDominated {
-
-        public float error;
-        public float rejection;
-        public String line;
-        public boolean toberemoved;
-
-    }
-
-    public void getNonDominatedSolutions(
-            String fileInputPath,
-            String fileOutputPath) {
-
-        ArrayList<NonDominated> nonDominatedList = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(fileInputPath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-
-                String[] split = line.split(";");
-
-                //float error = Float.valueOf(split[3]) + Float.valueOf(split[4]);
-                //error = error / 2.0f;
-                //float rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11]))/2.0f);
-                //rejection = 1.0f - rejection;
-
-                float error = Float.valueOf(split[4]);
-                error = error / 1.0f;
-                float rejection = ((Float.valueOf(split[11]))/1.0f);
-                rejection = 1.0f - rejection;
-
-                //float error = Float.valueOf(split[3]);
-                //error = error / 1.0f;
-                //float rejection = ((Float.valueOf(split[10]))/1.0f);
-                //rejection = 1.0f - rejection;
-
-                NonDominated nonDominated = new NonDominated();
-                nonDominated.error = error;
-                nonDominated.rejection = rejection;
-                nonDominated.line = line;
-                nonDominated.toberemoved = false;
-
-                nonDominatedList.add(nonDominated);
-            }
-
-            for (NonDominated nonDominated1 : nonDominatedList) {
-                for (NonDominated nonDominated2 : nonDominatedList) {
-                    if (!nonDominated1.toberemoved && !nonDominated2.toberemoved) {
-                        if (nonDominated2.error < nonDominated1.error && nonDominated2.rejection < nonDominated1.rejection) {
-                            nonDominated1.toberemoved = true;
-                        }
-                    }
-                }
-            }
-            Collections.sort(nonDominatedList, new Comparator<NonDominated>() {
-                @Override
-                public int compare(NonDominated o1, NonDominated o2) {
-                    return Double.compare(o1.rejection, o2.rejection);
-                }
-            });
-
-            PrintWriter writer = new PrintWriter(fileOutputPath, "UTF-8");
-
-            for (NonDominated nonDominated1 : nonDominatedList) {
-                if (!nonDominated1.toberemoved) {
-                    writer.println(nonDominated1.line);
-                }
-            }
-
-            writer.close();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public class OperationPoint {
-
-        public float difference;
-        public float error;
-        public float rejection;
-        public String line;
-    }
-
-    public void findOperationPoints(
-            String fileInputPath,
-            String fileOutputPath) {
-        ArrayList<OperationPoint> operationPointList = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(fileInputPath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] split = line.split(";");
-                OperationPoint op = new OperationPoint();
-
-                op.error = Float.valueOf(split[2]);
-                op.rejection = 1 - Float.valueOf(split[9]);
-                op.difference = Math.abs(op.error - op.rejection);
-                op.line = line;
-
-                operationPointList.add(op);
-            }
-
-            Collections.sort(operationPointList, new Comparator<OperationPoint>() {
-                @Override
-                public int compare(OperationPoint o1, OperationPoint o2) {
-                    return Double.compare(o1.difference, o2.difference);
-                }
-            });
-
-            PrintWriter writer = new PrintWriter(fileOutputPath, "UTF-8");
-
-            writer.println("\tAverage Operation Point:");
-            writer.println("Difference between objectives: " + operationPointList.get(0).difference);
-            writer.println("Error rate: " + operationPointList.get(0).error);
-            writer.println("Rejection rate: " + operationPointList.get(0).rejection);
-            writer.println("Normal threshold AVG: " + operationPointList.get(0).line.split(";")[10]);
-            writer.println("Attack threshold AVG: " + operationPointList.get(0).line.split(";")[11]);
-            writer.println("Line: " + operationPointList.get(0).line + "\n");
-
-            Collections.sort(operationPointList, new Comparator<OperationPoint>() {
-                @Override
-                public int compare(OperationPoint o1, OperationPoint o2) {
-                    return Double.compare(o2.rejection, o1.rejection);
-                }
-            });
-
-            OperationPoint bestOP = operationPointList.get(0);
-
-            for (OperationPoint op : operationPointList) {
-                if (Math.abs(op.rejection - 0.4f) < Math.abs(bestOP.rejection - 0.4f)) {
-                    bestOP = op;
-                }
-            }
-
-            writer.println("\tReject rate 40% Operation Point:");
-            writer.println("Difference between objectives: " + bestOP.difference);
-            writer.println("Error rate: " + bestOP.error);
-            writer.println("Rejection rate: " + bestOP.rejection);
-            writer.println("Normal threshold Error5%: " + bestOP.line.split(";")[10]);
-            writer.println("Attack threshold Error5%: " + bestOP.line.split(";")[11]);
-            writer.println("Line: " + bestOP.line + "\n");
-
-            writer.close();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
 }
