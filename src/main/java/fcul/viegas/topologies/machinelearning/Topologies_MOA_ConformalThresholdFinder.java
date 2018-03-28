@@ -402,8 +402,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
         }
         for (int iAttack = 0; iAttack < 100; iAttack++) {
             System.out.println("Attack: [" + iAttack + "]: " + listValuesPredictedAttack.get(pingAttack * iAttack).alpha+ " prob [" +
-                    listValuesPredictedAttack.get(pingNormal * iAttack).alphaEachClassifier.get(0)[0] + "] - [" +
-                    listValuesPredictedAttack.get(pingNormal * iAttack).alphaEachClassifier.get(0)[1] + "]"
+                    listValuesPredictedAttack.get(pingAttack * iAttack).alphaEachClassifier.get(0)[0] + "] - [" +
+                    listValuesPredictedAttack.get(pingAttack * iAttack).alphaEachClassifier.get(0)[1] + "]"
             );
         }
 

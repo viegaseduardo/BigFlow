@@ -495,19 +495,19 @@ public class MachineLearningModelBuilders implements Serializable {
     //  the fix here is to adjust grace period + 1 also to match weka results...
     //  actually the fix was to make a wekatreewrapper, we are internally using weka o.O
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
-        //moa.classifiers.AbstractClassifier classifier = new fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper();
-        moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
-        classifier.gracePeriodOption = new IntOption(
-                "gracePeriod",
-                'g',
-                "The number of instances a leaf should observe between split attempts.",
-                1000, 0, Integer.MAX_VALUE);
-        classifier.leafpredictionOption = new MultiChoiceOption(
-                "leafprediction", 'l', "Leaf prediction to use.", new String[]{
-                "MC", "NB", "NBAdaptive"}, new String[]{
-                "Majority class",
-                "Naive Bayes",
-                "Naive Bayes Adaptive"}, 1);
+        moa.classifiers.AbstractClassifier classifier = new fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper();
+        //moa.classifiers.trees.HoeffdingTree classifier = new moa.classifiers.trees.HoeffdingTree();
+        //classifier.gracePeriodOption = new IntOption(
+        //        "gracePeriod",
+         //       'g',
+          //      "The number of instances a leaf should observe between split attempts.",
+          //      1000, 0, Integer.MAX_VALUE);
+        //classifier.leafpredictionOption = new MultiChoiceOption(
+        //        "leafprediction", 'l', "Leaf prediction to use.", new String[]{
+        //        "MC", "NB", "NBAdaptive"}, new String[]{
+        //        "Majority class",
+        //        "Naive Bayes",
+        //        "Naive Bayes Adaptive"}, 1);
 
        // ClassBalancer balancer = new ClassBalancer();
       //  balancer.setInputFormat(train);
