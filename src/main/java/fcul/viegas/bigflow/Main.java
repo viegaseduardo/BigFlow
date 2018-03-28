@@ -134,6 +134,40 @@ public class Main {
                     args[2] + "_non_dominated.csv",
                     args[2] + "_operation_points");
 
+        }else if (args[0].equals("evaluateconformalmoaapply")) {
+
+            /*
+            note that this version is way faster than "testwithupdatedistributed"
+                due to the need to load from disk the models
+
+                args[1] = path to folder
+                args[2] = output
+                args[3] = days to use for training
+                args[4] = normalthreshold;
+                args[5] = attackthreshold;
+
+
+                static classifiers, work as a loop!
+                    args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                    args[N+2] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+                    args[N+3] = normal threshold
+                    args[N+4] = attack threshold
+
+                stream
+                stream classifiers, work as a loop!
+                    args[N+1] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                    args[N+2] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting, adahoeffdingoptiontree}
+                    args[N+3] = normal threshold
+                    args[N+4] = attack threshold
+
+             */
+            Topologies_MOA_ConformalThresholdApplyWithoutUpdate conformalFinder = new Topologies_MOA_ConformalThresholdApplyWithoutUpdate();
+
+            System.out.println("Generating threshold evaluation file...");
+
+            conformalFinder.generateThresholdEvaluationFile(args);
+
+
         } else if (args[0].equals("testwithoutupdatedistributed")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 

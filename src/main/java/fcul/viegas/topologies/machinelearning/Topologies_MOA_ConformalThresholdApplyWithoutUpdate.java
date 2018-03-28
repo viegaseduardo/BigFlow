@@ -1,6 +1,7 @@
 package fcul.viegas.topologies.machinelearning;
 
 import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
+import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.method.OperationPoints;
 import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal;
 import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
@@ -45,8 +46,8 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
             String[] params) throws Exception {
 
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
-        double thresholdAttack = 0.0000000001d;
-        double thresholdNormal = 0.0000000001d;
+        double thresholdAttack = Float.valueOf(params[5]);
+        double thresholdNormal = Float.valueOf(params[4]);
 
         this.folderPath = params[1];
         this.outputPath = params[2] + "_threshold_file.csv";
@@ -117,7 +118,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
         wekaWrapper.setConformalEvaluatorMOORE(null);
 
         //weka classifiers
-        int indexToUse = 4;
+        int indexToUse = 6;
         if (indexToUse < params.length && !params[indexToUse].equals("stream")) {
             for (; indexToUse < params.length;) {
                 String featureSet = params[indexToUse++];
@@ -536,12 +537,24 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
         }
 
 
-        PrintWriter writer = new PrintWriter(outputPath, "UTF-8");
+        PrintWriter writer = new PrintWriter(outputPath + "_raw_output.csv", "UTF-8");
 
         for (String s : outputList) {
             writer.println(s);
         }
         writer.close();
+
+        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
+                outputPath + "_raw_output.csv",
+                outputPath + "_summarized_monthly.csv",
+                ParseRawOutputFlinkNoUpdate.MonthRange
+        );
+
+        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
+                outputPath + "_raw_output.csv",
+                outputPath + "_summarized_yearly.csv",
+                ParseRawOutputFlinkNoUpdate.YearRange
+        );
 
     }
 
