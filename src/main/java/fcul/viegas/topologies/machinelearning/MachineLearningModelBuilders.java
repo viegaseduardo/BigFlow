@@ -508,22 +508,22 @@ public class MachineLearningModelBuilders implements Serializable {
                 "MC", "NB", "NBAdaptive"}, new String[]{
                 "Majority class",
                 "Naive Bayes",
-                "Naive Bayes Adaptive"}, 1);
+                "Naive Bayes Adaptive"}, 2);
 
         //ClassBalancer balancer = new ClassBalancer();
         //balancer.setInputFormat(train);
         //Instances newTrain = Filter.useFilter(train, balancer);
 
-        Resample resample = new Resample();
-        resample.setInputFormat(train);
-        resample.setBiasToUniformClass(1.0f);
-        resample.setNoReplacement(false);
-        Instances newTrain = Filter.useFilter(train, resample);
+        //Resample resample = new Resample();
+        //resample.setInputFormat(train);
+        //resample.setBiasToUniformClass(1.0f);
+        //resample.setNoReplacement(false);
+        //Instances newTrain = Filter.useFilter(train, resample);
 
-        //SpreadSubsample subsample = new SpreadSubsample();
-        //subsample.setInputFormat(train);
-        //subsample.setDistributionSpread(1.0d);
-        //Instances newTrain = Filter.useFilter(train, subsample);
+        SpreadSubsample subsample = new SpreadSubsample();
+        subsample.setInputFormat(train);
+        subsample.setDistributionSpread(1.0d);
+        Instances newTrain = Filter.useFilter(train, subsample);
 
         Randomize randomTrain = new Randomize();
         randomTrain.setInputFormat(newTrain);
