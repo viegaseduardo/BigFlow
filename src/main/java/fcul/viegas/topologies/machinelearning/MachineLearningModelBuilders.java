@@ -502,7 +502,7 @@ public class MachineLearningModelBuilders implements Serializable {
                 "gracePeriod",
                 'g',
                 "The number of instances a leaf should observe between split attempts.",
-                500, 0, Integer.MAX_VALUE);
+                300, 0, Integer.MAX_VALUE);
      /*   classifier.leafpredictionOption = new MultiChoiceOption(
                 "leafprediction", 'l', "Leaf prediction to use.", new String[]{
                 "MC", "NB", "NBAdaptive"}, new String[]{
@@ -564,8 +564,8 @@ public class MachineLearningModelBuilders implements Serializable {
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", numberEnsemble, 1, Integer.MAX_VALUE);
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
-                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+                "Classifier to train.", moa.classifiers.Classifier.class,
+                "moa.classifiers.trees.AdaHoeffdingOptionTree -g 500");
 
 
         SpreadSubsample subsample = new SpreadSubsample();
@@ -615,6 +615,9 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", numberEnsemble, 1, Integer.MAX_VALUE);
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", moa.classifiers.Classifier.class,
+                "moa.classifiers.trees.AdaHoeffdingOptionTree -g 500");
 
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
         com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
@@ -698,8 +701,8 @@ public class MachineLearningModelBuilders implements Serializable {
         newTrain = Filter.useFilter(newTrain, randomTrain);
 
         classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
-                "Classifier to train.", fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper.class,
-                "fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper");
+                "Classifier to train.", moa.classifiers.Classifier.class,
+                "moa.classifiers.trees.AdaHoeffdingOptionTree -g 500");
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", nEnsemble, 1, Integer.MAX_VALUE);
 
@@ -727,6 +730,9 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", nEnsemble, 1, Integer.MAX_VALUE);
+        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+                "Classifier to train.", moa.classifiers.Classifier.class,
+                "moa.classifiers.trees.AdaHoeffdingOptionTree -g 500");
 
         SpreadSubsample subsample = new SpreadSubsample();
         subsample.setInputFormat(train);
