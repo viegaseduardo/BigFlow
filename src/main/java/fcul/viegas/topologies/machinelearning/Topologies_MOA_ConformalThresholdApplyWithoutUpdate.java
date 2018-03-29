@@ -428,7 +428,6 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                         int nCorrectlyAcceptedNormal = 0; //ok
                         int nCorrectlyAcceptedAttack = 0;
 
-                        int j = 0;
 
                         for (ValueForRejectEvaluation values : listValuesAll) {
                             n++;
