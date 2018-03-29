@@ -502,7 +502,7 @@ public class MachineLearningModelBuilders implements Serializable {
                 "gracePeriod",
                 'g',
                 "The number of instances a leaf should observe between split attempts.",
-                100, 0, Integer.MAX_VALUE);
+                200, 0, Integer.MAX_VALUE);
         classifier.leafpredictionOption = new MultiChoiceOption(
                 "leafprediction", 'l', "Leaf prediction to use.", new String[]{
                 "MC", "NB", "NBAdaptive"}, new String[]{
@@ -516,7 +516,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         Resample resample = new Resample();
         resample.setInputFormat(train);
-        resample.setBiasToUniformClass(0.3f);
+        resample.setBiasToUniformClass(0.2f);
         resample.setNoReplacement(false);
         Instances newTrain = Filter.useFilter(train, resample);
 
