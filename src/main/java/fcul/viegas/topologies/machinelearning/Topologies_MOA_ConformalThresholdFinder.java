@@ -558,6 +558,8 @@ public class Topologies_MOA_ConformalThresholdFinder {
                 float error = Float.valueOf(split[4]);
                 error = error / 1.0f;
                 float rejection = ((Float.valueOf(split[11]))/1.0f);
+                //rejection = 1.0f - rejection;
+                rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11]))/2.0f);
                 rejection = 1.0f - rejection;
 
                 //float error = Float.valueOf(split[3]);
