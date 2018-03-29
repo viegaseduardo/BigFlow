@@ -428,6 +428,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                         int nCorrectlyAcceptedNormal = 0; //ok
                         int nCorrectlyAcceptedAttack = 0;
 
+                        int j = 0;
 
                         for (ValueForRejectEvaluation values : listValuesAll) {
                             n++;
@@ -516,7 +517,6 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                         if (n == 0) {
                             n = 1;
                         }
-
                         float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
                         String print = s1[0] + ";";
                         print = print + s1[1] + ";";
