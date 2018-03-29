@@ -97,33 +97,33 @@ public class Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal {
         Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
         dataTrainMOORE.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
-            Instances dataTrainInc = mlModelBuilder.openFile(testFilesMOORE.get(i));
-            dataTrainInc.randomize(new Random(1));
-            for (Instance inst : dataTrainInc) {
-                dataTrainMOORE.add(inst);
-            }
+            //Instances dataTrainInc = mlModelBuilder.openFile(testFilesMOORE.get(i));
+            //dataTrainInc.randomize(new Random(1));
+            //for (Instance inst : dataTrainInc) {
+            //    dataTrainMOORE.add(inst);
+            //}
         }
         dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
 
         Instances dataTrainNIGEL = mlModelBuilder.openFile(testFilesNIGEL.get(0));
         dataTrainNIGEL.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
-            Instances dataTrainInc = mlModelBuilder.openFile(testFilesNIGEL.get(i));
-            dataTrainInc.randomize(new Random(1));
-            for (Instance inst : dataTrainInc) {
-                dataTrainNIGEL.add(inst);
-            }
+            //Instances dataTrainInc = mlModelBuilder.openFile(testFilesNIGEL.get(i));
+            //dataTrainInc.randomize(new Random(1));
+            //for (Instance inst : dataTrainInc) {
+            //    dataTrainNIGEL.add(inst);
+            //}
         }
         dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
 
         Instances dataTrainORUNADA = mlModelBuilder.openFile(testFilesORUNADA.get(0));
         dataTrainORUNADA.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
-            Instances dataTrainInc = mlModelBuilder.openFile(testFilesORUNADA.get(i));
-            dataTrainInc.randomize(new Random(1));
-            for (Instance inst : dataTrainInc) {
-                dataTrainORUNADA.add(inst);
-            }
+            //Instances dataTrainInc = mlModelBuilder.openFile(testFilesORUNADA.get(i));
+            //dataTrainInc.randomize(new Random(1));
+            //for (Instance inst : dataTrainInc) {
+            //    dataTrainORUNADA.add(inst);
+            //}
         }
         dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
         dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
