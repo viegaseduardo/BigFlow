@@ -487,7 +487,6 @@ public class Topologies_MOA_ConformalThresholdFinder {
                             n = 1;
                         }
 
-
                         outputList.add(iAttack + ";"
                                 + iNormal + ";"
                                 + (1 - (nAcc / (float) n)) + ";"
@@ -550,15 +549,15 @@ public class Topologies_MOA_ConformalThresholdFinder {
 
                 String[] split = line.split(";");
 
-                float error = Float.valueOf(split[3]) + Float.valueOf(split[4]);
-                error = error / 2.0f;
-                float rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11]))/2.0f);
-                rejection = 1.0f - rejection;
-
-                //float error = Float.valueOf(split[4]);
-                //error = error / 1.0f;
+                //float error = Float.valueOf(split[3]) + Float.valueOf(split[4]);
+                //error = error / 2.0f;
                 //float rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11]))/2.0f);
                 //rejection = 1.0f - rejection;
+
+                float error = Float.valueOf(split[4]);
+                error = error / 1.0f;
+                float rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11]))/2.0f);
+                rejection = 1.0f - rejection;
                 //float rejection = ((Float.valueOf(split[11]))/1.0f);
                 //rejection = 1.0f - rejection;
 
