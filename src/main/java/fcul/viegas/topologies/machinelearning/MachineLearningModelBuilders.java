@@ -498,12 +498,12 @@ public class MachineLearningModelBuilders implements Serializable {
     public moa.classifiers.AbstractClassifier trainClassifierHoeffdingTreeMOA(Instances train) throws Exception {
         //moa.classifiers.AbstractClassifier classifier = new fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper();
         moa.classifiers.trees.AdaHoeffdingOptionTree classifier = new moa.classifiers.trees.AdaHoeffdingOptionTree();
-        /*classifier.gracePeriodOption = new IntOption(
+        classifier.gracePeriodOption = new IntOption(
                 "gracePeriod",
                 'g',
                 "The number of instances a leaf should observe between split attempts.",
                 1000, 0, Integer.MAX_VALUE);
-        classifier.leafpredictionOption = new MultiChoiceOption(
+     /*   classifier.leafpredictionOption = new MultiChoiceOption(
                 "leafprediction", 'l', "Leaf prediction to use.", new String[]{
                 "MC", "NB", "NBAdaptive"}, new String[]{
                 "Majority class",
