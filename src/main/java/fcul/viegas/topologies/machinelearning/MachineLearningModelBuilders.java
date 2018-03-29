@@ -509,7 +509,7 @@ public class MachineLearningModelBuilders implements Serializable {
                 "Majority class",
                 "Naive Bayes",
                 "Naive Bayes Adaptive"}, 2);
-
+//a
         //ClassBalancer balancer = new ClassBalancer();
         //balancer.setInputFormat(train);
         //Instances newTrain = Filter.useFilter(train, balancer);
