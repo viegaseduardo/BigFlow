@@ -518,17 +518,21 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                         }
                         float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
                         String print = s1[0] + ";";
-                        print = print + s1[1] + ";";
-                        print = print + s1[2] + ";";
-                        print = print + s1[3] + ";";
+                        print = print + 0 + ";";
+                        print = print + 0 + ";";
                         print = print + (n) + ";";
                         print = print + nNormal + ";";
+                        print = print + nAttack + ";";
                         print = print + nAttack + ";";
                         print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
                         print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
                         print = print + accAceito + ";";
+                        print = print + 0 + ";";
+                        print = print + 0 + ";";
+                        print = print + 0 + ";";
                         print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
                         print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+                        print = print + 0 + ";";
                         print = print + ((nRejectedAttack) / (float) nAttack) + ";";
                         print = print + ((nRejectedNormal) / (float) nNormal);
 
@@ -561,13 +565,13 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
         }
         writer.close();
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
+        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
                 outputPath + "_raw_output.csv",
                 outputPath + "_summarized_monthly.csv",
                 ParseRawOutputFlinkNoUpdate.MonthRange
         );
 
-        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejectionCascade(
+        ParseRawOutputFlinkNoUpdate.generateSummaryFileWithRejection(
                 outputPath + "_raw_output.csv",
                 outputPath + "_summarized_yearly.csv",
                 ParseRawOutputFlinkNoUpdate.YearRange
