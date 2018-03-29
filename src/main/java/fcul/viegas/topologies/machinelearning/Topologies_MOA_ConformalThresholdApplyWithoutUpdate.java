@@ -46,8 +46,8 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
             String[] params) throws Exception {
 
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
-        double thresholdAttack = Float.valueOf(params[5]);
-        double thresholdNormal = Float.valueOf(params[4]);
+        double thresholdAttack = Double.valueOf(params[5]);
+        double thresholdNormal = Double.valueOf(params[4]);
 
         this.folderPath = params[1];
         this.outputPath = params[2] + "_threshold_file.csv";
