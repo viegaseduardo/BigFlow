@@ -162,7 +162,7 @@ public class Main {
                     args[N+4] = attack threshold
 
              */
-            Topologies_MOA_ConformalThresholdApplyWithoutUpdate conformalFinder = new Topologies_MOA_ConformalThresholdApplyWithoutUpdate();
+            Topologies_MOA_ConformalThresholdApplyWithUpdate conformalFinder = new Topologies_MOA_ConformalThresholdApplyWithUpdate();
 
             System.out.println("Generating threshold evaluation file...");
 

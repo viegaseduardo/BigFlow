@@ -10,10 +10,12 @@ import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.*;
 
-public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
+public class Topologies_MOA_ConformalThresholdApplyWithUpdate {
 
 
     public class ValueForRejectEvaluation {
@@ -120,7 +122,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
         //weka classifiers
         int indexToUse = 6;
         if (indexToUse < params.length && !params[indexToUse].equals("stream")) {
-            for (; indexToUse < params.length;) {
+            for (; indexToUse < params.length; ) {
                 String featureSet = params[indexToUse++];
                 String classifierToBuild = params[indexToUse++];
                 float normalThreshold = Float.valueOf(params[indexToUse++]);
@@ -156,7 +158,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
 
         //moa classifiers
         indexToUse++;
-        for (; indexToUse < params.length;) {
+        for (; indexToUse < params.length; ) {
             String featureSet = params[indexToUse++];
             String classifierToBuild = params[indexToUse++];
             float normalThreshold = Float.valueOf(params[indexToUse++]);
@@ -175,7 +177,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                     ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
                     ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
                     ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("ozaboosting")
-                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain,  Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("adaptiveforest")
+                    ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("adaptiveforest")
                     ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
                     ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
                     ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain, Integer.valueOf(params[indexToUse++])) : classifierToBuild.equals("leveragingbag")
@@ -208,7 +210,6 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
             testFiles.add(array);
         }
 
-        int j = 0;
         int acertou = 0;
         int nTotalAttack = 0;
         int nTotalNormal = 0;
@@ -235,9 +236,9 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
             for (int counter = 0; counter < insts.size(); counter++) {
                 com.yahoo.labs.samoa.instances.Instance inst = insts.get(counter);
 
-                if(inst.classValue() == 0.0d){
+                if (inst.classValue() == 0.0d) {
                     nTotalNormal++;
-                }else{
+                } else {
                     nTotalAttack++;
                 }
 
@@ -251,7 +252,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                 values.votesForNormal = 0;
                 values.instClass = inst.classValue();
 
-                for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
+                for (int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++) {
                     moa.classifiers.AbstractClassifier classifier = wekaWrapper.getMoaClassifiers().get(k);
 
                     double[] prob = classifier.getVotesForInstance(inst);
@@ -262,16 +263,15 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                         acertou++;
                     }
                     boolean choosenAttack = false;
-                    if(correctlyClassifies && inst.classValue() == 0.0d){
+                    if (correctlyClassifies && inst.classValue() == 0.0d) {
                         choosenAttack = false;
-                    }else if(correctlyClassifies && inst.classValue() == 1.0d){
+                    } else if (correctlyClassifies && inst.classValue() == 1.0d) {
                         choosenAttack = true;
-                    }else if(!correctlyClassifies && inst.classValue() == 0.0d){
+                    } else if (!correctlyClassifies && inst.classValue() == 0.0d) {
                         choosenAttack = true;
-                    }else{
+                    } else {
                         choosenAttack = false;
                     }
-
 
 
                     if (!choosenAttack) {
@@ -303,12 +303,12 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
         ArrayList<Double> minProbClassifier = new ArrayList<>();
         ArrayList<Double> maxProbClassifier = new ArrayList<>();
 
-        for(int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++){
+        for (int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++) {
             double minProb = 1000000.0d;
             double maxProb = 0.0d;
-            for(ValueForRejectEvaluation values: listValuesAll){
+            for (ValueForRejectEvaluation values : listValuesAll) {
                 double alpha = values.alphaEachClassifier.get(k)[0];
-                if(!Double.isNaN(alpha)) {
+                if (!Double.isNaN(alpha)) {
                     if (alpha < minProb) {
                         minProb = alpha;
                     }
@@ -317,7 +317,7 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
                     }
                 }
                 alpha = values.alphaEachClassifier.get(k)[1];
-                if(!Double.isNaN(alpha)) {
+                if (!Double.isNaN(alpha)) {
                     if (alpha < minProb) {
                         minProb = alpha;
                     }
@@ -333,218 +333,208 @@ public class Topologies_MOA_ConformalThresholdApplyWithoutUpdate {
         System.out.println("Computing daily now");
         List<String> outputList = Collections.synchronizedList(new ArrayList<String>());
 
-        class ParameterClass implements Runnable {
-            int i;
-            int upper;
+        ArrayList<ArrayList<com.yahoo.labs.samoa.instances.Instance>> instancesToUseUpdate = new ArrayList<>();
 
-            ParameterClass(int i, int upper) {
-                this.i = i;
-                this.upper = upper;
+        for (int j = 0; j < testFiles.size(); j++) {
+            String[] s1 = testFiles.get(j);
+            String s = s1[0];
+
+            Instances dataTest = mlModelBuilder.openFile(s);
+            dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
+
+            if (featureSet.equals("VIEGAS")) {
+                dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
             }
 
-            public void run() {
-                try {
-                    for (int j = i; j < upper && j < testFiles.size(); j++) {
-                        String[] s1 = testFiles.get(j);
-                        String s = s1[0];
+            WekaToSamoaInstanceConverter converterViegas = new WekaToSamoaInstanceConverter();
+            com.yahoo.labs.samoa.instances.Instances insts = converterViegas.samoaInstances(dataTest);
 
-                        Instances dataTest = mlModelBuilder.openFile(s);
-                        dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
+            ArrayList<com.yahoo.labs.samoa.instances.Instance> instancesRejected = new ArrayList<>();
 
-                        if (featureSet.equals("VIEGAS")) {
-                            dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
-                        }
+            listValuesAll = new ArrayList<>();
+            for (int counter = 0; counter < insts.size(); counter++) {
+                com.yahoo.labs.samoa.instances.Instance inst = insts.get(counter);
 
-                        WekaToSamoaInstanceConverter converterViegas = new WekaToSamoaInstanceConverter();
-                        com.yahoo.labs.samoa.instances.Instances insts = converterViegas.samoaInstances(dataTest);
+                ValueForRejectEvaluation values = new ValueForRejectEvaluation();
 
-                        ArrayList<ValueForRejectEvaluation> listValuesAll = new ArrayList<>();
-                        for (int counter = 0; counter < insts.size(); counter++) {
-                            com.yahoo.labs.samoa.instances.Instance inst = insts.get(counter);
+                values.predictClassClassifier = new ArrayList<>();
+                values.credibility = new ArrayList<>();
+                values.confidence = new ArrayList<>();
+                values.alphaEachClassifier = new ArrayList<>();
+                values.votesForAttack = 0;
+                values.votesForNormal = 0;
+                values.instClass = inst.classValue();
 
-                            ValueForRejectEvaluation values = new ValueForRejectEvaluation();
+                for (int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++) {
+                    moa.classifiers.AbstractClassifier classifier = wekaWrapper.getMoaClassifiers().get(k);
 
-                            values.predictClassClassifier = new ArrayList<>();
-                            values.credibility = new ArrayList<>();
-                            values.confidence = new ArrayList<>();
-                            values.alphaEachClassifier = new ArrayList<>();
-                            values.votesForAttack = 0;
-                            values.votesForNormal = 0;
-                            values.instClass = inst.classValue();
+                    double[] prob = classifier.getVotesForInstance(inst);
+                    prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
 
-                            for (int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++) {
-                                moa.classifiers.AbstractClassifier classifier = wekaWrapper.getMoaClassifiers().get(k);
+                    boolean correctlyClassifies = classifier.correctlyClassifies(inst);
 
-                                double[] prob = classifier.getVotesForInstance(inst);
-                                prob = Arrays.copyOf(prob, inst.numClasses()); //pequeno teste
-
-                                boolean correctlyClassifies = classifier.correctlyClassifies(inst);
-
-                                boolean choosenAttack = false;
-                                if (correctlyClassifies && inst.classValue() == 0.0d) {
-                                    choosenAttack = false;
-                                } else if (correctlyClassifies && inst.classValue() == 1.0d) {
-                                    choosenAttack = true;
-                                } else if (!correctlyClassifies && inst.classValue() == 0.0d) {
-                                    choosenAttack = true;
-                                } else {
-                                    choosenAttack = false;
-                                }
-
-
-                                if (!choosenAttack) {
-                                    values.predictClassClassifier.add(0.0d);
-                                    //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
-                                    //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
-                                    //values.alpha = values.credibility + values.confidene;
-
-                                    values.votesForNormal++;
-                                    values.alphaEachClassifier.add(prob);
-
-                                } else {
-                                    values.predictClassClassifier.add(1.0d);
-                                    //values.credibility = conformal.getPValueForAttack(dataTest.get(counter));
-                                    //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
-                                    //values.alpha = values.credibility + values.confidence;
-
-                                    values.votesForAttack++;
-                                    values.alphaEachClassifier.add(prob);
-                                }
-
-
-                            }
-
-                            listValuesAll.add(values);
-                        }
-
-
-                        int n = 0;
-                        int nNormal = 0; //ok
-                        int nAttack = 0; //ok
-                        int nRejectedNormal = 0; //ok
-                        int nRejectedAttack = 0; //ok
-                        int nAcceptedNormal = 0; //ok
-                        int nAcceptedAttack = 0; //ok
-                        int nCorrectlyAcceptedNormal = 0; //ok
-                        int nCorrectlyAcceptedAttack = 0;
-
-
-                        for (ValueForRejectEvaluation values : listValuesAll) {
-                            n++;
-
-                            if (values.instClass == 0.0d) {
-                                nNormal++;
-                            } else {
-                                nAttack++;
-                            }
-
-                            values.averageAttackProb = 0.0d;
-                            values.averageNormalProb = 0.0d;
-                            for (int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++) {
-                                if (values.predictClassClassifier.get(k) == 0.0d) {
-                                    double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
-                                    if (normalizedProb > values.averageNormalProb || values.averageNormalProb == 0.0d) {
-                                        values.averageNormalProb = normalizedProb;
-                                    }
-                                } else {
-                                    double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
-                                    if (normalizedProb > values.averageAttackProb || values.averageAttackProb == 0.0d) {
-                                        values.averageAttackProb = normalizedProb;
-                                    }
-                                }
-                            }
-
-                            if (values.votesForNormal >= wekaWrapper.getMoaClassifiers().size()) {
-                                values.alpha = values.averageNormalProb;
-                                values.predictClass = 0.0d;
-                            } else {
-                                values.alpha = values.averageAttackProb;
-                                values.predictClass = 1.0d;
-                            }
-
-                            if (values.predictClass == 0.0d) {
-                                if (values.alpha >= thresholdNormal) {
-                                    if (values.instClass == 0.0d) {
-                                        nAcceptedNormal++;
-                                        nCorrectlyAcceptedNormal++;
-                                    } else {
-                                        nAcceptedAttack++;
-                                    }
-                                } else {
-                                    if (values.instClass == 0.0d) {
-                                        nRejectedNormal++;
-                                    } else {
-                                        nRejectedAttack++;
-                                    }
-                                }
-                            } else {
-                                if (values.alpha >= thresholdAttack) {
-                                    if (values.instClass == 0.0d) {
-                                        nAcceptedNormal++;
-                                    } else {
-                                        nAcceptedAttack++;
-                                        nCorrectlyAcceptedAttack++;
-                                    }
-                                } else {
-                                    if (values.instClass == 0.0d) {
-                                        nRejectedNormal++;
-                                    } else {
-                                        nRejectedAttack++;
-                                    }
-                                }
-                            }
-
-                        }
-                        if (nNormal == 0) {
-                            nNormal = 1;
-                        }
-                        if (nAttack == 0) {
-                            nAttack = 1;
-                        }
-                        if (n == 0) {
-                            n = 1;
-                        }
-                        float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
-
-
-                        String print = s1[0] + ";";
-                        print = print + 0 + ";";
-                        print = print + 0 + ";";
-                        print = print + (n) + ";";
-                        print = print + nNormal + ";";
-                        print = print + nAttack + ";";
-                        print = print + nAttack + ";";
-                        print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
-                        print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
-                        print = print + accAceito + ";";
-                        print = print + 0 + ";";
-                        print = print + 0 + ";";
-                        print = print + 0 + ";";
-                        print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
-                        print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
-                        print = print + 0 + ";";
-                        print = print + ((nRejectedAttack) / (float) nAttack) + ";";
-                        print = print + ((nRejectedNormal) / (float) nNormal);
-
-                        outputList.add(print);
-
-                        System.out.println(s);
+                    boolean choosenAttack = false;
+                    if (correctlyClassifies && inst.classValue() == 0.0d) {
+                        choosenAttack = false;
+                    } else if (correctlyClassifies && inst.classValue() == 1.0d) {
+                        choosenAttack = true;
+                    } else if (!correctlyClassifies && inst.classValue() == 0.0d) {
+                        choosenAttack = true;
+                    } else {
+                        choosenAttack = false;
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+
+
+                    if (!choosenAttack) {
+                        values.predictClassClassifier.add(0.0d);
+                        //values.credibility = conformal.getPValueForNormal(dataTest.get(counter));
+                        //values.confidence = 1.0f - conformal.getPValueForAttack(dataTest.get(counter));
+                        //values.alpha = values.credibility + values.confidene;
+
+                        values.votesForNormal++;
+                        values.alphaEachClassifier.add(prob);
+
+                    } else {
+                        values.predictClassClassifier.add(1.0d);
+                        //values.credibility = conformal.getPValueForAttack(dataTest.get(counter));
+                        //values.confidence = 1.0f - conformal.getPValueForNormal(dataTest.get(counter));
+                        //values.alpha = values.credibility + values.confidence;
+
+                        values.votesForAttack++;
+                        values.alphaEachClassifier.add(prob);
+                    }
+
+
+                }
+
+                listValuesAll.add(values);
+            }
+
+
+            int n = 0;
+            int nNormal = 0; //ok
+            int nAttack = 0; //ok
+            int nRejectedNormal = 0; //ok
+            int nRejectedAttack = 0; //ok
+            int nAcceptedNormal = 0; //ok
+            int nAcceptedAttack = 0; //ok
+            int nCorrectlyAcceptedNormal = 0; //ok
+            int nCorrectlyAcceptedAttack = 0;
+
+
+            for (ValueForRejectEvaluation values : listValuesAll) {
+                n++;
+
+                if (values.instClass == 0.0d) {
+                    nNormal++;
+                } else {
+                    nAttack++;
+                }
+
+                values.averageAttackProb = 0.0d;
+                values.averageNormalProb = 0.0d;
+                for (int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++) {
+                    if (values.predictClassClassifier.get(k) == 0.0d) {
+                        double normalizedProb = values.alphaEachClassifier.get(k)[0] / maxProbClassifier.get(k);
+                        if (normalizedProb > values.averageNormalProb || values.averageNormalProb == 0.0d) {
+                            values.averageNormalProb = normalizedProb;
+                        }
+                    } else {
+                        double normalizedProb = values.alphaEachClassifier.get(k)[1] / maxProbClassifier.get(k);
+                        if (normalizedProb > values.averageAttackProb || values.averageAttackProb == 0.0d) {
+                            values.averageAttackProb = normalizedProb;
+                        }
+                    }
+                }
+
+                if (values.votesForNormal >= wekaWrapper.getMoaClassifiers().size()) {
+                    values.alpha = values.averageNormalProb;
+                    values.predictClass = 0.0d;
+                } else {
+                    values.alpha = values.averageAttackProb;
+                    values.predictClass = 1.0d;
+                }
+
+                if (values.predictClass == 0.0d) {
+                    if (values.alpha >= thresholdNormal) {
+                        if (values.instClass == 0.0d) {
+                            nAcceptedNormal++;
+                            nCorrectlyAcceptedNormal++;
+                        } else {
+                            nAcceptedAttack++;
+                        }
+                    } else {
+                        if (values.instClass == 0.0d) {
+                            nRejectedNormal++;
+                        } else {
+                            nRejectedAttack++;
+                        }
+                        instancesRejected.add(insts.get(n-1));
+                    }
+                } else {
+                    if (values.alpha >= thresholdAttack) {
+                        if (values.instClass == 0.0d) {
+                            nAcceptedNormal++;
+                        } else {
+                            nAcceptedAttack++;
+                            nCorrectlyAcceptedAttack++;
+                        }
+                    } else {
+                        if (values.instClass == 0.0d) {
+                            nRejectedNormal++;
+                        } else {
+                            nRejectedAttack++;
+                        }
+                        instancesRejected.add(insts.get(n-1));
+                    }
+                }
+
+            }
+            if (nNormal == 0) {
+                nNormal = 1;
+            }
+            if (nAttack == 0) {
+                nAttack = 1;
+            }
+            if (n == 0) {
+                n = 1;
+            }
+
+            instancesToUseUpdate.add(instancesRejected);
+            if(j - 3 > 0){
+                for(com.yahoo.labs.samoa.instances.Instance inst: instancesToUseUpdate.get(j - 3)){
+                    for (int k = 0; k < wekaWrapper.getMoaClassifiers().size(); k++) {
+                        wekaWrapper.getMoaClassifiers().get(k).trainOnInstance(inst);
+                    }
                 }
             }
-        }
 
-        ArrayList<Thread> threads = new ArrayList<>();
-        for(int nThreads = 0; nThreads < 15; nThreads++){
-            Thread t = new Thread(new ParameterClass((int)((testFiles.size()/15.0f)*nThreads), (int)(((testFiles.size()/15.0f)*(nThreads+1)))));
-            t.start();
-            threads.add(t);
-        }
 
-        for(Thread t: threads) {
-            t.join();
+            float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
+
+
+            String print = s1[0] + ";";
+            print = print + 0 + ";";
+            print = print + 0 + ";";
+            print = print + (n) + ";";
+            print = print + nNormal + ";";
+            print = print + nAttack + ";";
+            print = print + nAttack + ";";
+            print = print + (nCorrectlyAcceptedNormal / (float) nAcceptedNormal) + ";";
+            print = print + (nCorrectlyAcceptedAttack / (float) nAcceptedAttack) + ";";
+            print = print + accAceito + ";";
+            print = print + 0 + ";";
+            print = print + 0 + ";";
+            print = print + 0 + ";";
+            print = print + ((nRejectedNormal + nRejectedAttack) / (float) (nNormal + nAttack)) + ";";
+            print = print + ((((nCorrectlyAcceptedNormal / (float) nAcceptedNormal)) + ((nCorrectlyAcceptedAttack / (float) nAcceptedAttack))) / 2.0f) + ";";
+            print = print + 0 + ";";
+            print = print + ((nRejectedAttack) / (float) nAttack) + ";";
+            print = print + ((nRejectedNormal) / (float) nNormal);
+
+            outputList.add(print);
+
+            System.out.println(s);
         }
 
 
