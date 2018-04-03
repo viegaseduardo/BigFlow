@@ -513,6 +513,10 @@ public class Topologies_MOA_ConformalThresholdApplyWithUpdate {
             float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
 
 
+
+
+
+
             String print = s1[0] + ";";
             print = print + 0 + ";";
             print = print + 0 + ";";

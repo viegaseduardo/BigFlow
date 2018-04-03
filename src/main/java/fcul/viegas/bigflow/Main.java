@@ -9,6 +9,7 @@ import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 import fcul.viegas.topologies.machinelearning.*;
+import fcul.viegas.topologies.machinelearning.ConformalEvaluator.ConformalEvaluator_Batch_ThresholdFinder;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
@@ -163,6 +164,24 @@ public class Main {
 
              */
             Topologies_MOA_ConformalThresholdApplyWithUpdate conformalFinder = new Topologies_MOA_ConformalThresholdApplyWithUpdate();
+
+            System.out.println("Generating threshold evaluation file...");
+
+            conformalFinder.generateThresholdEvaluationFile(args);
+
+
+        } else if (args[0].equals("evaluateconformalbatch")) {
+
+            /*
+
+                args[1] = path to folder
+                args[2] = output
+                args[3] = days to use for training
+                args[4] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[5] = classifier {naive, tree, forest, extratrees, adaboost, bagging, hoeffding}
+
+             */
+            ConformalEvaluator_Batch_ThresholdFinder conformalFinder = new ConformalEvaluator_Batch_ThresholdFinder();
 
             System.out.println("Generating threshold evaluation file...");
 
