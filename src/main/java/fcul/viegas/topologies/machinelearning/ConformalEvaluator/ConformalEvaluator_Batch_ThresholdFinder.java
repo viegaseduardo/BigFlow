@@ -211,8 +211,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 values.predictClass = predict;
                 if(values.predictClass == 0.0d){
                     values.alpha = conformalEvaluator.getPValueForNormal(inst);
+                    listValuesPredictedNormal.add(values);
                 }else{
                     values.alpha = conformalEvaluator.getPValueForAttack(inst);
+                    listValuesPredictedAttack.add(values);
                 }
 
             }
