@@ -190,6 +190,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             public void run() {
                 try {
                     for (int k = i; k < iUpper; k++) {
+                        System.out.println("Thread: [" + k + "/" + iUpper + "]");
                         String s = null;
                         String[] s1 = testFiles.get(k);
                         if (featureSet.equals("VIEGAS")) {
