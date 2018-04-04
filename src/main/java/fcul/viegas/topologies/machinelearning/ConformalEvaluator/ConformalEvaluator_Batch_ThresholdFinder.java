@@ -137,7 +137,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         String classifierToBuild = params[indexToUse++];
 
-        Classifier classifier = null;
+        weka.classifiers.Classifier classifier = null;
         //se nao for nem A nem B, da pau...
 
         System.out.println("STATIC - Building " + classifierToBuild + " classifier...");
@@ -215,7 +215,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                         for (int counter = 0; counter < dataTest.size(); counter++) {
                             Instance inst = dataTest.get(counter);
-                            double predict = classifier.classifyInstance(inst);
+                            double predict = 0.0d;
+                            synchronized (classifier){
+                                predict = classifier.classifyInstance(inst);
+                            }
 
                             synchronized (stats) {
                                 if (inst.classValue() == 0.0d) {
