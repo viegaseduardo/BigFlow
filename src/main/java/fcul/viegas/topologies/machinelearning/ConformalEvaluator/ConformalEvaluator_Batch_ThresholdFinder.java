@@ -204,6 +204,9 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 }else{
                     nTotalAttack++;
                 }
+                if(inst.classValue() == predict){
+                    acertou++;
+                }
 
                 ValueForRejectEvaluation values = new ValueForRejectEvaluation();
 
@@ -332,6 +335,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         if (n == 0) {
                             n = 1;
                         }
+
+
+
+
 
 
                         outputList.add(iAttack + ";"

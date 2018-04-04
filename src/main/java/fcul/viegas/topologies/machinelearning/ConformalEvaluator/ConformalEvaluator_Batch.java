@@ -42,7 +42,14 @@ public class ConformalEvaluator_Batch {
         System.out.println("CONFORMAL: computing non-conformities");
         int iNormal = 0;
         int iAttack = 0;
+        int pct = 0;
+        int index = 0;
         for (Instance inst : insts) {
+            index++;
+            if(index % (nInstancesNormal/100) == 0){
+                pct++;
+                System.out.println("\tnonconformity " + pct + "%");
+            }
             if(inst.classValue() == 0.0d){
                 this.nonConformityMeasures[0][iNormal] = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 0.0d);
                 iNormal++;
@@ -54,20 +61,30 @@ public class ConformalEvaluator_Batch {
 
         System.out.println("CONFORMAL: computing p-values");
 
+        pct = 0;
         for(int i = 0; i < nInstancesNormal; i++){
+            if(i % (nInstancesNormal/100) == 0){
+                pct++;
+                System.out.println("\tnormal p-value " + pct + "%");
+            }
             int nInstancesHigher = 0;
             for(int j = 0; j < this.nonConformityMeasures[0].length; j++){
-                if(j != i && this.nonConformityMeasures[0][j] >= this.nonConformityMeasures[0][i]){
+                if(j != i && this.nonConformityMeasures[0][i] >= this.nonConformityMeasures[0][j]){
                     nInstancesHigher++;
                 }
             }
             this.pvalues[0][i] = nInstancesHigher / (double) this.nonConformityMeasures[0].length;
         }
 
+        pct = 0;
         for(int i = 0; i < nInstancesAttack; i++){
+            if(i % (nInstancesAttack/100) == 0){
+                pct++;
+                System.out.println("\tattack p-value " + pct + "%");
+            }
             int nInstancesHigher = 0;
             for(int j = 0; j < this.nonConformityMeasures[1].length; j++){
-                if(j != i && this.nonConformityMeasures[1][j] >= this.nonConformityMeasures[1][i]){
+                if(j != i && this.nonConformityMeasures[1][i] >= this.nonConformityMeasures[1][j]){
                     nInstancesHigher++;
                 }
             }
