@@ -108,7 +108,7 @@ public class ConformalEvaluator_Batch {
         double nonConformity = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 1.0d);
         int nInstancesHigher = 0;
         for(int j = 0; j < this.nonConformityMeasures[1].length; j++){
-            if(nonConformity >= this.nonConformityMeasures[1][j]){
+            if(this.nonConformityMeasures[1][j] >= nonConformity){
                 nInstancesHigher++;
             }
         }
@@ -119,7 +119,7 @@ public class ConformalEvaluator_Batch {
         double nonConformity = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 0.0d);
         int nInstancesHigher = 0;
         for(int j = 0; j < this.nonConformityMeasures[0].length; j++){
-            if(nonConformity >= this.nonConformityMeasures[0][j]){
+            if(this.nonConformityMeasures[0][j] >= nonConformity){
                 nInstancesHigher++;
             }
         }
