@@ -59,7 +59,8 @@ public class ConformalEvaluator_Batch {
             }
         }
 
-        System.out.println("CONFORMAL: computing p-values");
+    /*    System.out.println("CONFORMAL: computing p-values");
+
 
         pct = 0;
         for(int i = 0; i < nInstancesNormal; i++){
@@ -99,7 +100,7 @@ public class ConformalEvaluator_Batch {
             int pingNormal = this.pvalues[0].length / 100;
             int pingAttack = this.pvalues[1].length / 100;
             System.out.println("Normal [" + this.pvalues[0][pingNormal * i] + "] Attack [" + this.pvalues[1][pingAttack * i] + "]");
-        }
+        }*/
 
     }
 

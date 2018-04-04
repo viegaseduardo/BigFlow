@@ -129,7 +129,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         System.out.println("building classifiers now, this will take some time.........");
-
         //aqui ainda nao usamos o moa mas who cares?, agora usamos
 
 
@@ -165,66 +164,106 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             testFiles.add(array);
         }
 
+        List<ValueForRejectEvaluation> listValuesPredictedNormal = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
+        List<ValueForRejectEvaluation> listValuesPredictedAttack = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
+
         int j = 0;
-        int acertou = 0;
-        int nTotalAttack = 0;
-        int nTotalNormal = 0;
-        ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<>();
-        ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<>();
+        class Stats{
+            public int acertou = 0;
+            public int nTotalAttack = 0;
+            public int nTotalNormal = 0;
+        }
+        Stats stats = new Stats();
 
 
-        for (String[] s1 : testFiles) {
-            String s = null;
-            if(featureSet.equals("VIEGAS")){
-                s = s1[0];
-            }else if(featureSet.equals("MOORE")){
-                s = s1[1];
-            }else if(featureSet.equals("NIGEL")){
-                s = s1[2];
-            }else if(featureSet.equals("ORUNADA")){
-                s = s1[3];
+        class TestClass implements Runnable {
+            int i;
+            int iUpper;
+            Classifier classifier;
+
+            TestClass(int i, int iUpper, Classifier classifier) {
+                this.i = i;
+                this.iUpper = iUpper;
+                this.classifier = classifier;
             }
 
-            Instances dataTest = mlModelBuilder.openFile(s);
-            dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
+            public void run() {
+                try {
+                    for (int k = i; k < iUpper; k++) {
+                        String s = null;
+                        String[] s1 = testFiles.get(k);
+                        if (featureSet.equals("VIEGAS")) {
+                            s = s1[0];
+                        } else if (featureSet.equals("MOORE")) {
+                            s = s1[1];
+                        } else if (featureSet.equals("NIGEL")) {
+                            s = s1[2];
+                        } else if (featureSet.equals("ORUNADA")) {
+                            s = s1[3];
+                        }
 
-            if (featureSet.equals("VIEGAS")) {
-                dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
-            }else if (featureSet.equals("ORUNADA")){
-                dataTest = mlModelBuilder.removeParticularAttributesOrunada(dataTest);
+                        Instances dataTest = mlModelBuilder.openFile(s);
+                        dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
+
+                        if (featureSet.equals("VIEGAS")) {
+                            dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
+                        } else if (featureSet.equals("ORUNADA")) {
+                            dataTest = mlModelBuilder.removeParticularAttributesOrunada(dataTest);
+                        }
+
+
+                        for (int counter = 0; counter < dataTest.size(); counter++) {
+                            Instance inst = dataTest.get(counter);
+                            double predict = classifier.classifyInstance(inst);
+
+                            synchronized (stats) {
+                                if (inst.classValue() == 0.0d) {
+                                    stats.nTotalNormal++;
+                                } else {
+                                    stats.nTotalAttack++;
+                                }
+                                if (inst.classValue() == predict) {
+                                    stats.acertou++;
+                                }
+                            }
+
+                            ValueForRejectEvaluation values = new ValueForRejectEvaluation();
+
+                            values.instClass = inst.classValue();
+                            values.predictClass = predict;
+                            if (values.predictClass == 0.0d) {
+                                values.alpha = conformalEvaluator.getPValueForNormal(inst);
+                                //values.alpha = classifier.distributionForInstance(inst)[0];
+                                listValuesPredictedNormal.add(values);
+                            } else {
+                                values.alpha = conformalEvaluator.getPValueForAttack(inst);
+                                //values.alpha = classifier.distributionForInstance(inst)[1];
+                                listValuesPredictedAttack.add(values);
+                            }
+
+                        }
+
+                        System.out.println(s);
+                    }
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
             }
+        }
 
 
-            for (int counter = 0; counter < dataTest.size(); counter++) {
-                Instance inst = dataTest.get(counter);
-                double predict = classifier.classifyInstance(inst);
+        ArrayList<Thread> threads = new ArrayList<>();
+        int jump = testFiles.size() / 15;
+        int start = 0;
+        for(int nThreads = 0; nThreads < 15; nThreads++){
+            Thread t = new Thread(new TestClass(start, start+jump, classifier));
+            t.start();
+            threads.add(t);
+            start += jump;
+        }
 
-                if(inst.classValue() == 0.0d){
-                    nTotalNormal++;
-                }else{
-                    nTotalAttack++;
-                }
-                if(inst.classValue() == predict){
-                    acertou++;
-                }
-
-                ValueForRejectEvaluation values = new ValueForRejectEvaluation();
-
-                values.instClass = inst.classValue();
-                values.predictClass = predict;
-                if(values.predictClass == 0.0d){
-                    values.alpha = conformalEvaluator.getPValueForNormal(inst);
-                    //values.alpha = classifier.distributionForInstance(inst)[0];
-                    listValuesPredictedNormal.add(values);
-                }else{
-                    values.alpha = conformalEvaluator.getPValueForAttack(inst);
-                    //values.alpha = classifier.distributionForInstance(inst)[1];
-                    listValuesPredictedAttack.add(values);
-                }
-
-            }
-
-            System.out.println(s);
+        for(Thread t: threads) {
+            t.join();
         }
 
 
@@ -247,7 +286,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         System.out.println("listValuesPredictedNormal.size(): " + listValuesPredictedNormal.size());
         System.out.println("listValuesPredictedAttack.size(): " + listValuesPredictedAttack.size());
-        System.out.println("Acertou: " + acertou);
 
         int pingNormal = (int) (listValuesPredictedNormal.size() / 100.0f);
         int pingAttack = (int) (listValuesPredictedAttack.size() / 100.0f);
@@ -259,7 +297,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         }
 
         List<String> outputList = Collections.synchronizedList(new ArrayList<String>());
-
 
         class ParameterClass implements Runnable {
             int iNormal;
@@ -360,9 +397,9 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             }
         }
 
-        ArrayList<Thread> threads = new ArrayList<>();
+        threads = new ArrayList<>();
         for(int nThreads = 0; nThreads < 15; nThreads++){
-            Thread t = new Thread(new ParameterClass((int)((100.0f/15.0f)*nThreads), (int)(((100.0f/15.0f)*(nThreads+1))), nTotalAttack, nTotalNormal));
+            Thread t = new Thread(new ParameterClass((int)((100.0f/15.0f)*nThreads), (int)(((100.0f/15.0f)*(nThreads+1))), stats.nTotalAttack, stats.nTotalNormal));
             t.start();
             threads.add(t);
         }

@@ -13,13 +13,14 @@ public class ConformalEvaluator_BatchClassifier_RandomForest extends RandomFores
 
     @Override
     public double computeNonConformityForClass(Instance inst, double classValue) throws Exception{
-        int nClassifiersChoosenClassValue = 0;
+        int nClassifiersNotChoosenClassValue = 0;
         for(int i = 0; i < this.m_Classifiers.length; i++){
-            if(this.m_Classifiers[i].classifyInstance(inst) == classValue){
-                nClassifiersChoosenClassValue++;
+            if(this.m_Classifiers[i].classifyInstance(inst) != classValue){
+                nClassifiersNotChoosenClassValue++;
             }
         }
-        return nClassifiersChoosenClassValue/(float)this.m_Classifiers.length;
+        //return dissimilarity
+        return (nClassifiersNotChoosenClassValue/(float)this.m_Classifiers.length);
     }
 
 }
