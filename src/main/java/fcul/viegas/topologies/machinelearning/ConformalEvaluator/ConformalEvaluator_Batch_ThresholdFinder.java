@@ -164,8 +164,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             testFiles.add(array);
         }
 
-        List<ValueForRejectEvaluation> listValuesPredictedNormal = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
-        List<ValueForRejectEvaluation> listValuesPredictedAttack = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
+        List<ValueForRejectEvaluation> listValuesPredictedNormalThreaded = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
+        List<ValueForRejectEvaluation> listValuesPredictedAttackThreaded = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
 
         int j = 0;
         class Stats{
@@ -184,7 +184,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             TestClass(int i, int iUpper, Classifier classifier) {
                 this.i = i;
                 this.iUpper = iUpper;
-                this.classifier = classifier;
+                try {
+                    this.classifier = weka.classifiers.AbstractClassifier.makeCopy(classifier);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
             }
 
             public void run() {
@@ -216,9 +220,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         for (int counter = 0; counter < dataTest.size(); counter++) {
                             Instance inst = dataTest.get(counter);
                             double predict = 0.0d;
-                            synchronized (classifier){
-                                predict = classifier.classifyInstance(inst);
-                            }
+                            predict = classifier.classifyInstance(inst);
 
                             synchronized (stats) {
                                 if (inst.classValue() == 0.0d) {
@@ -238,11 +240,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             if (values.predictClass == 0.0d) {
                                 values.alpha = conformalEvaluator.getPValueForNormal(inst);
                                 //values.alpha = classifier.distributionForInstance(inst)[0];
-                                listValuesPredictedNormal.add(values);
+                                listValuesPredictedNormalThreaded.add(values);
                             } else {
                                 values.alpha = conformalEvaluator.getPValueForAttack(inst);
                                 //values.alpha = classifier.distributionForInstance(inst)[1];
-                                listValuesPredictedAttack.add(values);
+                                listValuesPredictedAttackThreaded.add(values);
                             }
 
                         }
@@ -257,17 +259,33 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         ArrayList<Thread> threads = new ArrayList<>();
-        int jump = testFiles.size() / 15;
+        int jump = testFiles.size() / 20;
         int start = 0;
-        for(int nThreads = 0; nThreads < 15; nThreads++){
-            Thread t = new Thread(new TestClass(start, start+jump, classifier));
-            t.start();
-            threads.add(t);
-            start += jump;
+        for(int nThreads = 0; nThreads < 20; nThreads++){
+            if(nThreads + 1 == 20){
+                Thread t = new Thread(new TestClass(start, testFiles.size(), classifier));
+                t.start();
+                threads.add(t);
+                start += jump;
+            }else {
+                Thread t = new Thread(new TestClass(start, start + jump, classifier));
+                t.start();
+                threads.add(t);
+                start += jump;
+            }
         }
 
         for(Thread t: threads) {
             t.join();
+        }
+
+        ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<ValueForRejectEvaluation>();
+        ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<ValueForRejectEvaluation>();
+        for(ValueForRejectEvaluation obj : listValuesPredictedNormalThreaded){
+            listValuesPredictedNormal.add(obj);
+        }
+        for(ValueForRejectEvaluation obj : listValuesPredictedAttackThreaded){
+            listValuesPredictedAttack.add(obj);
         }
 
 
