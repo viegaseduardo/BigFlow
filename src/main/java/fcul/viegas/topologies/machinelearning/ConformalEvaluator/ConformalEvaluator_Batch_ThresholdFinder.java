@@ -398,7 +398,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         }
 
 
-
                         outputList.add(iAttack + ";"
                                 + iNormal + ";"
                                 + (1 - (nAcc / (float) n)) + ";"
