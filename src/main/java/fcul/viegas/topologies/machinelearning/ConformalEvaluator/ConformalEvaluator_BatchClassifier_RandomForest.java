@@ -1,8 +1,11 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
+import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.misc.InputMappedClassifier;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.supervised.instance.ClassBalancer;
 
 public class ConformalEvaluator_BatchClassifier_RandomForest extends RandomForest implements ConformalEvaluator_BatchClassifier {
 

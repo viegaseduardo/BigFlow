@@ -1,7 +1,11 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
+import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.supervised.instance.ClassBalancer;
 
 import java.util.Arrays;
 
@@ -18,7 +22,13 @@ public class ConformalEvaluator_Batch {
     public void buildConformal(Instances insts) throws Exception {
 
         System.out.println("CONFORMAL: building classifier");
-        this.conformalEvaluatorClassifier.buildClassifier(insts);
+
+        ClassBalancer balancer = new ClassBalancer();
+        balancer.setInputFormat(insts);
+        Instances newinsts = Filter.useFilter(insts, balancer);
+
+        this.conformalEvaluatorClassifier.buildClassifier(newinsts);
+
         this.nonConformityMeasures = new Double[2][];
         this.pvalues = new Double[2][];
 
