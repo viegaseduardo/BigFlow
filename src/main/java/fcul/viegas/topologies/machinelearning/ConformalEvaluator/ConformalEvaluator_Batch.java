@@ -46,7 +46,7 @@ public class ConformalEvaluator_Batch {
         int index = 0;
         for (Instance inst : insts) {
             index++;
-            if(index % (nInstancesNormal/100) == 0){
+            if(index % ((nInstancesNormal+nInstancesAttack)/100) == 0){
                 pct++;
                 System.out.println("\tnonconformity " + pct + "%");
             }
@@ -107,7 +107,7 @@ public class ConformalEvaluator_Batch {
         double nonConformity = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 1.0d);
         int nInstancesHigher = 0;
         for(int j = 0; j < this.nonConformityMeasures[1].length; j++){
-            if(this.nonConformityMeasures[1][j] >= nonConformity){
+            if(nonConformity >= this.nonConformityMeasures[1][j]){
                 nInstancesHigher++;
             }
         }
@@ -118,7 +118,7 @@ public class ConformalEvaluator_Batch {
         double nonConformity = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 0.0d);
         int nInstancesHigher = 0;
         for(int j = 0; j < this.nonConformityMeasures[0].length; j++){
-            if(this.nonConformityMeasures[0][j] >= nonConformity){
+            if(nonConformity >= this.nonConformityMeasures[0][j]){
                 nInstancesHigher++;
             }
         }
