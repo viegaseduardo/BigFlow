@@ -6,6 +6,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
+import weka.filters.supervised.instance.Resample;
 
 import java.util.Arrays;
 
@@ -23,9 +24,10 @@ public class ConformalEvaluator_Batch {
 
         System.out.println("CONFORMAL: building classifier");
 
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(insts);
-        Instances newinsts = Filter.useFilter(insts, balancer);
+        Resample resample = new Resample();
+        resample.setBiasToUniformClass(1.0d);
+        resample.setInputFormat(insts);
+        Instances newinsts = Filter.useFilter(insts, resample);
 
         this.conformalEvaluatorClassifier.buildClassifier(newinsts);
 
