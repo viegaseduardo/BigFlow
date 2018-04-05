@@ -10,8 +10,9 @@ import weka.filters.supervised.instance.ClassBalancer;
 public class ConformalEvaluator_BatchClassifier_RandomForest extends RandomForest implements ConformalEvaluator_BatchClassifier {
 
     public ConformalEvaluator_BatchClassifier_RandomForest(){
-        this.setNumIterations(100);
+        this.setNumIterations(1000);
         this.setNumExecutionSlots(20);
+        this.setBagSizePercent(30);
     }
 
     @Override

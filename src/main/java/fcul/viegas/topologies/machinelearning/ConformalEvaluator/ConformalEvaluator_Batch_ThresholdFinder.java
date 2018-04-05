@@ -125,7 +125,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         System.out.println("building conformal");
         ConformalEvaluator_Batch conformalEvaluator = new ConformalEvaluator_Batch();
-        //conformalEvaluator.buildConformal(dataTrain);
+        conformalEvaluator.buildConformal(dataTrain);
 
 
         System.out.println("building classifiers now, this will take some time.........");
@@ -238,21 +238,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             values.instClass = inst.classValue();
                             values.predictClass = predict;
                             if (values.predictClass == 0.0d) {
-                                //values.alpha = conformalEvaluator.getPValueForNormal(inst);
-                                if(values.instClass == values.predictClass){
-                                    values.alpha = 1.0d;
-                                }else{
-                                    values.alpha = 0.0d;
-                                }
+                                values.alpha = conformalEvaluator.getPValueForNormal(inst);
                                 //values.alpha = classifier.distributionForInstance(inst)[0];
                                 listValuesPredictedNormalThreaded.add(values);
                             } else {
-                                //values.alpha = conformalEvaluator.getPValueForAttack(inst);
-                                if(values.instClass == values.predictClass){
-                                    values.alpha = 1.0d;
-                                }else{
-                                    values.alpha = 0.0d;
-                                }
+                                values.alpha = conformalEvaluator.getPValueForAttack(inst);
                                 //values.alpha = classifier.distributionForInstance(inst)[1];
                                 listValuesPredictedAttackThreaded.add(values);
                             }
