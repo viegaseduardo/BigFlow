@@ -125,7 +125,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         System.out.println("building conformal");
         ConformalEvaluator_Batch conformalEvaluator = new ConformalEvaluator_Batch();
-        conformalEvaluator.buildConformal(dataTrain);
+        //conformalEvaluator.buildConformal(dataTrain);
 
 
         System.out.println("building classifiers now, this will take some time.........");
