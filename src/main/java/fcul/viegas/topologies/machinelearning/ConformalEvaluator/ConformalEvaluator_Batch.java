@@ -24,10 +24,9 @@ public class ConformalEvaluator_Batch {
 
         System.out.println("CONFORMAL: building classifier");
 
-        Resample resample = new Resample();
-        resample.setBiasToUniformClass(1.0d);
-        resample.setInputFormat(insts);
-        Instances newinsts = Filter.useFilter(insts, resample);
+        ClassBalancer balancer = new ClassBalancer();
+        balancer.setInputFormat(insts);
+        Instances newinsts = Filter.useFilter(insts, balancer);
 
         this.conformalEvaluatorClassifier.buildClassifier(newinsts);
 
