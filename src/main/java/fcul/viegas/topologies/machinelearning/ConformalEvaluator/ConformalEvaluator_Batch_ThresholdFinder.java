@@ -1,12 +1,6 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
-import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
-import fcul.viegas.topologies.machinelearning.Topologies_MOA_ConformalThresholdFinder;
-import fcul.viegas.topologies.machinelearning.method.OperationPoints;
-import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal;
-import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
-import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -20,6 +14,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         public double instClass;
         public double predictClass;
         public double alpha;
+
+        public double credibility;
+        public double confidence;
+        public double probability;
     }
 
     public String folderPath;
@@ -239,10 +237,18 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             values.predictClass = predict;
                             if (values.predictClass == 0.0d) {
                                 values.alpha = conformalEvaluator.getPValueForNormal(inst);
+
+                                values.credibility = values.alpha;
+                                values.confidence = 1.0f - conformalEvaluator.getPValueForAttack(inst);
+                                values.probability = classifier.distributionForInstance(inst)[0];
                                 //values.alpha = classifier.distributionForInstance(inst)[0];
                                 listValuesPredictedNormalThreaded.add(values);
                             } else {
                                 values.alpha = conformalEvaluator.getPValueForAttack(inst);
+
+                                values.credibility = values.alpha;
+                                values.confidence = 1.0f - conformalEvaluator.getPValueForNormal(inst);
+                                values.probability = classifier.distributionForInstance(inst)[1];
                                 //values.alpha = classifier.distributionForInstance(inst)[1];
                                 listValuesPredictedAttackThreaded.add(values);
                             }
@@ -281,12 +287,31 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<ValueForRejectEvaluation>();
         ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<ValueForRejectEvaluation>();
+
         for(ValueForRejectEvaluation obj : listValuesPredictedNormalThreaded){
             listValuesPredictedNormal.add(obj);
         }
         for(ValueForRejectEvaluation obj : listValuesPredictedAttackThreaded){
             listValuesPredictedAttack.add(obj);
         }
+
+        FileWriter fw = new FileWriter("output.csv");
+        for(ValueForRejectEvaluation obj : listValuesPredictedNormal) {
+            String s = "";
+            if(Double.compare(obj.instClass, obj.predictClass) == 0){
+                s += "0";
+            }else{
+                s += "1";
+            }
+            s = s + ";" + obj.instClass;
+            s = s + ";" + obj.predictClass;
+            s = s + ";" + obj.confidence;
+            s = s + ";" + obj.credibility;
+            s = s + ";" + obj.probability + System.getProperty("line.separator");
+            fw.write(s);
+        }
+        fw.close();
+        System.exit(1);
 
 
         Collections.sort(listValuesPredictedNormal, new Comparator<ValueForRejectEvaluation>() {

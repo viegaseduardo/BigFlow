@@ -71,48 +71,6 @@ public class ConformalEvaluator_Batch {
             }
         }
 
-    /*    System.out.println("CONFORMAL: computing p-values");
-
-
-        pct = 0;
-        for(int i = 0; i < nInstancesNormal; i++){
-            if(i % (nInstancesNormal/100) == 0){
-                pct++;
-                System.out.println("\tnormal p-value " + pct + "%");
-            }
-            int nInstancesHigher = 0;
-            for(int j = 0; j < this.nonConformityMeasures[0].length; j++){
-                if(j != i && this.nonConformityMeasures[0][i] >= this.nonConformityMeasures[0][j]){
-                    nInstancesHigher++;
-                }
-            }
-            this.pvalues[0][i] = nInstancesHigher / (double) this.nonConformityMeasures[0].length;
-        }
-
-        pct = 0;
-        for(int i = 0; i < nInstancesAttack; i++){
-            if(i % (nInstancesAttack/100) == 0){
-                pct++;
-                System.out.println("\tattack p-value " + pct + "%");
-            }
-            int nInstancesHigher = 0;
-            for(int j = 0; j < this.nonConformityMeasures[1].length; j++){
-                if(j != i && this.nonConformityMeasures[1][i] >= this.nonConformityMeasures[1][j]){
-                    nInstancesHigher++;
-                }
-            }
-            this.pvalues[1][i] = nInstancesHigher / (double) this.nonConformityMeasures[1].length;
-        }
-
-        Arrays.sort(this.pvalues[0]);
-        Arrays.sort(this.pvalues[1]);
-
-
-        for(int i = 0; i < 100; i++){
-            int pingNormal = this.pvalues[0].length / 100;
-            int pingAttack = this.pvalues[1].length / 100;
-            System.out.println("Normal [" + this.pvalues[0][pingNormal * i] + "] Attack [" + this.pvalues[1][pingAttack * i] + "]");
-        }*/
 
     }
 
