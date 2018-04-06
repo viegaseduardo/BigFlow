@@ -298,18 +298,38 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         FileWriter fw = new FileWriter("output.csv");
         for(ValueForRejectEvaluation obj : listValuesPredictedNormal) {
             String s = "";
+            s = s +  obj.instClass;
+            s = s + "," + obj.predictClass;
+            s = s + "," + obj.confidence;
+            s = s + "," + obj.credibility;
+            s = s + "," + obj.probability;
             if(Double.compare(obj.instClass, obj.predictClass) == 0){
-                s += "0";
+                s = s + ",correct";
             }else{
-                s += "1";
+                s = s + ",wrong";
             }
-            s = s + ";" + obj.instClass;
-            s = s + ";" + obj.predictClass;
-            s = s + ";" + obj.confidence;
-            s = s + ";" + obj.credibility;
-            s = s + ";" + obj.probability + System.getProperty("line.separator");
+            s = s + System.getProperty("line.separator");
+
             fw.write(s);
         }
+        for(ValueForRejectEvaluation obj : listValuesPredictedAttack) {
+            String s = "";
+            s = s +  obj.instClass;
+            s = s + "," + obj.predictClass;
+            s = s + "," + obj.confidence;
+            s = s + "," + obj.credibility;
+            s = s + "," + obj.probability;
+            if(Double.compare(obj.instClass, obj.predictClass) == 0){
+                s = s + ",correct";
+            }else{
+                s = s + ",wrong";
+            }
+            s = s + System.getProperty("line.separator");
+
+            fw.write(s);
+        }
+
+
         fw.close();
         System.exit(1);
 
