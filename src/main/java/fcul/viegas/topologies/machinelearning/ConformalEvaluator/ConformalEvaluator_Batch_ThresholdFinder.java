@@ -18,6 +18,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         public double credibility;
         public double confidence;
         public double probability;
+        public double nonConformity;
     }
 
     public String folderPath;
@@ -241,6 +242,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                                 values.credibility = values.alpha;
                                 values.confidence = 1.0f - conformalEvaluator.getPValueForAttack(inst);
                                 values.probability = classifier.distributionForInstance(inst)[0];
+                                values.nonConformity = conformalEvaluator.getNonConformity(inst, 0.0d);
                                 //values.alpha = classifier.distributionForInstance(inst)[0];
                                 listValuesPredictedNormalThreaded.add(values);
                             } else {
@@ -249,6 +251,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                                 values.credibility = values.alpha;
                                 values.confidence = 1.0f - conformalEvaluator.getPValueForNormal(inst);
                                 values.probability = classifier.distributionForInstance(inst)[1];
+                                values.nonConformity = conformalEvaluator.getNonConformity(inst, 1.0d);
                                 //values.alpha = classifier.distributionForInstance(inst)[1];
                                 listValuesPredictedAttackThreaded.add(values);
                             }
@@ -303,6 +306,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             s = s + "," + obj.confidence;
             s = s + "," + obj.credibility;
             s = s + "," + obj.probability;
+            s = s + "," + obj.nonConformity;
             if(Double.compare(obj.instClass, obj.predictClass) == 0){
                 s = s + ",correct";
             }else{
@@ -319,6 +323,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             s = s + "," + obj.confidence;
             s = s + "," + obj.credibility;
             s = s + "," + obj.probability;
+            s = s + "," + obj.nonConformity;
             if(Double.compare(obj.instClass, obj.predictClass) == 0){
                 s = s + ",correct";
             }else{

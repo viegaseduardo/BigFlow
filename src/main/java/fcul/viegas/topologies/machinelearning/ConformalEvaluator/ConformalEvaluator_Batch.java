@@ -95,4 +95,8 @@ public class ConformalEvaluator_Batch {
         return nInstancesHigher / (double) this.nonConformityMeasures[0].length;
     }
 
+    public double getNonConformity(Instance inst, double givenClass) throws Exception{
+        return this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, givenClass);
+    }
+
 }
