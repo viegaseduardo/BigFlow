@@ -19,6 +19,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         public double confidence;
         public double probability;
         public double nonConformity;
+        public Instance inst;
     }
 
     public String folderPath;
@@ -122,9 +123,50 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrain = dataTrainORUNADA;
         }
 
-        System.out.println("building conformal");
-        ConformalEvaluator_Batch conformalEvaluator = new ConformalEvaluator_Batch();
-        conformalEvaluator.buildConformal(dataTrain);
+        ArrayList<ConformalEvaluator_Batch> arrayListConformal = new ArrayList<>();
+
+        System.out.println("building conformal forest 1000 ");
+        ConformalEvaluator_Batch conformalEvaluatorForest1000 = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_RandomForest(1000, 100));
+        conformalEvaluatorForest1000.buildConformal(dataTrain);
+
+        System.out.println("building conformal forest 1000 30 bagsize");
+        ConformalEvaluator_Batch conformalEvaluatorForest1000_30 = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_RandomForest(1000, 30));
+        conformalEvaluatorForest1000_30.buildConformal(dataTrain);
+
+        System.out.println("building conformal forest 100 ");
+        ConformalEvaluator_Batch conformalEvaluatorForest100 = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_RandomForest(100, 100));
+        conformalEvaluatorForest100.buildConformal(dataTrain);
+
+        System.out.println("building conformal bagging 1000 ");
+        ConformalEvaluator_Batch conformalEvaluatorBagging1000 = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_Bagging(1000, 100));
+        conformalEvaluatorBagging1000.buildConformal(dataTrain);
+
+        System.out.println("building conformal bagging 1000 30 bagsize");
+        ConformalEvaluator_Batch conformalEvaluatorBagging1000_30 = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_Bagging(1000, 30));
+        conformalEvaluatorBagging1000_30.buildConformal(dataTrain);
+
+        System.out.println("building conformal bagging 100 ");
+        ConformalEvaluator_Batch conformalEvaluatorBagging100 = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_Bagging(100, 100));
+        conformalEvaluatorBagging100.buildConformal(dataTrain);
+
+        System.out.println("building conformal naive");
+        ConformalEvaluator_Batch conformalEvaluatorNaiveSupervised = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_NaiveBayes(true));
+        conformalEvaluatorNaiveSupervised.buildConformal(dataTrain);
+
+        System.out.println("building conformal naive not supervised");
+        ConformalEvaluator_Batch conformalEvaluatorNaiveNotSupervised = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
+        conformalEvaluatorNaiveNotSupervised.buildConformal(dataTrain);
+
+        arrayListConformal.add(conformalEvaluatorForest1000);
+        arrayListConformal.add(conformalEvaluatorForest1000_30);
+        arrayListConformal.add(conformalEvaluatorForest100);
+        arrayListConformal.add(conformalEvaluatorBagging1000);
+        arrayListConformal.add(conformalEvaluatorBagging1000_30);
+        arrayListConformal.add(conformalEvaluatorBagging100);
+        arrayListConformal.add(conformalEvaluatorNaiveSupervised);
+        arrayListConformal.add(conformalEvaluatorNaiveNotSupervised);
+
+
 
 
         System.out.println("building classifiers now, this will take some time.........");
@@ -152,8 +194,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         ArrayList<String[]> testFiles = new ArrayList<>();
-        for (int i = 60; i < testFilesVIEGAS.size(); i++) {
-        //for (int i = 0; i < 60; i++) {
+        //for (int i = 60; i < testFilesVIEGAS.size(); i++) {
+        for (int i = 0; i < 60; i++) {
 
             String[] array = new String[4];
             array[0] = testFilesVIEGAS.get(i);
@@ -237,23 +279,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                             values.instClass = inst.classValue();
                             values.predictClass = predict;
+                            values.inst = inst;
                             if (values.predictClass == 0.0d) {
-                                values.alpha = conformalEvaluator.getPValueForNormal(inst);
-
-                                values.credibility = values.alpha;
-                                values.confidence = 1.0f - conformalEvaluator.getPValueForAttack(inst);
-                                values.probability = classifier.distributionForInstance(inst)[0];
-                                values.nonConformity = conformalEvaluator.getNonConformity(inst, 0.0d);
-                                //values.alpha = classifier.distributionForInstance(inst)[0];
                                 listValuesPredictedNormalThreaded.add(values);
                             } else {
-                                values.alpha = conformalEvaluator.getPValueForAttack(inst);
-
-                                values.credibility = values.alpha;
-                                values.confidence = 1.0f - conformalEvaluator.getPValueForNormal(inst);
-                                values.probability = classifier.distributionForInstance(inst)[1];
-                                values.nonConformity = conformalEvaluator.getNonConformity(inst, 1.0d);
-                                //values.alpha = classifier.distributionForInstance(inst)[1];
                                 listValuesPredictedAttackThreaded.add(values);
                             }
 
@@ -299,19 +328,47 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             listValuesPredictedAttack.add(obj);
         }
 
-        FileWriter fw = new FileWriter("predictednormal_test.csv");
+        FileWriter fw = new FileWriter("predictednormal.csv");
         for(ValueForRejectEvaluation obj : listValuesPredictedNormal) {
+
             String s = "";
-            s = s +  obj.instClass;
-            s = s + "," + obj.predictClass;
-            s = s + "," + obj.confidence;
-            s = s + "," + obj.credibility;
-            s = s + "," + obj.probability;
-            s = s + "," + obj.nonConformity;
+            if (obj.predictClass == 0.0d) {
+                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal){
+                    obj.alpha = conformalEvaluator.getPValueForNormal(obj.inst);
+
+                    obj.credibility = obj.alpha;
+                    obj.confidence = 1.0f - conformalEvaluator.getPValueForAttack(obj.inst);
+                    obj.probability = classifier.distributionForInstance(obj.inst)[0];
+                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 0.0d);
+
+                    s = s + obj.confidence;
+                    s = s + "," + obj.credibility;
+                    s = s + "," + obj.probability;
+                    s = s + "," + obj.nonConformity + ",";
+                }
+            } else {
+
+                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal) {
+
+                    obj.alpha = conformalEvaluator.getPValueForAttack(obj.inst);
+
+                    obj.credibility = obj.alpha;
+                    obj.confidence = 1.0f - conformalEvaluator.getPValueForNormal(obj.inst);
+                    obj.probability = classifier.distributionForInstance(obj.inst)[1];
+                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 1.0d);
+                    //values.alpha = classifier.distributionForInstance(inst)[1];
+
+                    s = s + obj.confidence;
+                    s = s + "," + obj.credibility;
+                    s = s + "," + obj.probability;
+                    s = s + "," + obj.nonConformity + ",";
+                }
+            }
+
             if(Double.compare(obj.instClass, obj.predictClass) == 0){
-                s = s + ",correct";
+                s = s + "correct";
             }else{
-                s = s + ",wrong";
+                s = s + "wrong";
             }
             s = s + System.getProperty("line.separator");
 
@@ -320,19 +377,47 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         fw.close();
 
 
-        fw = new FileWriter("predictedattack_test.csv");
+        fw = new FileWriter("predictedattack.csv");
         for(ValueForRejectEvaluation obj : listValuesPredictedAttack) {
+
             String s = "";
-            s = s +  obj.instClass;
-            s = s + "," + obj.predictClass;
-            s = s + "," + obj.confidence;
-            s = s + "," + obj.credibility;
-            s = s + "," + obj.probability;
-            s = s + "," + obj.nonConformity;
+            if (obj.predictClass == 0.0d) {
+                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal){
+                    obj.alpha = conformalEvaluator.getPValueForNormal(obj.inst);
+
+                    obj.credibility = obj.alpha;
+                    obj.confidence = 1.0f - conformalEvaluator.getPValueForAttack(obj.inst);
+                    obj.probability = classifier.distributionForInstance(obj.inst)[0];
+                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 0.0d);
+
+                    s = s + obj.confidence;
+                    s = s + "," + obj.credibility;
+                    s = s + "," + obj.probability;
+                    s = s + "," + obj.nonConformity + ",";
+                }
+            } else {
+
+                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal) {
+
+                    obj.alpha = conformalEvaluator.getPValueForAttack(obj.inst);
+
+                    obj.credibility = obj.alpha;
+                    obj.confidence = 1.0f - conformalEvaluator.getPValueForNormal(obj.inst);
+                    obj.probability = classifier.distributionForInstance(obj.inst)[1];
+                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 1.0d);
+                    //values.alpha = classifier.distributionForInstance(inst)[1];
+
+                    s = s + obj.confidence;
+                    s = s + "," + obj.credibility;
+                    s = s + "," + obj.probability;
+                    s = s + "," + obj.nonConformity + ",";
+                }
+            }
+
             if(Double.compare(obj.instClass, obj.predictClass) == 0){
-                s = s + ",correct";
+                s = s + "correct";
             }else{
-                s = s + ",wrong";
+                s = s + "wrong";
             }
             s = s + System.getProperty("line.separator");
 

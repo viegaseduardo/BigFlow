@@ -1,18 +1,14 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
-import weka.classifiers.meta.FilteredClassifier;
-import weka.classifiers.misc.InputMappedClassifier;
-import weka.classifiers.trees.RandomForest;
+import weka.classifiers.meta.Bagging;
 import weka.core.Instance;
-import weka.core.Instances;
-import weka.filters.supervised.instance.ClassBalancer;
 
-public class ConformalEvaluator_BatchClassifier_RandomForest extends RandomForest implements ConformalEvaluator_BatchClassifier {
+public class ConformalEvaluator_BatchClassifier_Bagging extends Bagging implements ConformalEvaluator_BatchClassifier {
 
     int nClassifiers;
     int sizeBagPercent;
 
-    public ConformalEvaluator_BatchClassifier_RandomForest(int nClassifiers, int sizeBagPercent){
+    public ConformalEvaluator_BatchClassifier_Bagging(int nClassifiers, int sizeBagPercent){
         this.nClassifiers = nClassifiers;
         this.setNumIterations(nClassifiers);
         this.setNumExecutionSlots(20);

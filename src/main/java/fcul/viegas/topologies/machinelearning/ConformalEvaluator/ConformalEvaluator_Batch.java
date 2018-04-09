@@ -16,8 +16,8 @@ public class ConformalEvaluator_Batch {
     private Double[][] nonConformityMeasures;
     private Double[][] pvalues;
 
-    public ConformalEvaluator_Batch() {
-        this.conformalEvaluatorClassifier = new ConformalEvaluator_BatchClassifier_RandomForest();
+    public ConformalEvaluator_Batch(ConformalEvaluator_BatchClassifier conformalEvaluatorClassifier) {
+        this.conformalEvaluatorClassifier = conformalEvaluatorClassifier;
     }
 
     public void buildConformal(Instances insts) throws Exception {
