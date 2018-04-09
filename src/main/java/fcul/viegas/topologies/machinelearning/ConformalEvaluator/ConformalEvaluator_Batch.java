@@ -1,5 +1,6 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
+import weka.classifiers.Classifier;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -8,6 +9,7 @@ import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
 import weka.filters.supervised.instance.Resample;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ConformalEvaluator_Batch {
@@ -51,25 +53,74 @@ public class ConformalEvaluator_Batch {
         this.pvalues[1] = new Double[nInstancesAttack];
 
         System.out.println("CONFORMAL: computing non-conformities");
-        int iNormal = 0;
-        int iAttack = 0;
-        int pct = 0;
-        int index = 0;
-        for (Instance inst : insts) {
-            index++;
-            if(index % ((nInstancesNormal+nInstancesAttack)/100) == 0){
-                pct++;
-                System.out.println("\tnonconformity " + pct + "%");
+
+        class TestClass implements Runnable {
+            int i;
+            int iUpper;
+            Instances insts;
+            int iNormal = 0;
+            int iAttack = 0;
+            int pct = 0;
+            int index = 0;
+
+            TestClass(int i, int iUpper, Instances insts) {
+                this.i = i;
+                this.iUpper = iUpper;
+                this.insts = insts;
             }
-            if(inst.classValue() == 0.0d){
-                this.nonConformityMeasures[0][iNormal] = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 0.0d);
-                iNormal++;
-            }else{
-                this.nonConformityMeasures[1][iAttack] = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 1.0d);
-                iAttack++;
+
+            public void run() {
+                try {
+                    for (int k = 0; k < iUpper; k++) {
+                        index++;
+                        if(k >= i){
+                            if(index % ((insts.size())/100) == 0){
+                                pct++;
+                                System.out.println("\tnonconformity " + pct + "% ...[" + i + "/" + iUpper + "]");
+                            }
+                        }
+                        if(k < i){
+                            if(insts.get(k).classValue() == 0.0d){
+                                iNormal++;
+                            }else{
+                                iAttack++;
+                            }
+                        }else{
+                            if(insts.get(k).classValue() == 0.0d){
+                                nonConformityMeasures[0][iNormal] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 0.0d);
+                                iNormal++;
+                            }else{
+                                nonConformityMeasures[1][iAttack] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 1.0d);
+                                iAttack++;
+                            }
+                        }
+                    }
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
             }
         }
 
+        ArrayList<Thread> threads = new ArrayList<>();
+        int jump = insts.size() / 20;
+        int start = 0;
+        for(int nThreads = 0; nThreads < 20; nThreads++){
+            if(nThreads + 1 == 20){
+                Thread t = new Thread(new TestClass(start, insts.size(), insts));
+                t.start();
+                threads.add(t);
+                start += jump;
+            }else {
+                Thread t = new Thread(new TestClass(start, start + jump, insts));
+                t.start();
+                threads.add(t);
+                start += jump;
+            }
+        }
+
+        for(Thread t: threads) {
+            t.join();
+        }
 
     }
 
