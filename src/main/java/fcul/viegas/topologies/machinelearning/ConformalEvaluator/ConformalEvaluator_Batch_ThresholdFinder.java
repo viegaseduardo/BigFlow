@@ -15,10 +15,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         public double predictClass;
         public double alpha;
 
-        public double credibility;
-        public double confidence;
+        public ArrayList<Double> credibility;
+        public ArrayList<Double> confidence;
         public double probability;
-        public double nonConformity;
+        public ArrayList<Double> nonConformity;
         public Instance inst;
     }
 
@@ -226,11 +226,13 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             int i;
             int iUpper;
             Classifier classifier;
+            ArrayList<ConformalEvaluator_Batch> arrayListConformal;
 
-            TestClass(int i, int iUpper, Classifier classifier) {
+            TestClass(int i, int iUpper, Classifier classifier, ArrayList<ConformalEvaluator_Batch> arrayListConformal)  {
                 this.i = i;
                 this.iUpper = iUpper;
                 try {
+                    this.arrayListConformal = new ArrayList<ConformalEvaluator_Batch>(arrayListConformal);
                     this.classifier = weka.classifiers.AbstractClassifier.makeCopy(classifier);
                 }catch(Exception ex){
                     ex.printStackTrace();
@@ -284,9 +286,28 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             values.instClass = inst.classValue();
                             values.predictClass = predict;
                             values.inst = inst;
+
                             if (values.predictClass == 0.0d) {
+                                values.probability = classifier.distributionForInstance(inst)[0];
+
+                                for(ConformalEvaluator_Batch conformalEvaluatorBatch: arrayListConformal){
+
+                                    values.credibility.add(conformalEvaluatorBatch.getPValueForNormal(inst));
+                                    values.confidence.add(1.0f - conformalEvaluatorBatch.getPValueForAttack(inst));
+                                    values.nonConformity.add(conformalEvaluatorBatch.getNonConformity(inst, 0.0d));
+                                }
+
                                 listValuesPredictedNormalThreaded.add(values);
                             } else {
+                                values.probability = classifier.distributionForInstance(inst)[1];
+
+                                for(ConformalEvaluator_Batch conformalEvaluatorBatch: arrayListConformal){
+
+                                    values.credibility.add(conformalEvaluatorBatch.getPValueForAttack(inst));
+                                    values.confidence.add(1.0f - conformalEvaluatorBatch.getPValueForNormal(inst));
+                                    values.nonConformity.add(conformalEvaluatorBatch.getNonConformity(inst, 0.0d));
+                                }
+
                                 listValuesPredictedAttackThreaded.add(values);
                             }
 
@@ -306,12 +327,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         int start = 0;
         for(int nThreads = 0; nThreads < 20; nThreads++){
             if(nThreads + 1 == 20){
-                Thread t = new Thread(new TestClass(start, testFiles.size(), classifier));
+                Thread t = new Thread(new TestClass(start, testFiles.size(), classifier, arrayListConformal));
                 t.start();
                 threads.add(t);
                 start += jump;
             }else {
-                Thread t = new Thread(new TestClass(start, start + jump, classifier));
+                Thread t = new Thread(new TestClass(start, start + jump, classifier, arrayListConformal));
                 t.start();
                 threads.add(t);
                 start += jump;
@@ -335,49 +356,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         FileWriter fw = new FileWriter("predictednormal_test.csv");
         for(ValueForRejectEvaluation obj : listValuesPredictedNormal) {
 
-            String s = "";
-            boolean first = true;
-            if (obj.predictClass == 0.0d) {
-                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal){
-                    obj.alpha = conformalEvaluator.getPValueForNormal(obj.inst);
+            String s = obj.probability + ",";
+            for(int i = 0; i < arrayListConformal.size(); i++){
 
-                    obj.credibility = obj.alpha;
-                    obj.confidence = 1.0f - conformalEvaluator.getPValueForAttack(obj.inst);
-                    if(first) {
-                        obj.probability = classifier.distributionForInstance(obj.inst)[0];
-                    }
-                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 0.0d);
-
-                    s = s + obj.confidence;
-                    s = s + "," + obj.credibility;
-                    if(first) {
-                        s = s + "," + obj.probability;
-                        first = false;
-                    }
-                    s = s + "," + obj.nonConformity + ",";
-                }
-            } else {
-
-                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal) {
-
-                    obj.alpha = conformalEvaluator.getPValueForAttack(obj.inst);
-
-                    obj.credibility = obj.alpha;
-                    obj.confidence = 1.0f - conformalEvaluator.getPValueForNormal(obj.inst);
-                    if(first) {
-                        obj.probability = classifier.distributionForInstance(obj.inst)[1];
-                    }
-                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 1.0d);
-                    //values.alpha = classifier.distributionForInstance(inst)[1];
-
-                    s = s + obj.confidence;
-                    s = s + "," + obj.credibility;
-                    if(first) {
-                        s = s + "," + obj.probability;
-                        first = false;
-                    }
-                    s = s + "," + obj.nonConformity + ",";
-                }
+                s = s + obj.confidence.get(i);
+                s = s + "," + obj.credibility.get(i);
+                s = s + "," + obj.nonConformity.get(i) + ",";
             }
 
             if(Double.compare(obj.instClass, obj.predictClass) == 0){
@@ -395,49 +379,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         fw = new FileWriter("predictedattack_test.csv");
         for(ValueForRejectEvaluation obj : listValuesPredictedAttack) {
 
-            String s = "";
-            boolean first = true;
-            if (obj.predictClass == 0.0d) {
-                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal){
-                    obj.alpha = conformalEvaluator.getPValueForNormal(obj.inst);
+            String s = obj.probability + ",";
+            for(int i = 0; i < arrayListConformal.size(); i++){
 
-                    obj.credibility = obj.alpha;
-                    obj.confidence = 1.0f - conformalEvaluator.getPValueForAttack(obj.inst);
-                    if(first) {
-                        obj.probability = classifier.distributionForInstance(obj.inst)[0];
-                    }
-                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 0.0d);
-
-                    s = s + obj.confidence;
-                    s = s + "," + obj.credibility;
-                    if(first) {
-                        s = s + "," + obj.probability;
-                        first = false;
-                    }
-                    s = s + "," + obj.nonConformity + ",";
-                }
-            } else {
-
-                for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal) {
-
-                    obj.alpha = conformalEvaluator.getPValueForAttack(obj.inst);
-
-                    obj.credibility = obj.alpha;
-                    obj.confidence = 1.0f - conformalEvaluator.getPValueForNormal(obj.inst);
-                    if(first) {
-                        obj.probability = classifier.distributionForInstance(obj.inst)[1];
-                    }
-                    obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 1.0d);
-                    //values.alpha = classifier.distributionForInstance(inst)[1];
-
-                    s = s + obj.confidence;
-                    s = s + "," + obj.credibility;
-                    if(first) {
-                        s = s + "," + obj.probability;
-                        first = false;
-                    }
-                    s = s + "," + obj.nonConformity + ",";
-                }
+                s = s + obj.confidence.get(i);
+                s = s + "," + obj.credibility.get(i);
+                s = s + "," + obj.nonConformity.get(i) + ",";
             }
 
             if(Double.compare(obj.instClass, obj.predictClass) == 0){
