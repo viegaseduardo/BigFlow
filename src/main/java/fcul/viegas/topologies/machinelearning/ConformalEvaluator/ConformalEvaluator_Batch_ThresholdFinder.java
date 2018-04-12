@@ -129,6 +129,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         ConformalEvaluator_Batch conformalEvaluatorNaiveNotSupervised = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
         conformalEvaluatorNaiveNotSupervised.buildConformal(dataTrain);
 
+        /*
         System.out.println("building conformal forest 1000 ");
         ConformalEvaluator_Batch conformalEvaluatorForest1000 = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_RandomForest(1000, 100));
         conformalEvaluatorForest1000.buildConformal(dataTrain);
@@ -166,6 +167,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         arrayListConformal.add(conformalEvaluatorBagging1000_30);
         arrayListConformal.add(conformalEvaluatorBagging100);
         //arrayListConformal.add(conformalEvaluatorNaiveSupervised);
+*/
         arrayListConformal.add(conformalEvaluatorNaiveNotSupervised);
 
 
