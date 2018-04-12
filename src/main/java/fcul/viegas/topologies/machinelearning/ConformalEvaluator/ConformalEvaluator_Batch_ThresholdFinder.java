@@ -19,6 +19,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         public ArrayList<Double> confidence = new ArrayList<>();
         public double probability;
         public ArrayList<Double> nonConformity = new ArrayList<>();
+        public double[] featuresConformities;
         public Instance inst;
     }
 
@@ -128,6 +129,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         System.out.println("building conformal naive not supervised");
         ConformalEvaluator_Batch conformalEvaluatorNaiveNotSupervised = new ConformalEvaluator_Batch(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
         conformalEvaluatorNaiveNotSupervised.buildConformal(dataTrain);
+
+        System.out.println("building conformal features");
+        ConformalEvaluator_Batch_Features conformalEvaluatorFeatures = new ConformalEvaluator_Batch_Features();
+        conformalEvaluatorFeatures.buildConformalEvaluator_Batch_Features(dataTrain);
+
 
         /*
         System.out.println("building conformal forest 1000 ");
@@ -287,6 +293,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             values.instClass = inst.classValue();
                             values.predictClass = predict;
                             values.inst = inst;
+                            values.featuresConformities = conformalEvaluatorFeatures.getFeatureStatistics(inst);
 
                             if (values.predictClass == 0.0d) {
                                 values.probability = classifier.distributionForInstance(inst)[0];
@@ -358,6 +365,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         for(ValueForRejectEvaluation obj : listValuesPredictedNormal) {
 
             String s = obj.probability + ",";
+            for(double d: obj.featuresConformities){
+                s = s + d + ",";
+            }
+
             for(int i = 0; i < arrayListConformal.size(); i++){
 
                 s = s + obj.confidence.get(i);
@@ -381,6 +392,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         for(ValueForRejectEvaluation obj : listValuesPredictedAttack) {
 
             String s = obj.probability + ",";
+            for(double d: obj.featuresConformities){
+                s = s + d + ",";
+            }
+
             for(int i = 0; i < arrayListConformal.size(); i++){
 
                 s = s + obj.confidence.get(i);
