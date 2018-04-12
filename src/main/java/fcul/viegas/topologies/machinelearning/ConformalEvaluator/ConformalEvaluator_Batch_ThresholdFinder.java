@@ -15,10 +15,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         public double predictClass;
         public double alpha;
 
-        public ArrayList<Double> credibility;
-        public ArrayList<Double> confidence;
+        public ArrayList<Double> credibility = new ArrayList<>();
+        public ArrayList<Double> confidence = new ArrayList<>();
         public double probability;
-        public ArrayList<Double> nonConformity;
+        public ArrayList<Double> nonConformity = new ArrayList<>();
         public Instance inst;
     }
 
@@ -282,6 +282,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             }
 
                             ValueForRejectEvaluation values = new ValueForRejectEvaluation();
+
 
                             values.instClass = inst.classValue();
                             values.predictClass = predict;
