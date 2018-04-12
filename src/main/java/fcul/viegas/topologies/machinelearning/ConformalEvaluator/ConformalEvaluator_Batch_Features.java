@@ -74,6 +74,11 @@ public class ConformalEvaluator_Batch_Features {
 
         this.featureValuesAverageAttack = new MathUtils[insts.numAttributes()];
 
+        for(int i  =0 ; i < insts.numAttributes(); i++){
+            this.featureValuesAverageNormal[i] = new MathUtils();
+            this.featureValuesAverageAttack[i] = new MathUtils();
+        }
+
         int nAttack = 0;
         int nNormal = 0;
         for(Instance inst : insts){
