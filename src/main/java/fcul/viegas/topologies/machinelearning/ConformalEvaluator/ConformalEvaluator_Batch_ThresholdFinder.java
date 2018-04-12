@@ -306,7 +306,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                                     values.credibility.add(conformalEvaluatorBatch.getPValueForAttack(inst));
                                     values.confidence.add(1.0f - conformalEvaluatorBatch.getPValueForNormal(inst));
-                                    values.nonConformity.add(conformalEvaluatorBatch.getNonConformity(inst, 0.0d));
+                                    values.nonConformity.add(conformalEvaluatorBatch.getNonConformity(inst, 1.0d));
                                 }
 
                                 listValuesPredictedAttackThreaded.add(values);
