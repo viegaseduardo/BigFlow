@@ -334,18 +334,24 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         for(ValueForRejectEvaluation obj : listValuesPredictedNormal) {
 
             String s = "";
+            boolean first = true;
             if (obj.predictClass == 0.0d) {
                 for(ConformalEvaluator_Batch conformalEvaluator : arrayListConformal){
                     obj.alpha = conformalEvaluator.getPValueForNormal(obj.inst);
 
                     obj.credibility = obj.alpha;
                     obj.confidence = 1.0f - conformalEvaluator.getPValueForAttack(obj.inst);
-                    obj.probability = classifier.distributionForInstance(obj.inst)[0];
+                    if(first) {
+                        obj.probability = classifier.distributionForInstance(obj.inst)[0];
+                    }
                     obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 0.0d);
 
                     s = s + obj.confidence;
                     s = s + "," + obj.credibility;
-                    s = s + "," + obj.probability;
+                    if(first) {
+                        s = s + "," + obj.probability;
+                        first = false;
+                    }
                     s = s + "," + obj.nonConformity + ",";
                 }
             } else {
@@ -356,13 +362,18 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                     obj.credibility = obj.alpha;
                     obj.confidence = 1.0f - conformalEvaluator.getPValueForNormal(obj.inst);
-                    obj.probability = classifier.distributionForInstance(obj.inst)[1];
+                    if(first) {
+                        obj.probability = classifier.distributionForInstance(obj.inst)[1];
+                    }
                     obj.nonConformity = conformalEvaluator.getNonConformity(obj.inst, 1.0d);
                     //values.alpha = classifier.distributionForInstance(inst)[1];
 
                     s = s + obj.confidence;
                     s = s + "," + obj.credibility;
-                    s = s + "," + obj.probability;
+                    if(first) {
+                        s = s + "," + obj.probability;
+                        first = false;
+                    }
                     s = s + "," + obj.nonConformity + ",";
                 }
             }
