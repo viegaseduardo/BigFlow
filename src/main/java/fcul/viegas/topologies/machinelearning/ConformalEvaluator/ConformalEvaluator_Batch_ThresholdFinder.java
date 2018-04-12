@@ -204,8 +204,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         ArrayList<String[]> testFiles = new ArrayList<>();
-        //for (int i = 60; i < testFilesVIEGAS.size(); i++) {
-        for (int i = 0; i < 60; i++) {
+        for (int i = 60; i < testFilesVIEGAS.size(); i++) {
+        //for (int i = 0; i < 60; i++) {
 
             String[] array = new String[4];
             array[0] = testFilesVIEGAS.get(i);
@@ -361,7 +361,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             listValuesPredictedAttack.add(obj);
         }
 
-        FileWriter fw = new FileWriter("predictednormal_train.csv");
+        FileWriter fw = new FileWriter("predictednormal_test.csv");
         for(ValueForRejectEvaluation obj : listValuesPredictedNormal) {
 
             String s = obj.probability + ",";
@@ -388,7 +388,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         fw.close();
 
 
-        fw = new FileWriter("predictedattack_train.csv");
+        fw = new FileWriter("predictedattack_test.csv");
         for(ValueForRejectEvaluation obj : listValuesPredictedAttack) {
 
             String s = obj.probability + ",";
