@@ -227,10 +227,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         ArrayList<Thread> threads = new ArrayList<>();
-        int jump = daysToUseForTraining / 20;
+        int jump = daysToUseForTraining / 5;
         int start = 0;
-        for(int nThreads = 0; nThreads < 20; nThreads++){
-            if(nThreads + 1 == 20){
+        for(int nThreads = 0; nThreads < 5; nThreads++){
+            if(nThreads + 1 == 5){
                 Thread t = new Thread(new TrainClass(start, testFiles.size(), classifier));
                 t.start();
                 threads.add(t);
@@ -331,10 +331,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                                 values.predictClass = 0.0d;
                                 values.instClass = inst.classValue();
                                 values.alpha = conformalEvaluatorBatch.probabilityForCorrectNormal(inst, classifier.distributionForInstance(inst)[0]);
+                                listValueslThreadedNormal.add(values);
                             } else {
                                 values.predictClass = 1.0d;
                                 values.instClass = inst.classValue();
                                 values.alpha = conformalEvaluatorBatch.probabilityForCorrectNormal(inst, classifier.distributionForInstance(inst)[1]);
+                                listValueslThreadedAttack.add(values);
                             }
                         }
 
@@ -352,12 +354,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         start = 0;
         for(int nThreads = 0; nThreads < 20; nThreads++){
             if(nThreads + 1 == 20){
-                Thread t = new Thread(new TrainClass(start, testFiles.size(), classifier));
+                Thread t = new Thread(new TestClass(start, testFiles.size(), classifier));
                 t.start();
                 threads.add(t);
                 start += jump;
             }else {
-                Thread t = new Thread(new TrainClass(start, start + jump, classifier));
+                Thread t = new Thread(new TestClass(start, start + jump, classifier));
                 t.start();
                 threads.add(t);
                 start += jump;
