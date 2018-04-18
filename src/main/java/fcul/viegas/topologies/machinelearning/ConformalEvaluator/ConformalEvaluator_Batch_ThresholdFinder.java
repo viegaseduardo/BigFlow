@@ -202,11 +202,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         ArrayList<Thread> threads = new ArrayList<>();
-        int jump = daysToUseForTraining / 1;
+        int jump = dataTrain.size() / 1;
         int start = 0;
         for (int nThreads = 0; nThreads < 1; nThreads++) {
             if (nThreads + 1 == 1) {
-                Thread t = new Thread(new TrainClass(start, daysToUseForTraining, classifier, dataTrain));
+                Thread t = new Thread(new TrainClass(start, dataTrain.size(), classifier, dataTrain));
                 t.start();
                 threads.add(t);
                 start += jump;
