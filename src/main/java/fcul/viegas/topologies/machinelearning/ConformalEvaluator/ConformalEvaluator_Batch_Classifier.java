@@ -1,6 +1,7 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
@@ -195,6 +196,16 @@ public class ConformalEvaluator_Batch_Classifier {
 
         this.normalClassifier = normalTree;
         this.attackClassifier = attackTree;
+
+        Evaluation evalNormal = new Evaluation(dataNormal);
+        evalNormal.evaluateModel(this.normalClassifier, dataNormal);
+        System.out.println(evalNormal.toSummaryString("\n\n\n\n\n\nNORMAL Results\n======\n", false));
+
+
+        Evaluation evalAttack = new Evaluation(dataAttack);
+        evalAttack.evaluateModel(this.attackClassifier, dataAttack);
+        System.out.println(evalAttack.toSummaryString("\n\n\n\n\n\nATTACK Results\n======\n", false));
+
     }
 
     public double probabilityForCorrectNormal(Instance inst, double probability) throws Exception {
