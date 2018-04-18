@@ -169,6 +169,9 @@ public class ConformalEvaluator_Batch_Classifier {
             dataAttack.add(new DenseInstance(1.0d, features));
         }
 
+        dataNormal.setClassIndex(dataNormal.numAttributes() - 1);
+        dataAttack.setClassIndex(dataAttack.numAttributes() - 1);
+
         this.attackInstanceFormat = dataAttack.get(0);
         this.normalInstanceFormat = dataNormal.get(0);
 
