@@ -305,7 +305,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             } else {
                                 values.predictClass = 1.0d;
                                 values.instClass = inst.classValue();
-                                values.alpha = conformalEvaluatorBatch.probabilityForCorrectNormal(inst, classifier.distributionForInstance(inst)[1]);
+                                values.alpha = conformalEvaluatorBatch.probabilityForCorrectAttack(inst, classifier.distributionForInstance(inst)[1]);
                                 listValueslThreadedAttack.add(values);
                             }
                         }
@@ -461,6 +461,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         if (n == 0) {
                             n = 1;
                         }
+
+
+
+
+
 
 
                         outputList.add(iAttack + ";"
