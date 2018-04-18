@@ -3,7 +3,7 @@ package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 import weka.classifiers.meta.Bagging;
 import weka.core.Instance;
 
-public class ConformalEvaluator_BatchClassifier_Bagging extends Bagging implements ConformalEvaluator_BatchClassifier {
+public class ConformalEvaluator_BatchClassifier_Bagging extends Bagging implements ConformalEvaluator_BatchClassifier_Transcend {
 
     int nClassifiers;
     int sizeBagPercent;

@@ -1,7 +1,6 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
 import fcul.viegas.topologies.machinelearning.method.OperationPoints;
-import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
 import moa.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 
@@ -23,10 +22,10 @@ public class ConformalEvaluator_Batch_WekaMoaClassifierWrapper {
     //operation points for the stream learning for them
     private ArrayList<OperationPoints> moaOperationPoints;
     //conformal evaluators, different from usenix one!
-    private ConformalEvaluator_Batch conformalEvaluatorVIEGAS_Batch;
-    private ConformalEvaluator_Batch conformalEvaluatorMOORE_Batch;
-    private ConformalEvaluator_Batch conformalEvaluatorNIGEL_Batch;
-    private ConformalEvaluator_Batch conformalEvaluatorORUNADA_Batch;
+    private ConformalEvaluator_Batch_Transcend conformalEvaluatorVIEGAS_Batch;
+    private ConformalEvaluator_Batch_Transcend conformalEvaluatorMOORE_Batch;
+    private ConformalEvaluator_Batch_Transcend conformalEvaluatorNIGEL_Batch;
+    private ConformalEvaluator_Batch_Transcend conformalEvaluatorORUNADA_Batch;
 
     public ConformalEvaluator_Batch_WekaMoaClassifierWrapper() {
         this.featureSetToLookMoa = new ArrayList<>();
@@ -53,35 +52,35 @@ public class ConformalEvaluator_Batch_WekaMoaClassifierWrapper {
         this.featureSetToLookMoa = featureSetToLookMoa;
     }
 
-    public ConformalEvaluator_Batch getConformalEvaluatorMOORE_Batch() {
+    public ConformalEvaluator_Batch_Transcend getConformalEvaluatorMOORE_Batch() {
         return conformalEvaluatorMOORE_Batch;
     }
 
-    public void setConformalEvaluatorMOORE_Batch(ConformalEvaluator_Batch conformalEvaluatorMOORE_Batch) {
+    public void setConformalEvaluatorMOORE_Batch(ConformalEvaluator_Batch_Transcend conformalEvaluatorMOORE_Batch) {
         this.conformalEvaluatorMOORE_Batch = conformalEvaluatorMOORE_Batch;
     }
 
-    public ConformalEvaluator_Batch getConformalEvaluatorNIGEL_Batch() {
+    public ConformalEvaluator_Batch_Transcend getConformalEvaluatorNIGEL_Batch() {
         return conformalEvaluatorNIGEL_Batch;
     }
 
-    public void setConformalEvaluatorNIGEL_Batch(ConformalEvaluator_Batch conformalEvaluatorNIGEL_Batch) {
+    public void setConformalEvaluatorNIGEL_Batch(ConformalEvaluator_Batch_Transcend conformalEvaluatorNIGEL_Batch) {
         this.conformalEvaluatorNIGEL_Batch = conformalEvaluatorNIGEL_Batch;
     }
 
-    public ConformalEvaluator_Batch getConformalEvaluatorORUNADA_Batch() {
+    public ConformalEvaluator_Batch_Transcend getConformalEvaluatorORUNADA_Batch() {
         return conformalEvaluatorORUNADA_Batch;
     }
 
-    public void setConformalEvaluatorORUNADA_Batch(ConformalEvaluator_Batch conformalEvaluatorORUNADA_Batch) {
+    public void setConformalEvaluatorORUNADA_Batch(ConformalEvaluator_Batch_Transcend conformalEvaluatorORUNADA_Batch) {
         this.conformalEvaluatorORUNADA_Batch = conformalEvaluatorORUNADA_Batch;
     }
 
-    public ConformalEvaluator_Batch getConformalEvaluatorVIEGAS_Batch() {
+    public ConformalEvaluator_Batch_Transcend getConformalEvaluatorVIEGAS_Batch() {
         return conformalEvaluatorVIEGAS_Batch;
     }
 
-    public void setConformalEvaluatorVIEGAS_Batch(ConformalEvaluator_Batch conformalEvaluatorVIEGAS_Batch) {
+    public void setConformalEvaluatorVIEGAS_Batch(ConformalEvaluator_Batch_Transcend conformalEvaluatorVIEGAS_Batch) {
         this.conformalEvaluatorVIEGAS_Batch = conformalEvaluatorVIEGAS_Batch;
     }
 

@@ -1,24 +1,19 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
-import weka.classifiers.Classifier;
-import weka.classifiers.meta.FilteredClassifier;
-import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
-import weka.filters.supervised.instance.Resample;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class ConformalEvaluator_Batch {
+public class ConformalEvaluator_Batch_Transcend {
 
-    private ConformalEvaluator_BatchClassifier conformalEvaluatorClassifier;
+    private ConformalEvaluator_BatchClassifier_Transcend conformalEvaluatorClassifier;
     private Double[][] nonConformityMeasures;
     private Double[][] pvalues;
 
-    public ConformalEvaluator_Batch(ConformalEvaluator_BatchClassifier conformalEvaluatorClassifier) {
+    public ConformalEvaluator_Batch_Transcend(ConformalEvaluator_BatchClassifier_Transcend conformalEvaluatorClassifier) {
         this.conformalEvaluatorClassifier = conformalEvaluatorClassifier;
     }
 

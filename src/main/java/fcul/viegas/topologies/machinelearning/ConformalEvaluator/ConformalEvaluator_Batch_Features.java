@@ -93,12 +93,11 @@ public class ConformalEvaluator_Batch_Features {
         }
     }
 
-    public double[] getFeatureStatistics(Instance inst){
+    public double[] getFeatureStatistics(Instance inst, double classifiedClass){
         double[] distRet = new double[inst.numAttributes()];
         int outsideScopePCT = 0;
         for(int i = 0; i < inst.numAttributes() - 1; i++){
-            double featValue = inst.toDoubleArray()[i];
-            if(inst.classValue() == 0.0d){
+            if(classifiedClass == 0.0d){
                 double std = this.featureValuesAverageNormal[i].getStandardDeviation();
                 double avg = this.featureValuesAverageNormal[i].getAverage();
                 distRet[i] = Math.abs(avg - inst.toDoubleArray()[i]);

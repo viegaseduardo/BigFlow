@@ -4,7 +4,7 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instance;
 import weka.core.Utils;
 
-public class ConformalEvaluator_BatchClassifier_NaiveBayes extends NaiveBayes implements ConformalEvaluator_BatchClassifier {
+public class ConformalEvaluator_BatchClassifier_NaiveBayes extends NaiveBayes implements ConformalEvaluator_BatchClassifier_Transcend {
 
 
     public ConformalEvaluator_BatchClassifier_NaiveBayes(boolean supervised){
