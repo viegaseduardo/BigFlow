@@ -58,8 +58,14 @@ public class ConformalEvaluator_Batch_Classifier {
 
             public void run() {
                 try {
+                    int pct = 0;
                     for (int k = i; k < iUpper; k++) {
-                        System.out.println("Thread: [" + k + "/" + iUpper + "]");
+                        if(k >= i){
+                            if(k % ((dataTrain.size())/100) == 0){
+                                pct++;
+                                System.out.println("\tConformalEvaluator_Batch_Classifier " + pct + "% ...[" + k + "/" + iUpper + "]");
+                            }
+                        }
 
                         Instance inst = dataTrain.get(k);
 
