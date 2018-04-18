@@ -145,6 +145,9 @@ public class ConformalEvaluator_Batch_Classifier {
             instancesConformalAttack.add(d);
         }
 
+        System.out.println("ConformalEvaluator_Batch_Classifier - NormalInstances: " + instancesConformalNormal.size());
+        System.out.println("ConformalEvaluator_Batch_Classifier - AttackInstances: " + instancesConformalAttack.size());
+
 
 
         ArrayList<Attribute> atts = new ArrayList<Attribute>(instancesConformalNormal.get(0).length);
@@ -153,7 +156,7 @@ public class ConformalEvaluator_Batch_Classifier {
         classVal.add("wrong");
 
         for (int i = 0; i < instancesConformalNormal.get(0).length - 1; i++) {
-            atts.add(new Attribute("feat_" + i, (ArrayList<String>) null));
+            atts.add(new Attribute("feat_" + i));
         }
 
         atts.add(new Attribute("class", classVal));
