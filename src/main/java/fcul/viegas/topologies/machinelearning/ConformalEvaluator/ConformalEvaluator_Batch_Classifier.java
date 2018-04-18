@@ -10,6 +10,8 @@ import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ConformalEvaluator_Batch_Classifier {
 
@@ -38,52 +40,106 @@ public class ConformalEvaluator_Batch_Classifier {
         System.out.println("ConformalEvaluator_Batch_Classifier - Building feature for classifiers...");
         ArrayList<double[]> instancesConformalNormal = new ArrayList<>();
         ArrayList<double[]> instancesConformalAttack = new ArrayList<>();
-        for (int i = 0; i < dataTrain.size(); i++) {
-            Instance inst = dataTrain.get(i);
+        List<double[]> listValuesThreadedNormal = Collections.synchronizedList(new ArrayList<double[]>());
+        List<double[]> listValuesThreadedAttack = Collections.synchronizedList(new ArrayList<double[]>());
 
 
-            double[] featureConformal = this.conformalFeaturesEvaluator.getFeatureStatistics(inst, classGivenByClassifier[i]);
-            double[] featVec = new double[featureConformal.length + 5];
 
-            int j = 0;
-            for (j = 0; j < featureConformal.length; j++) {
-                featVec[j] = featureConformal[j];
-            }
-            featVec[j] = probabilities[i];
-            j++;
-            if (classGivenByClassifier[i] == 0.0d) {
-                featVec[j] = this.conformalTranscend.getPValueForNormal(inst);
-                j++;
-                featVec[j] = this.conformalTranscend.getPValueForAttack(inst);
-                j++;
-                featVec[j] = this.conformalTranscend.getNonConformity(inst, 0.0d);
-                j++;
 
-                if (Double.compare(inst.classValue(), classGivenByClassifier[i]) == 0) {
-                    featVec[j] = 0.0d;
-                } else {
-                    featVec[j] = 1.0d;
-                }
 
-                instancesConformalNormal.add(featVec);
-            } else {
-                featVec[j] = this.conformalTranscend.getPValueForAttack(inst);
-                j++;
-                featVec[j] = this.conformalTranscend.getPValueForNormal(inst);
-                j++;
-                featVec[j] = this.conformalTranscend.getNonConformity(inst, 1.0d);
-                j++;
+        class TestClass implements Runnable {
+            int i;
+            int iUpper;
 
-                if (Double.compare(inst.classValue(), classGivenByClassifier[i]) == 0) {
-                    featVec[j] = 0.0d;
-                } else {
-                    featVec[j] = 1.0d;
-                }
-
-                instancesConformalAttack.add(featVec);
+            TestClass(int i, int iUpper)  {
+                this.i = i;
+                this.iUpper = iUpper;
             }
 
+            public void run() {
+                try {
+                    for (int k = i; k < iUpper; k++) {
+                        System.out.println("Thread: [" + k + "/" + iUpper + "]");
+
+                        Instance inst = dataTrain.get(k);
+
+                        double[] featureConformal = conformalFeaturesEvaluator.getFeatureStatistics(inst, classGivenByClassifier[i]);
+                        double[] featVec = new double[featureConformal.length + 5];
+
+                        int j = 0;
+                        for (j = 0; j < featureConformal.length; j++) {
+                            featVec[j] = featureConformal[j];
+                        }
+                        featVec[j] = probabilities[k];
+                        j++;
+                        if (classGivenByClassifier[k] == 0.0d) {
+                            featVec[j] = conformalTranscend.getPValueForNormal(inst);
+                            j++;
+                            featVec[j] = conformalTranscend.getPValueForAttack(inst);
+                            j++;
+                            featVec[j] = conformalTranscend.getNonConformity(inst, 0.0d);
+                            j++;
+
+                            if (Double.compare(inst.classValue(), classGivenByClassifier[k]) == 0) {
+                                featVec[j] = 0.0d;
+                            } else {
+                                featVec[j] = 1.0d;
+                            }
+
+                            listValuesThreadedNormal.add(featVec);
+                        } else {
+                            featVec[j] = conformalTranscend.getPValueForAttack(inst);
+                            j++;
+                            featVec[j] = conformalTranscend.getPValueForNormal(inst);
+                            j++;
+                            featVec[j] = conformalTranscend.getNonConformity(inst, 1.0d);
+                            j++;
+
+                            if (Double.compare(inst.classValue(), classGivenByClassifier[k]) == 0) {
+                                featVec[j] = 0.0d;
+                            } else {
+                                featVec[j] = 1.0d;
+                            }
+
+                            listValuesThreadedAttack.add(featVec);
+                        }
+                    }
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
         }
+
+
+        ArrayList<Thread> threads = new ArrayList<>();
+        int jump = dataTrain.size() / 20;
+        int start = 0;
+        for(int nThreads = 0; nThreads < 20; nThreads++){
+            if(nThreads + 1 == 20){
+                Thread t = new Thread(new TestClass(start, dataTrain.size()));
+                t.start();
+                threads.add(t);
+                start += jump;
+            }else {
+                Thread t = new Thread(new TestClass(start, start + jump));
+                t.start();
+                threads.add(t);
+                start += jump;
+            }
+        }
+
+        for(Thread t: threads) {
+            t.join();
+        }
+
+        for(double[] d: listValuesThreadedNormal){
+            instancesConformalNormal.add(d);
+        }
+        for(double[] d: listValuesThreadedAttack){
+            instancesConformalAttack.add(d);
+        }
+
+
 
         ArrayList<Attribute> atts = new ArrayList<Attribute>(instancesConformalNormal.get(0).length);
         ArrayList<String> classVal = new ArrayList<String>();
