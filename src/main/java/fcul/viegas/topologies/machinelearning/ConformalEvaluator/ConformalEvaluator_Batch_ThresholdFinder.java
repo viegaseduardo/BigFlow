@@ -208,7 +208,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             double predict = 0.0d;
                             predict = classifier.classifyInstance(inst);
 
-                            if (predict == 0.0d) {
+                            if (Double.compare(predict,0.0d) == 0) {
                                 classGivenByClassifier[k] = 0.0d;
                                 probabilities[k] = classifier.distributionForInstance(inst)[0];
                             } else {

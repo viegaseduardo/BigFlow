@@ -78,7 +78,7 @@ public class ConformalEvaluator_Batch_Classifier {
                         }
                         featVec[j] = probabilities[k];
                         j++;
-                        if (classGivenByClassifier[k] == 0.0d) {
+                        if (Double.compare(classGivenByClassifier[k],0.0d) == 0 ) {
                             featVec[j] = conformalTranscend.getPValueForNormal(inst);
                             j++;
                             featVec[j] = conformalTranscend.getPValueForAttack(inst);
