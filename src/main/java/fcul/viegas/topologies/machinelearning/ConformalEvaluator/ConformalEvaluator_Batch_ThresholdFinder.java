@@ -59,7 +59,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         System.out.println("Opening training file....");
 
         Instances dataTrain = null;
-        if(featureSet.equals("VIEGAS")) {
+        if (featureSet.equals("VIEGAS")) {
             Instances dataTrainVIEGAS = mlModelBuilder.openFile(testFilesVIEGAS.get(0));
             dataTrainVIEGAS.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
@@ -73,7 +73,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
 
             dataTrain = dataTrainVIEGAS;
-        }else if(featureSet.equals("NIGEL")) {
+        } else if (featureSet.equals("NIGEL")) {
 
             Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
             dataTrainMOORE.randomize(new Random(1));
@@ -87,7 +87,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
 
             dataTrain = dataTrainMOORE;
-        }else if(featureSet.equals("MOORE")) {
+        } else if (featureSet.equals("MOORE")) {
 
             Instances dataTrainNIGEL = mlModelBuilder.openFile(testFilesNIGEL.get(0));
             dataTrainNIGEL.randomize(new Random(1));
@@ -101,7 +101,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
 
             dataTrain = dataTrainNIGEL;
-        }else if(featureSet.equals("ORUNADA")) {
+        } else if (featureSet.equals("ORUNADA")) {
 
             Instances dataTrainORUNADA = mlModelBuilder.openFile(testFilesORUNADA.get(0));
             dataTrainORUNADA.randomize(new Random(1));
@@ -148,7 +148,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         ArrayList<String[]> testFiles = new ArrayList<>();
         for (int i = 0; i < testFilesVIEGAS.size(); i++) {
-        //for (int i = 0; i < 60; i++) {
+            //for (int i = 0; i < 60; i++) {
 
             String[] array = new String[4];
             array[0] = testFilesVIEGAS.get(i);
@@ -166,13 +166,15 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             int i;
             int iUpper;
             Classifier classifier;
+            Instances dataTrain;
 
-            TrainClass(int i, int iUpper, Classifier classifier)  {
+            TrainClass(int i, int iUpper, Classifier classifier, Instances dataTrain) {
                 this.i = i;
                 this.iUpper = iUpper;
+                this.dataTrain = dataTrain;
                 try {
                     this.classifier = weka.classifiers.AbstractClassifier.makeCopy(classifier);
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -180,46 +182,19 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             public void run() {
                 try {
                     for (int k = i; k < iUpper; k++) {
-                        System.out.println("Thread: [" + k + "/" + iUpper + "]");
-                        String s = null;
-                        String[] s1 = testFiles.get(k);
-                        if (featureSet.equals("VIEGAS")) {
-                            s = s1[0];
-                        } else if (featureSet.equals("MOORE")) {
-                            s = s1[1];
-                        } else if (featureSet.equals("NIGEL")) {
-                            s = s1[2];
-                        } else if (featureSet.equals("ORUNADA")) {
-                            s = s1[3];
+                        Instance inst = dataTrain.get(k);
+                        double predict = 0.0d;
+                        predict = classifier.classifyInstance(inst);
+
+                        if (Double.compare(predict, 0.0d) == 0) {
+                            classGivenByClassifier[k] = 0.0d;
+                            probabilities[k] = classifier.distributionForInstance(inst)[0];
+                        } else {
+                            classGivenByClassifier[k] = 1.0d;
+                            probabilities[k] = classifier.distributionForInstance(inst)[1];
                         }
-
-                        Instances dataTest = mlModelBuilder.openFile(s);
-                        dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
-
-                        if (featureSet.equals("VIEGAS")) {
-                            dataTest = mlModelBuilder.removeParticularAttributesViegas(dataTest);
-                        } else if (featureSet.equals("ORUNADA")) {
-                            dataTest = mlModelBuilder.removeParticularAttributesOrunada(dataTest);
-                        }
-
-
-                        for (int counter = 0; counter < dataTest.size(); counter++) {
-                            Instance inst = dataTest.get(counter);
-                            double predict = 0.0d;
-                            predict = classifier.classifyInstance(inst);
-
-                            if (Double.compare(predict,0.0d) == 0) {
-                                classGivenByClassifier[k] = 0.0d;
-                                probabilities[k] = classifier.distributionForInstance(inst)[0];
-                            } else {
-                                classGivenByClassifier[k] = 1.0d;
-                                probabilities[k] = classifier.distributionForInstance(inst)[1];
-                            }
-                        }
-
-                        System.out.println(s);
                     }
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -227,39 +202,34 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         ArrayList<Thread> threads = new ArrayList<>();
-        int jump = daysToUseForTraining / 5;
+        int jump = daysToUseForTraining / 1;
         int start = 0;
-        for(int nThreads = 0; nThreads < 5; nThreads++){
-            if(nThreads + 1 == 5){
-                Thread t = new Thread(new TrainClass(start, daysToUseForTraining, classifier));
+        for (int nThreads = 0; nThreads < 1; nThreads++) {
+            if (nThreads + 1 == 1) {
+                Thread t = new Thread(new TrainClass(start, daysToUseForTraining, classifier, dataTrain));
                 t.start();
                 threads.add(t);
                 start += jump;
-            }else {
-                Thread t = new Thread(new TrainClass(start, start + jump, classifier));
+            } else {
+                Thread t = new Thread(new TrainClass(start, start + jump, classifier, dataTrain));
                 t.start();
                 threads.add(t);
                 start += jump;
             }
         }
 
-        for(Thread t: threads) {
+        for (Thread t : threads) {
             t.join();
         }
 
         conformalEvaluatorBatch.buildEvaluator(dataTrain, classGivenByClassifier, probabilities);
 
 
-
         List<ValueForRejectEvaluation> listValueslThreadedNormal = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
         List<ValueForRejectEvaluation> listValueslThreadedAttack = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
 
 
-
-
-
-
-        class Stats{
+        class Stats {
             public int acertou = 0;
             public int nTotalAttack = 0;
             public int nTotalNormal = 0;
@@ -272,12 +242,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             int iUpper;
             Classifier classifier;
 
-            TestClass(int i, int iUpper, Classifier classifier)  {
+            TestClass(int i, int iUpper, Classifier classifier) {
                 this.i = i;
                 this.iUpper = iUpper;
                 try {
                     this.classifier = weka.classifiers.AbstractClassifier.makeCopy(classifier);
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -342,7 +312,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                         System.out.println(s);
                     }
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -352,13 +322,13 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         threads = new ArrayList<>();
         jump = testFiles.size() / 20;
         start = 0;
-        for(int nThreads = 0; nThreads < 20; nThreads++){
-            if(nThreads + 1 == 20){
+        for (int nThreads = 0; nThreads < 20; nThreads++) {
+            if (nThreads + 1 == 20) {
                 Thread t = new Thread(new TestClass(start, testFiles.size(), classifier));
                 t.start();
                 threads.add(t);
                 start += jump;
-            }else {
+            } else {
                 Thread t = new Thread(new TestClass(start, start + jump, classifier));
                 t.start();
                 threads.add(t);
@@ -366,19 +336,18 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             }
         }
 
-        for(Thread t: threads) {
+        for (Thread t : threads) {
             t.join();
         }
-
-
 
 
         ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<ValueForRejectEvaluation>();
         ArrayList<ValueForRejectEvaluation> listValuesPredictedAttack = new ArrayList<ValueForRejectEvaluation>();
 
-        for(ValueForRejectEvaluation obj : listValueslThreadedNormal){
+        for (ValueForRejectEvaluation obj : listValueslThreadedNormal) {
             listValuesPredictedNormal.add(obj);
-        }for(ValueForRejectEvaluation obj : listValueslThreadedAttack){
+        }
+        for (ValueForRejectEvaluation obj : listValueslThreadedAttack) {
             listValuesPredictedAttack.add(obj);
         }
 
@@ -419,12 +388,14 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             int iNormalUpper;
             int nTotalAttack;
             int nTotalNormal;
+
             ParameterClass(int iNorm, int iNormUpper, int nTotalAtk, int nTotalNorm) {
                 iNormal = iNorm;
                 iNormalUpper = iNormUpper;
                 nTotalAttack = nTotalAtk;
                 nTotalNormal = nTotalNorm;
             }
+
             public void run() {
                 System.out.println("iNormal: " + iNormal + " iNormalUpper: " + iNormalUpper);
                 for (; iNormal < iNormalUpper; iNormal++) {
@@ -502,8 +473,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                                 + nAtkAcc + ";"
                                 + nAtk + ";"
                                 + ((nToUseNormal + nToUseAttack) / (float) (listValuesPredictedAttack.size() + listValuesPredictedNormal.size())) + ";"
-                                + (nAtk/(float)nTotalAttack) + ";"
-                                + (nNormal/(float)nTotalNormal) + ";"
+                                + (nAtk / (float) nTotalAttack) + ";"
+                                + (nNormal / (float) nTotalNormal) + ";"
                                 + listValuesPredictedNormal.get(pingNormal * iNormal).alpha + ";"
                                 + listValuesPredictedAttack.get(pingAttack * iAttack).alpha);
                     }
@@ -513,13 +484,13 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         }
 
         threads = new ArrayList<>();
-        for(int nThreads = 0; nThreads < 15; nThreads++){
-            Thread t = new Thread(new ParameterClass((int)((100.0f/15.0f)*nThreads), (int)(((100.0f/15.0f)*(nThreads+1))), stats.nTotalAttack, stats.nTotalNormal));
+        for (int nThreads = 0; nThreads < 15; nThreads++) {
+            Thread t = new Thread(new ParameterClass((int) ((100.0f / 15.0f) * nThreads), (int) (((100.0f / 15.0f) * (nThreads + 1))), stats.nTotalAttack, stats.nTotalNormal));
             t.start();
             threads.add(t);
         }
 
-        for(Thread t: threads) {
+        for (Thread t : threads) {
             t.join();
         }
 
@@ -556,7 +527,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                 float error = Float.valueOf(split[3]) + Float.valueOf(split[4]);
                 error = error / 2.0f;
-                float rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11]))/2.0f);
+                float rejection = ((Float.valueOf(split[10]) + Float.valueOf(split[11])) / 2.0f);
                 rejection = 1.0f - rejection;
 
                 //float error = Float.valueOf(split[4]);
