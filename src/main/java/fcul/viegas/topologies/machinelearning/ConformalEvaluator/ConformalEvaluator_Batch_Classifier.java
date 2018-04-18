@@ -2,6 +2,7 @@ package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -179,23 +180,21 @@ public class ConformalEvaluator_Batch_Classifier {
         this.normalInstanceFormat = dataNormal.get(0);
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
-        NaiveBayes normalBayes = new NaiveBayes();
-        normalBayes.setUseSupervisedDiscretization(false);
+        J48 normalTree = new J48();
 
         ClassBalancer balancer = new ClassBalancer();
         balancer.setInputFormat(dataNormal);
-        normalBayes.buildClassifier(Filter.useFilter(dataNormal, balancer));
+        normalTree.buildClassifier(Filter.useFilter(dataNormal, balancer));
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building ATTACK classifier...");
-        NaiveBayes attackBayes = new NaiveBayes();
-        attackBayes.setUseSupervisedDiscretization(false);
+        J48 attackTree = new J48();
 
         balancer = new ClassBalancer();
         balancer.setInputFormat(dataAttack);
-        attackBayes.buildClassifier(Filter.useFilter(dataAttack, balancer));
+        attackTree.buildClassifier(Filter.useFilter(dataAttack, balancer));
 
-        this.normalClassifier = normalBayes;
-        this.attackClassifier = attackBayes;
+        this.normalClassifier = normalTree;
+        this.attackClassifier = attackTree;
     }
 
     public double probabilityForCorrectNormal(Instance inst, double probability) throws Exception {
@@ -226,7 +225,7 @@ public class ConformalEvaluator_Batch_Classifier {
 
     public double probabilityForCorrectAttack(Instance inst, double probability) throws Exception {
 
-        double[] featureConformal = this.conformalFeaturesEvaluator.getFeatureStatistics(inst, 0.0d);
+        double[] featureConformal = this.conformalFeaturesEvaluator.getFeatureStatistics(inst, 1.0d);
         double[] featVec = new double[featureConformal.length + 5];
 
         int j = 0;
