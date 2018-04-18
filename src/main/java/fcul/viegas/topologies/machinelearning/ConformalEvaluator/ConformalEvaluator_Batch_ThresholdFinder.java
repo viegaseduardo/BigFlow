@@ -231,7 +231,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         int start = 0;
         for(int nThreads = 0; nThreads < 5; nThreads++){
             if(nThreads + 1 == 5){
-                Thread t = new Thread(new TrainClass(start, testFiles.size(), classifier));
+                Thread t = new Thread(new TrainClass(start, daysToUseForTraining, classifier));
                 t.start();
                 threads.add(t);
                 start += jump;
