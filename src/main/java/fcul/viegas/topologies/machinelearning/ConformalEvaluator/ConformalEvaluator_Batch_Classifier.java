@@ -4,6 +4,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.J48;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class ConformalEvaluator_Batch_Classifier {
 
@@ -199,11 +201,15 @@ public class ConformalEvaluator_Batch_Classifier {
 
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
-        NaiveBayes normalTree = new NaiveBayes();
+        RandomForest normalTree = new RandomForest();
+        normalTree.setNumExecutionSlots(20);
+        normalTree.setNumIterations(100);
         normalTree.buildClassifier(dataNormal);
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building ATTACK classifier...");
-        NaiveBayes attackTree = new NaiveBayes();
+        RandomForest attackTree = new RandomForest();
+        attackTree.setNumExecutionSlots(20);
+        attackTree.setNumIterations(100);
         attackTree.buildClassifier(dataAttack);
 
         this.normalClassifier = normalTree;
