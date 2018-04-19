@@ -199,11 +199,11 @@ public class ConformalEvaluator_Batch_Classifier {
 
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
-        J48 normalTree = new J48();
+        NaiveBayes normalTree = new NaiveBayes();
         normalTree.buildClassifier(dataNormal);
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building ATTACK classifier...");
-        J48 attackTree = new J48();
+        NaiveBayes attackTree = new NaiveBayes();
         attackTree.buildClassifier(dataAttack);
 
         this.normalClassifier = normalTree;
