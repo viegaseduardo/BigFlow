@@ -318,6 +318,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             }
         }
 
+        conformalEvaluatorBatch.setStartWriting(true);
+
 
         threads = new ArrayList<>();
         jump = testFiles.size() / 20;
@@ -339,6 +341,9 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         for (Thread t : threads) {
             t.join();
         }
+
+        conformalEvaluatorBatch.writeDatasets();
+        System.exit(1);
 
 
         ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<ValueForRejectEvaluation>();
