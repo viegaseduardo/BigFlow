@@ -78,8 +78,8 @@ public class ConformalEvaluator_Batch_Classifier {
 
                         Instance inst = dataTrain.get(k);
 
-                        double[] featureConformal = conformalFeaturesEvaluator.getFeatureStatistics(inst, classGivenByClassifier[i]);
-                        double[] featureConformalOther = conformalFeaturesEvaluator.getFeatureStatistics(inst, (classGivenByClassifier[i] == 0.0d) ? 1.0d : 0.0d);
+                        double[] featureConformal = conformalFeaturesEvaluator.getFeatureStatistics(inst, classGivenByClassifier[k]);
+                        double[] featureConformalOther = conformalFeaturesEvaluator.getFeatureStatistics(inst, (classGivenByClassifier[k] == 0.0d) ? 1.0d : 0.0d);
                         double[] featVec = new double[featureConformal.length + featureConformalOther.length + 5];
 
                         int j = 0;
