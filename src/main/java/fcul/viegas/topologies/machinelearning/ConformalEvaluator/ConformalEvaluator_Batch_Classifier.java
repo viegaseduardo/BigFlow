@@ -199,29 +199,23 @@ public class ConformalEvaluator_Batch_Classifier {
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
         J48 normalTree = new J48();
-
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(dataNormal);
-        normalTree.buildClassifier(Filter.useFilter(dataNormal, balancer));
+        normalTree.buildClassifier(dataNormal);
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building ATTACK classifier...");
         J48 attackTree = new J48();
-
-        balancer = new ClassBalancer();
-        balancer.setInputFormat(dataAttack);
-        attackTree.buildClassifier(Filter.useFilter(dataAttack, balancer));
+        attackTree.buildClassifier(dataAttack);
 
         this.normalClassifier = normalTree;
         this.attackClassifier = attackTree;
 
         Evaluation evalNormal = new Evaluation(dataNormal);
         evalNormal.evaluateModel(this.normalClassifier, dataNormal);
-        System.out.println(evalNormal.toSummaryString("\n\n\n\n\n\nNORMAL Results\n======\n", false));
+        System.out.println(evalNormal.toSummaryString("\n\n\n\n\n\nNORMAL Results\n======\n", true));
 
 
         Evaluation evalAttack = new Evaluation(dataAttack);
         evalAttack.evaluateModel(this.attackClassifier, dataAttack);
-        System.out.println(evalAttack.toSummaryString("\n\n\n\n\n\nATTACK Results\n======\n", false));
+        System.out.println(evalAttack.toSummaryString("\n\n\n\n\n\nATTACK Results\n======\n", true));
 
     }
 
@@ -251,6 +245,7 @@ public class ConformalEvaluator_Batch_Classifier {
 
 
         Instance copyOfNormalTemplate = new DenseInstance(this.normalInstanceFormat);
+        copyOfNormalTemplate.setDataset(this.normalInstanceFormat.dataset());
         for (int i = 0; i < copyOfNormalTemplate.numAttributes(); i++) {
             copyOfNormalTemplate.setValue(i, featVec[i]);
         }
@@ -285,6 +280,7 @@ public class ConformalEvaluator_Batch_Classifier {
         featVec[j] = 0.0d;
 
         Instance copyOfAttackTemplate = new DenseInstance(this.attackInstanceFormat);
+        copyOfAttackTemplate.setDataset(this.attackInstanceFormat.dataset());
         for (int i = 0; i < copyOfAttackTemplate.numAttributes(); i++) {
             copyOfAttackTemplate.setValue(i, featVec[i]);
         }
