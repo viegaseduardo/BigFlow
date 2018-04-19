@@ -260,9 +260,9 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         String[] s1 = testFiles.get(k);
                         if (featureSet.equals("VIEGAS")) {
                             s = s1[0];
-                        } else if (featureSet.equals("MOORE")) {
-                            s = s1[1];
                         } else if (featureSet.equals("NIGEL")) {
+                            s = s1[1];
+                        } else if (featureSet.equals("MOORE")) {
                             s = s1[2];
                         } else if (featureSet.equals("ORUNADA")) {
                             s = s1[3];
