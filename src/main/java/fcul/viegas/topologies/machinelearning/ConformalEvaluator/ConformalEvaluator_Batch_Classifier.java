@@ -179,6 +179,7 @@ public class ConformalEvaluator_Batch_Classifier {
 
         this.attackInstanceFormat = dataAttack.get(0);
         this.normalInstanceFormat = dataNormal.get(0);
+        //a
 
         ArffSaver saverNormal = new ArffSaver();
         saverNormal.setInstances(dataNormal);
