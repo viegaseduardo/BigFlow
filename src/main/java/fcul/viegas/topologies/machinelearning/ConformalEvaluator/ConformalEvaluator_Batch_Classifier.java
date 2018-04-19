@@ -281,7 +281,11 @@ public class ConformalEvaluator_Batch_Classifier {
         featVec[j] = conformalTranscend.getNonConformity(inst, 0.0d);
         j++;
 
-        featVec[j] = 0.0d;
+        if(inst.classValue() == 0.0d) {
+            featVec[j] = 0.0d;
+        }else{
+            featVec[j] = 1.0d;
+        }
 
 
         Instance copyOfNormalTemplate = new DenseInstance(this.normalInstanceFormat);
@@ -323,7 +327,11 @@ public class ConformalEvaluator_Batch_Classifier {
         featVec[j] = conformalTranscend.getNonConformity(inst, 1.0d);
         j++;
 
-        featVec[j] = 0.0d;
+        if(inst.classValue() == 1.0d) {
+            featVec[j] = 0.0d;
+        }else{
+            featVec[j] = 1.0d;
+        }
 
         Instance copyOfAttackTemplate = new DenseInstance(this.attackInstanceFormat);
         copyOfAttackTemplate.setDataset(this.attackInstanceFormat.dataset());
