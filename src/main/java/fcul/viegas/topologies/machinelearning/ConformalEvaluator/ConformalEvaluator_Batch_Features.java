@@ -100,15 +100,15 @@ public class ConformalEvaluator_Batch_Features {
             if(classifiedClass == 0.0d){
                 double std = this.featureValuesAverageNormal[i].getStandardDeviation();
                 double avg = this.featureValuesAverageNormal[i].getAverage();
-                distRet[i] = Math.abs(avg - inst.toDoubleArray()[i]);
+                distRet[i] = avg - inst.toDoubleArray()[i];
                 if(inst.toDoubleArray()[i] < (std-avg) || inst.toDoubleArray()[i] > (std+avg)){
                     outsideScopePCT++;
                 }
             }else{
                 double std = this.featureValuesAverageAttack[i].getStandardDeviation();
                 double avg = this.featureValuesAverageAttack[i].getAverage();
-                distRet[i] = Math.abs(avg - inst.toDoubleArray()[i]);
-                if(inst.toDoubleArray()[i] < (std-avg) || inst.toDoubleArray()[i] > (std+avg)){
+                distRet[i] = avg - inst.toDoubleArray()[i];
+                if(inst.toDoubleArray()[i] <= (std-avg) || inst.toDoubleArray()[i] >= (std+avg)){
                     outsideScopePCT++;
                 }
             }

@@ -218,11 +218,13 @@ public class ConformalEvaluator_Batch_Classifier {
         Evaluation evalNormal = new Evaluation(dataNormal);
         evalNormal.evaluateModel(this.normalClassifier, dataNormal);
         System.out.println(evalNormal.toSummaryString("\n\n\n\n\n\nNORMAL Results\n======\n", true));
+        System.out.println(evalNormal.toClassDetailsString());
 
 
         Evaluation evalAttack = new Evaluation(dataAttack);
         evalAttack.evaluateModel(this.attackClassifier, dataAttack);
         System.out.println(evalAttack.toSummaryString("\n\n\n\n\n\nATTACK Results\n======\n", true));
+        System.out.println(evalAttack.toClassDetailsString());
 
     }
 
