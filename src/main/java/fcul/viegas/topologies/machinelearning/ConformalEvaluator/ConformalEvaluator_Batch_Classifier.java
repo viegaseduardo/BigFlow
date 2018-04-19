@@ -8,9 +8,11 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +32,7 @@ public class ConformalEvaluator_Batch_Classifier {
 
     public void buildEvaluator(Instances dataTrain, double[] classGivenByClassifier, double[] probabilities) throws Exception {
 
-        this.conformalTranscend = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
+        this.conformalTranscend = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(1000, 100));
         this.conformalFeaturesEvaluator = new ConformalEvaluator_Batch_Features();
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building feature evaluator...");
@@ -44,8 +46,6 @@ public class ConformalEvaluator_Batch_Classifier {
         ArrayList<double[]> instancesConformalAttack = new ArrayList<>();
         List<double[]> listValuesThreadedNormal = Collections.synchronizedList(new ArrayList<double[]>());
         List<double[]> listValuesThreadedAttack = Collections.synchronizedList(new ArrayList<double[]>());
-
-
 
 
 
@@ -180,6 +180,18 @@ public class ConformalEvaluator_Batch_Classifier {
         this.attackInstanceFormat = dataAttack.get(0);
         this.normalInstanceFormat = dataNormal.get(0);
 
+        ArffSaver saverNormal = new ArffSaver();
+        saverNormal.setInstances(dataNormal);
+        saverNormal.setFile(new File("normal.arff"));
+        saverNormal.writeBatch();
+
+        ArffSaver saverAttack = new ArffSaver();
+        saverAttack.setInstances(dataAttack);
+        saverAttack.setFile(new File("attack.arff"));
+        saverAttack.writeBatch();
+
+
+
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
         J48 normalTree = new J48();
 
@@ -228,7 +240,10 @@ public class ConformalEvaluator_Batch_Classifier {
         j++;
         featVec[j] = 0.0d;
 
-        Instance copyOfNormalTemplate = this.normalInstanceFormat.copy(featVec);
+        Instance copyOfNormalTemplate = new DenseInstance(this.normalInstanceFormat);
+        for(int i = 0; i < copyOfNormalTemplate.numAttributes(); i++){
+            copyOfNormalTemplate.setValue(i, featVec[i]);
+        }
 
         return this.normalClassifier.distributionForInstance(copyOfNormalTemplate)[0];
     }
@@ -254,7 +269,11 @@ public class ConformalEvaluator_Batch_Classifier {
         j++;
         featVec[j] = 0.0d;
 
-        Instance copyOfAttackTemplate = this.attackInstanceFormat.copy(featVec);
+        Instance copyOfAttackTemplate = new DenseInstance(this.attackInstanceFormat);
+        for(int i = 0; i < copyOfAttackTemplate.numAttributes(); i++){
+            copyOfAttackTemplate.setValue(i, featVec[i]);
+        }
+
 
         return this.attackClassifier.distributionForInstance(copyOfAttackTemplate)[0];
     }
