@@ -48,12 +48,11 @@ public class ConformalEvaluator_Batch_Classifier {
         List<double[]> listValuesThreadedAttack = Collections.synchronizedList(new ArrayList<double[]>());
 
 
-
         class TestClass implements Runnable {
             int i;
             int iUpper;
 
-            TestClass(int i, int iUpper)  {
+            TestClass(int i, int iUpper) {
                 this.i = i;
                 this.iUpper = iUpper;
             }
@@ -62,8 +61,8 @@ public class ConformalEvaluator_Batch_Classifier {
                 try {
                     int pct = 0;
                     for (int k = i; k < iUpper; k++) {
-                        if(k >= i){
-                            if(k % ((dataTrain.size())/100) == 0){
+                        if (k >= i) {
+                            if (k % ((dataTrain.size()) / 100) == 0) {
                                 pct++;
                                 System.out.println("\tConformalEvaluator_Batch_Classifier " + pct + "% ...[" + k + "/" + iUpper + "]");
                             }
@@ -72,7 +71,7 @@ public class ConformalEvaluator_Batch_Classifier {
                         Instance inst = dataTrain.get(k);
 
                         double[] featureConformal = conformalFeaturesEvaluator.getFeatureStatistics(inst, classGivenByClassifier[i]);
-                        double[] featureConformalOther = conformalFeaturesEvaluator.getFeatureStatistics(inst, (classGivenByClassifier[i] == 0.0d)? 1.0d:0.0d);
+                        double[] featureConformalOther = conformalFeaturesEvaluator.getFeatureStatistics(inst, (classGivenByClassifier[i] == 0.0d) ? 1.0d : 0.0d);
                         double[] featVec = new double[featureConformal.length + featureConformalOther.length + 5];
 
                         int j = 0;
@@ -84,7 +83,7 @@ public class ConformalEvaluator_Batch_Classifier {
                         }
                         featVec[j] = probabilities[k];
                         j++;
-                        if (Double.compare(classGivenByClassifier[k],0.0d) == 0 ) {
+                        if (Double.compare(classGivenByClassifier[k], 0.0d) == 0) {
                             featVec[j] = conformalTranscend.getPValueForNormal(inst);
                             j++;
                             featVec[j] = conformalTranscend.getPValueForAttack(inst);
@@ -116,7 +115,7 @@ public class ConformalEvaluator_Batch_Classifier {
                             listValuesThreadedAttack.add(featVec);
                         }
                     }
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -126,13 +125,13 @@ public class ConformalEvaluator_Batch_Classifier {
         ArrayList<Thread> threads = new ArrayList<>();
         int jump = dataTrain.size() / 20;
         int start = 0;
-        for(int nThreads = 0; nThreads < 20; nThreads++){
-            if(nThreads + 1 == 20){
+        for (int nThreads = 0; nThreads < 20; nThreads++) {
+            if (nThreads + 1 == 20) {
                 Thread t = new Thread(new TestClass(start, dataTrain.size()));
                 t.start();
                 threads.add(t);
                 start += jump;
-            }else {
+            } else {
                 Thread t = new Thread(new TestClass(start, start + jump));
                 t.start();
                 threads.add(t);
@@ -140,20 +139,19 @@ public class ConformalEvaluator_Batch_Classifier {
             }
         }
 
-        for(Thread t: threads) {
+        for (Thread t : threads) {
             t.join();
         }
 
-        for(double[] d: listValuesThreadedNormal){
+        for (double[] d : listValuesThreadedNormal) {
             instancesConformalNormal.add(d);
         }
-        for(double[] d: listValuesThreadedAttack){
+        for (double[] d : listValuesThreadedAttack) {
             instancesConformalAttack.add(d);
         }
 
         System.out.println("ConformalEvaluator_Batch_Classifier - NormalInstances: " + instancesConformalNormal.size());
         System.out.println("ConformalEvaluator_Batch_Classifier - AttackInstances: " + instancesConformalAttack.size());
-
 
 
         ArrayList<Attribute> atts = new ArrayList<Attribute>(instancesConformalNormal.get(0).length);
@@ -181,20 +179,22 @@ public class ConformalEvaluator_Batch_Classifier {
         dataNormal.setClassIndex(dataNormal.numAttributes() - 1);
         dataAttack.setClassIndex(dataAttack.numAttributes() - 1);
 
+
         this.attackInstanceFormat = dataAttack.get(0);
         this.normalInstanceFormat = dataNormal.get(0);
+        this.attackInstanceFormat.setDataset(dataAttack);
+        this.normalInstanceFormat.setDataset(dataNormal);
         //a
 
         ArffSaver saverNormal = new ArffSaver();
         saverNormal.setInstances(dataNormal);
-        saverNormal.setFile(new File("normal.arff"));
+        saverNormal.setFile(new File("normal_more_feats.arff"));
         saverNormal.writeBatch();
 
         ArffSaver saverAttack = new ArffSaver();
         saverAttack.setInstances(dataAttack);
-        saverAttack.setFile(new File("attack.arff"));
+        saverAttack.setFile(new File("attack_more_feats.arff"));
         saverAttack.writeBatch();
-
 
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
@@ -227,26 +227,31 @@ public class ConformalEvaluator_Batch_Classifier {
 
     public double probabilityForCorrectNormal(Instance inst, double probability) throws Exception {
 
-        double[] featureConformal = this.conformalFeaturesEvaluator.getFeatureStatistics(inst, 0.0d);
-        double[] featVec = new double[featureConformal.length + 5];
+        double[] featureConformal = conformalFeaturesEvaluator.getFeatureStatistics(inst, 0.0d);
+        double[] featureConformalOther = conformalFeaturesEvaluator.getFeatureStatistics(inst, 1.0d);
+        double[] featVec = new double[featureConformal.length + featureConformalOther.length + 5];
 
         int j = 0;
         for (j = 0; j < featureConformal.length; j++) {
             featVec[j] = featureConformal[j];
         }
+        for (; j < (featureConformal.length + featureConformalOther.length); j++) {
+            featVec[j] = featureConformalOther[j - featureConformal.length];
+        }
         featVec[j] = probability;
         j++;
+        featVec[j] = conformalTranscend.getPValueForNormal(inst);
+        j++;
+        featVec[j] = conformalTranscend.getPValueForAttack(inst);
+        j++;
+        featVec[j] = conformalTranscend.getNonConformity(inst, 0.0d);
+        j++;
 
-        featVec[j] = this.conformalTranscend.getPValueForNormal(inst);
-        j++;
-        featVec[j] = this.conformalTranscend.getPValueForAttack(inst);
-        j++;
-        featVec[j] = this.conformalTranscend.getNonConformity(inst, 0.0d);
-        j++;
         featVec[j] = 0.0d;
 
+
         Instance copyOfNormalTemplate = new DenseInstance(this.normalInstanceFormat);
-        for(int i = 0; i < copyOfNormalTemplate.numAttributes(); i++){
+        for (int i = 0; i < copyOfNormalTemplate.numAttributes(); i++) {
             copyOfNormalTemplate.setValue(i, featVec[i]);
         }
 
@@ -256,29 +261,33 @@ public class ConformalEvaluator_Batch_Classifier {
 
     public double probabilityForCorrectAttack(Instance inst, double probability) throws Exception {
 
-        double[] featureConformal = this.conformalFeaturesEvaluator.getFeatureStatistics(inst, 1.0d);
-        double[] featVec = new double[featureConformal.length + 5];
+        double[] featureConformal = conformalFeaturesEvaluator.getFeatureStatistics(inst, 1.0d);
+        double[] featureConformalOther = conformalFeaturesEvaluator.getFeatureStatistics(inst, 0.0d);
+        double[] featVec = new double[featureConformal.length + featureConformalOther.length + 5];
 
         int j = 0;
         for (j = 0; j < featureConformal.length; j++) {
             featVec[j] = featureConformal[j];
         }
+        for (; j < (featureConformal.length + featureConformalOther.length); j++) {
+            featVec[j] = featureConformalOther[j - featureConformal.length];
+        }
         featVec[j] = probability;
         j++;
 
-        featVec[j] = this.conformalTranscend.getPValueForAttack(inst);
+        featVec[j] = conformalTranscend.getPValueForAttack(inst);
         j++;
-        featVec[j] = this.conformalTranscend.getPValueForNormal(inst);
+        featVec[j] = conformalTranscend.getPValueForNormal(inst);
         j++;
-        featVec[j] = this.conformalTranscend.getNonConformity(inst, 1.0d);
+        featVec[j] = conformalTranscend.getNonConformity(inst, 1.0d);
         j++;
+
         featVec[j] = 0.0d;
 
         Instance copyOfAttackTemplate = new DenseInstance(this.attackInstanceFormat);
-        for(int i = 0; i < copyOfAttackTemplate.numAttributes(); i++){
+        for (int i = 0; i < copyOfAttackTemplate.numAttributes(); i++) {
             copyOfAttackTemplate.setValue(i, featVec[i]);
         }
-
 
         return this.attackClassifier.distributionForInstance(copyOfAttackTemplate)[0];
     }
