@@ -73,7 +73,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
 
             dataTrain = dataTrainVIEGAS;
-        } else if (featureSet.equals("NIGEL")) {
+        } else if (featureSet.equals("MOORE")) {
 
             Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
             dataTrainMOORE.randomize(new Random(1));
@@ -87,7 +87,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
 
             dataTrain = dataTrainMOORE;
-        } else if (featureSet.equals("MOORE")) {
+        } else if (featureSet.equals("NIGEL")) {
 
             Instances dataTrainNIGEL = mlModelBuilder.openFile(testFilesNIGEL.get(0));
             dataTrainNIGEL.randomize(new Random(1));
