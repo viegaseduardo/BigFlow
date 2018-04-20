@@ -1,6 +1,7 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
 import fcul.viegas.bigflow.math.MathUtils;
+import io.netty.util.internal.MathUtil;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -92,9 +93,10 @@ public class ConformalEvaluator_Batch_Features {
     }
 
     public double[] getFeatureStatistics(Instance inst, double classifiedClass){
-        double[] distRet = new double[inst.numAttributes() + 1];
+        double[] distRet = new double[inst.numAttributes() + 5];
         double avgDist = 0.0d;
         double maxDist = 0.0d;
+        MathUtils mathUtils = new MathUtils();
         for(int i = 0; i < inst.numAttributes() - 1; i++){
             if(classifiedClass == 0.0d){
                 double std = this.featureValuesAverageNormal[i].getStandardDeviation();
@@ -103,6 +105,7 @@ public class ConformalEvaluator_Batch_Features {
                 //if(inst.toDoubleArray()[i] < (std-avg) || inst.toDoubleArray()[i] > (std+avg)){
                 //    outsideScopePCT++;
                 //}
+                mathUtils.addNumber(Math.abs(distRet[i]));
                 avgDist += Math.abs(distRet[i]);
                 if(Math.abs(distRet[i]) > maxDist){
                     maxDist = Math.abs(distRet[i]);
@@ -114,14 +117,18 @@ public class ConformalEvaluator_Batch_Features {
                 //if(inst.toDoubleArray()[i] <= (std-avg) || inst.toDoubleArray()[i] >= (std+avg)){
                 //    outsideScopePCT++;
                 //}
+                mathUtils.addNumber(Math.abs(distRet[i]));
                 avgDist += Math.abs(distRet[i]);
                 if(Math.abs(distRet[i]) > maxDist){
                     maxDist = Math.abs(distRet[i]);
                 }
             }
         }
-        distRet[distRet.length - 2] = avgDist / (float) (inst.numAttributes() - 1);
-        distRet[distRet.length - 1] = maxDist;
+        distRet[distRet.length - 5] = avgDist / (float) (inst.numAttributes() - 1);
+        distRet[distRet.length - 4] = maxDist;
+        distRet[distRet.length - 3] = mathUtils.getAverage();
+        distRet[distRet.length - 2] = mathUtils.getStandardDeviation();
+        distRet[distRet.length - 1] = mathUtils.getVariance();
         return distRet;
     }
 }
