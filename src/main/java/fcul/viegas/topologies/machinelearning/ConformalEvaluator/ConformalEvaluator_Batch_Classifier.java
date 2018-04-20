@@ -12,6 +12,7 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.ClassBalancer;
+import weka.filters.supervised.instance.SpreadSubsample;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -209,13 +210,19 @@ public class ConformalEvaluator_Batch_Classifier {
         RandomForest normalTree = new RandomForest();
         normalTree.setNumExecutionSlots(20);
         normalTree.setNumIterations(100);
-        normalTree.buildClassifier(dataNormal);
+        SpreadSubsample spreadSubsampleNormal = new SpreadSubsample();
+        spreadSubsampleNormal.setDistributionSpread(1.0d);
+        spreadSubsampleNormal.setInputFormat(dataNormal);
+        normalTree.buildClassifier(Filter.useFilter(dataAttack, spreadSubsampleNormal));
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building ATTACK classifier...");
         RandomForest attackTree = new RandomForest();
         attackTree.setNumExecutionSlots(20);
         attackTree.setNumIterations(100);
-        attackTree.buildClassifier(dataAttack);
+        SpreadSubsample spreadSubsampleAttack = new SpreadSubsample();
+        spreadSubsampleAttack.setDistributionSpread(1.0d);
+        spreadSubsampleAttack.setInputFormat(dataAttack);
+        attackTree.buildClassifier(Filter.useFilter(dataAttack, spreadSubsampleAttack));
 
         this.normalClassifier = normalTree;
         this.attackClassifier = attackTree;
