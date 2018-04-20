@@ -57,19 +57,19 @@ public class ConformalEvaluator_Batch_Classifier {
 
 
         class TestClass implements Runnable {
-            int i;
+            int iBegin;
             int iUpper;
 
             TestClass(int i, int iUpper) {
-                this.i = i;
+                this.iBegin = i;
                 this.iUpper = iUpper;
             }
 
             public void run() {
                 try {
                     int pct = 0;
-                    for (int k = i; k < iUpper; k++) {
-                        if (k >= i) {
+                    for (int k = iBegin; k < iUpper; k++) {
+                        if (k >= iBegin) {
                             if (k % ((dataTrain.size()) / 100) == 0) {
                                 pct++;
                                 System.out.println("\tConformalEvaluator_Batch_Classifier " + pct + "% ...[" + k + "/" + iUpper + "]");

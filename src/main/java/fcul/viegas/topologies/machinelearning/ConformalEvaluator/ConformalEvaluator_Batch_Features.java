@@ -71,7 +71,6 @@ public class ConformalEvaluator_Batch_Features {
 
     public void buildConformalEvaluator_Batch_Features(Instances insts){
         this.featureValuesAverageNormal = new MathUtils[insts.numAttributes()];
-
         this.featureValuesAverageAttack = new MathUtils[insts.numAttributes()];
 
         for(int i  =0 ; i < insts.numAttributes(); i++){
@@ -79,8 +78,7 @@ public class ConformalEvaluator_Batch_Features {
             this.featureValuesAverageAttack[i] = new MathUtils();
         }
 
-        int nAttack = 0;
-        int nNormal = 0;
+
         for(Instance inst : insts){
             for(int i = 0; i < inst.numAttributes() - 1; i++){
                 double featValue = inst.toDoubleArray()[i];
@@ -94,26 +92,36 @@ public class ConformalEvaluator_Batch_Features {
     }
 
     public double[] getFeatureStatistics(Instance inst, double classifiedClass){
-        double[] distRet = new double[inst.numAttributes()];
-        int outsideScopePCT = 0;
+        double[] distRet = new double[inst.numAttributes() + 1];
+        double avgDist = 0.0d;
+        double maxDist = 0.0d;
         for(int i = 0; i < inst.numAttributes() - 1; i++){
             if(classifiedClass == 0.0d){
                 double std = this.featureValuesAverageNormal[i].getStandardDeviation();
                 double avg = this.featureValuesAverageNormal[i].getAverage();
                 distRet[i] = avg - inst.toDoubleArray()[i];
-                if(inst.toDoubleArray()[i] < (std-avg) || inst.toDoubleArray()[i] > (std+avg)){
-                    outsideScopePCT++;
+                //if(inst.toDoubleArray()[i] < (std-avg) || inst.toDoubleArray()[i] > (std+avg)){
+                //    outsideScopePCT++;
+                //}
+                avgDist += Math.abs(distRet[i]);
+                if(Math.abs(distRet[i]) > maxDist){
+                    maxDist = Math.abs(distRet[i]);
                 }
             }else{
                 double std = this.featureValuesAverageAttack[i].getStandardDeviation();
                 double avg = this.featureValuesAverageAttack[i].getAverage();
                 distRet[i] = avg - inst.toDoubleArray()[i];
-                if(inst.toDoubleArray()[i] <= (std-avg) || inst.toDoubleArray()[i] >= (std+avg)){
-                    outsideScopePCT++;
+                //if(inst.toDoubleArray()[i] <= (std-avg) || inst.toDoubleArray()[i] >= (std+avg)){
+                //    outsideScopePCT++;
+                //}
+                avgDist += Math.abs(distRet[i]);
+                if(Math.abs(distRet[i]) > maxDist){
+                    maxDist = Math.abs(distRet[i]);
                 }
             }
         }
-        distRet[distRet.length - 1] = outsideScopePCT / (float) (inst.numAttributes() - 1);
+        distRet[distRet.length - 2] = avgDist / (float) (inst.numAttributes() - 1);
+        distRet[distRet.length - 1] = maxDist;
         return distRet;
     }
 }

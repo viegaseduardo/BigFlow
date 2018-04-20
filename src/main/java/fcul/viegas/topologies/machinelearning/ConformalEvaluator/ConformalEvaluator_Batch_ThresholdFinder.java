@@ -163,13 +163,13 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         int j = 0;
 
         class TrainClass implements Runnable {
-            int i;
+            int ilower;
             int iUpper;
             Classifier classifier;
             Instances dataTrain;
 
-            TrainClass(int i, int iUpper, Classifier classifier, Instances dataTrain) {
-                this.i = i;
+            TrainClass(int ilower, int iUpper, Classifier classifier, Instances dataTrain) {
+                this.ilower = ilower;
                 this.iUpper = iUpper;
                 this.dataTrain = dataTrain;
                 try {
@@ -181,7 +181,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
             public void run() {
                 try {
-                    for (int k = i; k < iUpper; k++) {
+                    for (int k = this.ilower; k < iUpper; k++) {
                         Instance inst = dataTrain.get(k);
                         double predict = 0.0d;
                         predict = classifier.classifyInstance(inst);
@@ -280,8 +280,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                         for (int counter = 0; counter < dataTest.size(); counter++) {
                             Instance inst = dataTest.get(counter);
-                            double predict = 0.0d;
-                            predict = classifier.classifyInstance(inst);
+                            double prob[] = classifier.distributionForInstance(inst);
+
 
                             synchronized (stats) {
                                 if (inst.classValue() == 0.0d) {
@@ -289,23 +289,29 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                                 } else {
                                     stats.nTotalAttack++;
                                 }
-                                if (inst.classValue() == predict) {
-                                    stats.acertou++;
+                                if (prob[0] >= prob[1]) {
+                                    if (inst.classValue() == 0.0d) {
+                                        stats.acertou++;
+                                    }
+                                }else{
+                                    if (inst.classValue() == 1.0d) {
+                                        stats.acertou++;
+                                    }
                                 }
                             }
 
                             ValueForRejectEvaluation values = new ValueForRejectEvaluation();
                             values.inst = inst;
 
-                            if (predict == 0.0d) {
+                            if (prob[0] >= prob[1]) {
                                 values.predictClass = 0.0d;
                                 values.instClass = inst.classValue();
-                                values.alpha = conformalEvaluatorBatch.probabilityForCorrectNormal(inst, classifier.distributionForInstance(inst)[0]);
+                                values.alpha = conformalEvaluatorBatch.probabilityForCorrectNormal(inst, prob[0]);
                                 listValueslThreadedNormal.add(values);
                             } else {
                                 values.predictClass = 1.0d;
                                 values.instClass = inst.classValue();
-                                values.alpha = conformalEvaluatorBatch.probabilityForCorrectAttack(inst, classifier.distributionForInstance(inst)[1]);
+                                values.alpha = conformalEvaluatorBatch.probabilityForCorrectAttack(inst, prob[1]);
                                 listValueslThreadedAttack.add(values);
                             }
                         }
@@ -466,11 +472,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         if (n == 0) {
                             n = 1;
                         }
-
-
-
-
-
 
 
                         outputList.add(iAttack + ";"
