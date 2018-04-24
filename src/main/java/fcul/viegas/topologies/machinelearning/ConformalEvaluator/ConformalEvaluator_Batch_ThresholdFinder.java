@@ -4,6 +4,7 @@ import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 
 import java.io.*;
 import java.util.*;
@@ -117,6 +118,16 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
             dataTrain = dataTrainORUNADA;
         }
+
+        ArffSaver saverTrain = new ArffSaver();
+        saverTrain.setInstances(dataTrain);
+        saverTrain.setFile(new File("train_" + featureSet +".arff"));
+        saverTrain.writeBatch();
+        System.exit(1);
+
+
+
+
 
         ConformalEvaluator_Batch_Classifier conformalEvaluatorBatch = new ConformalEvaluator_Batch_Classifier();
         double[] classGivenByClassifier = new double[dataTrain.size()];
