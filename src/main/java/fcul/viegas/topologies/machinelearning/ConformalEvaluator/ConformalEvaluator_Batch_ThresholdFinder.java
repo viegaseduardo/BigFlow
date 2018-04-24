@@ -121,7 +121,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         ArffSaver saverTrain = new ArffSaver();
         saverTrain.setInstances(dataTrain);
-        saverTrain.setFile(new File("train_" + featureSet +".arff"));
+        saverTrain.setFile(new File("test_" + featureSet +".arff"));
         saverTrain.writeBatch();
         System.exit(1);
 
