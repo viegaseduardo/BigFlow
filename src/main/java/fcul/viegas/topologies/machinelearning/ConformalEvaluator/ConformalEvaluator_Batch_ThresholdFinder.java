@@ -62,70 +62,82 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         Instances dataTrain = null;
         if (featureSet.equals("VIEGAS")) {
             Instances dataTrainVIEGAS = mlModelBuilder.openFile(testFilesVIEGAS.get(0));
+            dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
+            dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
             dataTrainVIEGAS.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesVIEGAS.get(i));
+                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
+                dataTrainInc = mlModelBuilder.removeParticularAttributesViegas(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainVIEGAS.add(inst);
                 }
             }
-            dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
-            dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
+            //dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
+            //dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
 
             dataTrain = dataTrainVIEGAS;
         } else if (featureSet.equals("MOORE")) {
 
             Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
+            dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
             dataTrainMOORE.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesMOORE.get(i));
+                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainMOORE.add(inst);
                 }
             }
-            dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
+            //dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
 
             dataTrain = dataTrainMOORE;
         } else if (featureSet.equals("NIGEL")) {
 
             Instances dataTrainNIGEL = mlModelBuilder.openFile(testFilesNIGEL.get(0));
+            dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
             dataTrainNIGEL.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesNIGEL.get(i));
+
+                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainNIGEL.add(inst);
                 }
             }
-            dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
+            //dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
 
             dataTrain = dataTrainNIGEL;
         } else if (featureSet.equals("ORUNADA")) {
 
             Instances dataTrainORUNADA = mlModelBuilder.openFile(testFilesORUNADA.get(0));
+            dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
+            dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
             dataTrainORUNADA.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesORUNADA.get(i));
+                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
+                dataTrainInc = mlModelBuilder.removeParticularAttributesOrunada(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainORUNADA.add(inst);
                 }
             }
-            dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
-            dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
+            //dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
+            //dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
 
             dataTrain = dataTrainORUNADA;
         }
+
 
         ArffSaver saverTrain = new ArffSaver();
         saverTrain.setInstances(dataTrain);
         saverTrain.setFile(new File("test_" + featureSet +".arff"));
         saverTrain.writeBatch();
         System.exit(1);
-
-
 
 
 
