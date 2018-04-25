@@ -80,7 +80,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0,2000));
 
         testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder))
                 .setParallelism(env.getParallelism())
