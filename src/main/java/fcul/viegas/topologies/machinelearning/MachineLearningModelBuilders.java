@@ -12,6 +12,7 @@ import com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter;
 import fcul.viegas.topologies.machinelearning.classifier.HoeffdingTreeWekaWrapper;
 import fcul.viegas.topologies.machinelearning.method.WekaMoaClassifierWrapper;
 import fcul.viegas.topologies.machinelearning.relatedWorks.Transcend_ConformalPredictor;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
 import moa.classifiers.meta.AdaptiveRandomForest;
 import moa.classifiers.meta.LeveragingBag;
 import moa.classifiers.meta.OCBoost;
@@ -55,7 +57,6 @@ import weka.filters.unsupervised.instance.Randomize;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
 /**
- *
  * @author viegas
  */
 public class MachineLearningModelBuilders implements Serializable {
@@ -131,7 +132,7 @@ public class MachineLearningModelBuilders implements Serializable {
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         Instances dataTrain = arff.getData();
         dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
-
+/*
         String[] options = new String[2];
         options[0] = "-R";
 
@@ -149,7 +150,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
         Instances newdataFeat = Filter.useFilter(dataTrain, remove);
         newdataFeat.setClassIndex(newdataFeat.numAttributes() - 1);
-
+*/
 //        Enumeration<Attribute> e = newdataFeat.enumerateAttributes();
 //        
 //        while (e.hasMoreElements()) {
@@ -157,7 +158,7 @@ public class MachineLearningModelBuilders implements Serializable {
 //            System.out.println(param.name());
 //        }
 //        System.out.println(newdataFeat.classAttribute().name());
-        return newdataFeat;
+        return dataTrain;
     }
 
     public Instances openFileNormalized(String path) throws Exception {
@@ -545,9 +546,9 @@ public class MachineLearningModelBuilders implements Serializable {
                 System.out.println("Trained with " + (i / pct) + " % of training instances... Normal: " + nNormal + " attack: " + nAttack);
             }
             classifier.trainOnInstance(moaTrain.get(i));
-            if(moaTrain.get(i).classValue() == 0.0d){
+            if (moaTrain.get(i).classValue() == 0.0d) {
                 nNormal++;
-            }else{
+            } else {
                 nAttack++;
             }
         }
@@ -600,8 +601,8 @@ public class MachineLearningModelBuilders implements Serializable {
 
         System.out.println("Ozaboost, training: " + numberEnsemble + " of models");
 
-    //    ClassBalancer balancer = new ClassBalancer();
-  //      balancer.setInputFormat(train);
+        //    ClassBalancer balancer = new ClassBalancer();
+        //      balancer.setInputFormat(train);
 //        Instances newTrain = Filter.useFilter(train, balancer);
 
         SpreadSubsample subsample = new SpreadSubsample();
@@ -764,31 +765,72 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public String evaluateClassifier(String path, Classifier classifier) {
         try {
-            Instances[] dataTest = this.openFileForTest(path);
+            Instances dataTest = this.openFile(path);
 
-            Evaluation evalNormal = new Evaluation(dataTest[0]);
-            evalNormal.evaluateModel(classifier, dataTest[0]);
+            int nNormal = 0; //ok
+            int nAttack = 0; //ok
+            int nCorrectlyAcceptedNormal = 0; //ok
+            int nCorrectlyAcceptedAttack = 0;
 
-            Evaluation evalSuspicious = new Evaluation(dataTest[1]);
-            evalSuspicious.evaluateModel(classifier, dataTest[1]);
+            for (Instance inst : dataTest) {
 
-            Evaluation evalAnomalous = new Evaluation(dataTest[2]);
-            evalAnomalous.evaluateModel(classifier, dataTest[2]);
+                double prob[] = classifier.distributionForInstance(inst);
 
-            String print = path + ";"
-                    + (dataTest[0].size() + dataTest[1].size() + dataTest[2].size()) + ";"
-                    + dataTest[0].size() + ";"
-                    + dataTest[2].size() + ";"
-                    + dataTest[1].size() + ";"
-                    + String.format("%.4f", ((evalNormal.pctCorrect() * dataTest[0].size()
-                    + evalSuspicious.pctCorrect() * dataTest[1].size()
-                    + evalAnomalous.pctCorrect() * dataTest[2].size()) / (dataTest[0].size() + dataTest[1].size() + dataTest[2].size())) / 100.0f) + ";"
-                    + String.format("%.4f", evalNormal.pctCorrect() / 100.0f) + ";"
-                    + String.format("%.4f", evalAnomalous.pctCorrect() / 100.0f) + ";"
-                    + String.format("%.4f", evalSuspicious.pctCorrect() / 100.0f);
-            return print.replace(",", ".");
+                //if is normal
+                if (inst.classValue() == 0.0d) {
+                    nNormal++;
+                } else {
+                    //is attack
+                    nAttack++;
+                }
+
+                //classified as normal
+                if (prob[0] > prob[1]) {
+                    //if should accept
+
+                    //if correctly classified
+                    if (inst.classValue() == 0.0d) {
+                        nCorrectlyAcceptedNormal++;
+                    }
+
+                } else {
+                    //classified as attack
+                    //if should accept
+
+                    if (inst.classValue() == 1.0d) {
+                        nCorrectlyAcceptedAttack++;
+                    }
+
+                }
+            }
+
+            if (nNormal == 0) {
+                nNormal = 1;
+            }
+            if (nAttack == 0) {
+                nAttack = 1;
+            }
+
+
+            float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nNormal + nAttack));
+
+
+
+
+            String print = path + ";";
+            print = print + (dataTest.size()) + ";";
+            print = print + nNormal + ";";
+            print = print + nAttack + ";";
+            print = print + (nCorrectlyAcceptedNormal / (float) nNormal) + ";";
+            print = print + (nCorrectlyAcceptedAttack / (float) nAttack) + ";";
+            print = print + accAceito;
+
+            print = print.replace(",", ".");
+
+            return print;
+
         } catch (Exception ex) {
-            return ex.getStackTrace().toString();
+            return null;
         }
     }
 
@@ -926,11 +968,11 @@ public class MachineLearningModelBuilders implements Serializable {
     }
 
     public String evaluateClassifierWithRejectionThroughConformal(String path,
-            Classifier classifier,
-            Transcend_ConformalPredictor conformalEvaluator,
-            float normalThreshold,
-            float attackThreshold,
-            String featureSet) {
+                                                                  Classifier classifier,
+                                                                  Transcend_ConformalPredictor conformalEvaluator,
+                                                                  float normalThreshold,
+                                                                  float attackThreshold,
+                                                                  String featureSet) {
         try {
             Instances dataTest = this.openFile(path);
 
@@ -1465,7 +1507,7 @@ public class MachineLearningModelBuilders implements Serializable {
         int nCorrectlyAcceptedNormal = 0; //ok
         int nCorrectlyAcceptedAttack = 0;
 
-        int nInstances =    (dataTestVIEGAS == null) ?
+        int nInstances = (dataTestVIEGAS == null) ?
                 (dataTestMOORE == null) ?
                         (dataTestNIGEL == null) ?
                                 dataTestORUNADA.size() :
@@ -1493,7 +1535,7 @@ public class MachineLearningModelBuilders implements Serializable {
                         instMoaViegas, instMoaNigel, instMoaMoore, instMoaOrunada);
             }
 
-            double classValue =    (dataTestVIEGAS == null) ?
+            double classValue = (dataTestVIEGAS == null) ?
                     (dataTestMOORE == null) ?
                             (dataTestNIGEL == null) ?
                                     instOrunada.classValue() :
@@ -1543,7 +1585,6 @@ public class MachineLearningModelBuilders implements Serializable {
         }
 
         float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
-
 
 
         String print = arffPaths[0] + ";";
@@ -1634,7 +1675,7 @@ public class MachineLearningModelBuilders implements Serializable {
         int nCorrectlyAcceptedNormal = 0; //ok
         int nCorrectlyAcceptedAttack = 0;
 
-        int nInstances =    (dataTestVIEGAS == null) ?
+        int nInstances = (dataTestVIEGAS == null) ?
                 (dataTestMOORE == null) ?
                         (dataTestNIGEL == null) ?
                                 dataTestORUNADA.size() :
@@ -1657,37 +1698,37 @@ public class MachineLearningModelBuilders implements Serializable {
 
             int nClassifiedAsAttack = 0;
             int nClassifiedAsNormal = 0;
-            for(int j = 0; j < wekaMoa.getMoaClassifiers().size(); j++){
+            for (int j = 0; j < wekaMoa.getMoaClassifiers().size(); j++) {
                 moa.classifiers.AbstractClassifier classifier = wekaMoa.getMoaClassifiers().get(j);
 
                 boolean correclyClassifies = classifier.correctlyClassifies(instMoaViegas);
                 double classifiedClass = (correclyClassifies) ? instMoaViegas.classValue() : (instMoaViegas.classValue() == 0.0d) ? 1.0d : 0.0d;
 
-                if(classifiedClass == 0.0d){
+                if (classifiedClass == 0.0d) {
                     nClassifiedAsNormal++;
-                }else{
+                } else {
                     nClassifiedAsAttack++;
                 }
             }
 
 
             int decision = 0;
-            if(nClassifiedAsNormal > nClassifiedAsAttack){
-                if(instMoaViegas.classValue() == 0.0d){
+            if (nClassifiedAsNormal > nClassifiedAsAttack) {
+                if (instMoaViegas.classValue() == 0.0d) {
                     decision = 1;
-                }else{
+                } else {
                     decision = 2;
                 }
-            }else{
-                if(instMoaViegas.classValue() == 1.0d){
+            } else {
+                if (instMoaViegas.classValue() == 1.0d) {
                     decision = 1;
-                }else{
+                } else {
                     decision = 2;
                 }
             }
 
 
-            double classValue =    (dataTestVIEGAS == null) ?
+            double classValue = (dataTestVIEGAS == null) ?
                     (dataTestMOORE == null) ?
                             (dataTestNIGEL == null) ?
                                     instOrunada.classValue() :
@@ -1737,7 +1778,6 @@ public class MachineLearningModelBuilders implements Serializable {
         }
 
         float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nAcceptedNormal + nAcceptedAttack));
-
 
 
         String print = arffPaths[0] + ";";

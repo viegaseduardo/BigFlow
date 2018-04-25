@@ -44,11 +44,9 @@ public class ParseRawOutputFlinkNoUpdate {
                         hashMap.put(month, new ValuesDTO());
                     }
                     hashMap.get(month).nNormal += Integer.valueOf(split[2]);
-                    hashMap.get(month).nSusp += Integer.valueOf(split[4]);
                     hashMap.get(month).nAnomalous += Integer.valueOf(split[3]);
-                    hashMap.get(month).accNormal += (Float.valueOf(split[6]) * Integer.valueOf(split[2]));
-                    hashMap.get(month).accAnomalous += (Float.valueOf(split[7]) * Integer.valueOf(split[3]));
-                    hashMap.get(month).accSusp += (Float.valueOf(split[8]) * Integer.valueOf(split[4]));
+                    hashMap.get(month).accNormal += (Float.valueOf(split[4]));
+                    hashMap.get(month).accAnomalous += (Float.valueOf(split[5]));
                     System.out.println("Accepted - " + split[0]);
                 } else {
                     if (split.length > 4) {
@@ -68,19 +66,21 @@ public class ParseRawOutputFlinkNoUpdate {
 
         PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
 
-        writer.println("month;nNormal;nAnomalous;nSusp;ACC;accnormal;accallatk;accanomalous;accsusp");
+        writer.println("month;nNormal;nAnomalous;ACC;accnormal;accatkp");
 
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             ValuesDTO values = (ValuesDTO) pair.getValue();
             String s = (String) pair.getKey();
-            float acc = (values.accAnomalous + values.accSusp + values.accNormal) / (float) (values.nAnomalous + values.nSusp + values.nNormal);
+            float acc = (values.accAnomalous + values.accNormal) / (float) (values.nAnomalous + values.nNormal);
             float accNormal = values.accNormal / (float) values.nNormal;
             float accAnomalous = values.accAnomalous / (float) values.nAnomalous;
-            float accSuspicious = values.accSusp / (float) values.nSusp;
-            float accAllATK = (values.accAnomalous + values.accSusp) / (float) (values.nAnomalous + values.nSusp);
-            writer.println(s + ";" + values.nNormal + ";" + values.nAnomalous + ";" + values.nSusp + ";"
-                    + acc + ";" + accNormal + ";" + accAllATK + ";" + accAnomalous + ";" + accSuspicious);
+            writer.println(s + ";" +
+                    values.nNormal + ";" +
+                    values.nAnomalous + ";" +
+                    acc + ";" +
+                    accNormal + ";" +
+                    accAnomalous);
         }
         writer.close();
 
