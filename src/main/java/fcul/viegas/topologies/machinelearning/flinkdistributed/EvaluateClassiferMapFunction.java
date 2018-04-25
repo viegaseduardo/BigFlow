@@ -8,8 +8,11 @@ package fcul.viegas.topologies.machinelearning.flinkdistributed;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+
+import moa.clusterers.outliers.AbstractC.AbstractC;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
+import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 
 /**
@@ -22,7 +25,11 @@ public class EvaluateClassiferMapFunction extends RichMapFunction<String, String
 
     public EvaluateClassiferMapFunction(MachineLearningModelBuilders mlModelBuilder, Classifier classifier) {
         this.mlModelBuilder = mlModelBuilder;
-        this.classifier = classifier;
+        try {
+            this.classifier = AbstractClassifier.makeCopy(classifier);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override
