@@ -81,6 +81,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         //Collections.shuffle(testFiles);
         DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0,2000));
+        System.out.println("CLASSIFIER BUILT");
 
         testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder, classifier))
                 .setParallelism(env.getParallelism())
