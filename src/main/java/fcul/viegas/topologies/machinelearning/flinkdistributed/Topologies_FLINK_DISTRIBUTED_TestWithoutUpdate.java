@@ -70,19 +70,19 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
-
+/*
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
         oos.writeObject(classifier);
         oos.flush();
         oos.close();
-
+*/
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
         //Collections.shuffle(testFiles);
         DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0,2000));
 
-        testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder))
+        testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder, classifier))
                 .setParallelism(env.getParallelism())
                 .sortPartition(new KeySelector<String, String>() {
                     @Override

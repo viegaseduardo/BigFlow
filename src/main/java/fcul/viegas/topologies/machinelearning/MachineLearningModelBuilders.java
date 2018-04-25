@@ -787,7 +787,6 @@ public class MachineLearningModelBuilders implements Serializable {
                 //classified as normal
                 if (prob[0] > prob[1]) {
                     //if should accept
-
                     //if correctly classified
                     if (inst.classValue() == 0.0d) {
                         nCorrectlyAcceptedNormal++;
@@ -796,7 +795,6 @@ public class MachineLearningModelBuilders implements Serializable {
                 } else {
                     //classified as attack
                     //if should accept
-
                     if (inst.classValue() == 1.0d) {
                         nCorrectlyAcceptedAttack++;
                     }

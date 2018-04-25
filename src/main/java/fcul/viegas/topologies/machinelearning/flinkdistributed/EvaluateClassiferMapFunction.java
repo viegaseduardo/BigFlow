@@ -20,12 +20,14 @@ public class EvaluateClassiferMapFunction extends RichMapFunction<String, String
     private Classifier classifier;
     private MachineLearningModelBuilders mlModelBuilder;
 
-    public EvaluateClassiferMapFunction(MachineLearningModelBuilders mlModelBuilder) {
+    public EvaluateClassiferMapFunction(MachineLearningModelBuilders mlModelBuilder, Classifier classifier) {
         this.mlModelBuilder = mlModelBuilder;
+        this.classifier = classifier;
     }
 
     @Override
     public void open(Configuration cfg) {
+        /*
         try {
             ObjectInputStream ois = new ObjectInputStream(
                     new FileInputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
@@ -36,6 +38,7 @@ public class EvaluateClassiferMapFunction extends RichMapFunction<String, String
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        */
     }
 
     @Override
