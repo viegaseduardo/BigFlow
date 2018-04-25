@@ -2,6 +2,8 @@ package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
 import weka.classifiers.Classifier;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
@@ -58,87 +60,66 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         }
 
         System.out.println("Opening training file....");
-
+/*
         Instances dataTrain = null;
         if (featureSet.equals("VIEGAS")) {
             Instances dataTrainVIEGAS = mlModelBuilder.openFile(testFilesVIEGAS.get(0));
-            dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
-            dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
             dataTrainVIEGAS.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesVIEGAS.get(i));
-                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
-                dataTrainInc = mlModelBuilder.removeParticularAttributesViegas(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainVIEGAS.add(inst);
                 }
             }
-            //dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
-            //dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
+            dataTrainVIEGAS = mlModelBuilder.getAsNormalizeFeatures(dataTrainVIEGAS);
+            dataTrainVIEGAS = mlModelBuilder.removeParticularAttributesViegas(dataTrainVIEGAS);
 
             dataTrain = dataTrainVIEGAS;
         } else if (featureSet.equals("MOORE")) {
 
             Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
-            dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
             dataTrainMOORE.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesMOORE.get(i));
-                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainMOORE.add(inst);
                 }
             }
-            //dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
+            dataTrainMOORE = mlModelBuilder.getAsNormalizeFeatures(dataTrainMOORE);
 
             dataTrain = dataTrainMOORE;
         } else if (featureSet.equals("NIGEL")) {
 
             Instances dataTrainNIGEL = mlModelBuilder.openFile(testFilesNIGEL.get(0));
-            dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
             dataTrainNIGEL.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesNIGEL.get(i));
-
-                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainNIGEL.add(inst);
                 }
             }
-            //dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
+            dataTrainNIGEL = mlModelBuilder.getAsNormalizeFeatures(dataTrainNIGEL);
 
             dataTrain = dataTrainNIGEL;
         } else if (featureSet.equals("ORUNADA")) {
 
             Instances dataTrainORUNADA = mlModelBuilder.openFile(testFilesORUNADA.get(0));
-            dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
-            dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
             dataTrainORUNADA.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
                 Instances dataTrainInc = mlModelBuilder.openFile(testFilesORUNADA.get(i));
-                dataTrainInc = mlModelBuilder.getAsNormalizeFeatures(dataTrainInc);
-                dataTrainInc = mlModelBuilder.removeParticularAttributesOrunada(dataTrainInc);
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainORUNADA.add(inst);
                 }
             }
-            //dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
-            //dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
+            dataTrainORUNADA = mlModelBuilder.getAsNormalizeFeatures(dataTrainORUNADA);
+            dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
 
             dataTrain = dataTrainORUNADA;
         }
-
-
-        ArffSaver saverTrain = new ArffSaver();
-        saverTrain.setInstances(dataTrain);
-        saverTrain.setFile(new File("test_" + featureSet +".arff"));
-        saverTrain.writeBatch();
-        System.exit(1);
-
 
 
         ConformalEvaluator_Batch_Classifier conformalEvaluatorBatch = new ConformalEvaluator_Batch_Classifier();
@@ -168,6 +149,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
+*/
+
 
         ArrayList<String[]> testFiles = new ArrayList<>();
         for (int i = 0; i < testFilesVIEGAS.size(); i++) {
@@ -182,6 +165,82 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             testFiles.add(array);
         }
 
+        for(String[] s: testFiles){
+            String viegasPath = s[0];
+            String nigelPath = s[1];
+            String moorePath = s[2];
+            String orunadaPath = s[3];
+
+            Instances dataViegas = mlModelBuilder.openFile(viegasPath);
+            Instances dataNigel = mlModelBuilder.openFile(nigelPath);
+            Instances dataMoore = mlModelBuilder.openFile(moorePath);
+            Instances dataOrunada = mlModelBuilder.openFile(orunadaPath);
+
+            dataViegas = mlModelBuilder.getAsNormalizeFeatures(dataViegas);
+            dataViegas = mlModelBuilder.removeParticularAttributesViegas(dataViegas);
+            dataOrunada = mlModelBuilder.getAsNormalizeFeatures(dataOrunada);
+            dataOrunada = mlModelBuilder.removeParticularAttributesOrunada(dataOrunada);
+            dataNigel = mlModelBuilder.getAsNormalizeFeatures(dataNigel);
+            dataMoore = mlModelBuilder.getAsNormalizeFeatures(dataMoore);
+
+            ArrayList<Attribute> atts = new ArrayList<Attribute>((dataViegas.numAttributes() - 1)
+                    + (dataNigel.numAttributes() - 1)
+                    + (dataMoore.numAttributes() - 1)
+                    + (dataOrunada.numAttributes() - 1)
+                    + 1);
+            ArrayList<String> classVal = new ArrayList<String>();
+            classVal.add("normal");
+            classVal.add("attack");
+
+            for (int i = 0; i < dataViegas.numAttributes() - 1; i++) {
+                atts.add(dataViegas.attribute(i));
+            }
+            for (int i = 0; i < dataNigel.numAttributes() - 1; i++) {
+                atts.add(dataNigel.attribute(i));
+            }
+            for (int i = 0; i < dataMoore.numAttributes() - 1; i++) {
+                atts.add(dataMoore.attribute(i));
+            }
+            for (int i = 0; i < dataOrunada.numAttributes() - 1; i++) {
+                atts.add(dataOrunada.attribute(i));
+            }
+
+            atts.add(new Attribute("class", classVal));
+
+            Instances dataAll = new Instances("datasetNormal", atts, 0);
+
+            for(int j = 0; j < dataViegas.size(); j++){
+                double[] features = new double[atts.size()];
+
+                int k = 0;
+                for (int l = 0; l < dataViegas.numAttributes() - 1; l++) {
+                    features[k++] = dataViegas.get(j).toDoubleArray()[l];
+                }
+                for (int l = 0; l < dataNigel.numAttributes() - 1; l++) {
+                    features[k++] = dataNigel.get(j).toDoubleArray()[l];
+                }
+                for (int l = 0; l < dataMoore.numAttributes() - 1; l++) {
+                    features[k++] = dataMoore.get(j).toDoubleArray()[l];
+                }
+                for (int l = 0; l < dataOrunada.numAttributes(); l++) {
+                    features[k++] = dataOrunada.get(j).toDoubleArray()[l];
+                }
+
+                dataAll.add(new DenseInstance(1.0d, features));
+            }
+
+            String pathToWrite = "/home/viegas/Bases/allFeatures/";
+            String name = viegasPath.split("/")[viegasPath.split("/").length - 1];
+            name = name.replace("VIEGAS", "ALL");
+
+            pathToWrite = pathToWrite + name;
+
+            System.out.println(pathToWrite);
+
+        }
+
+
+        /*
 
         int j = 0;
 
@@ -689,5 +748,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        */
     }
 }
