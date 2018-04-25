@@ -235,10 +235,16 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
             pathToWrite = pathToWrite + name;
 
+            ArffSaver saverNormal = new ArffSaver();
+            saverNormal.setInstances(dataAll);
+            saverNormal.setFile(new File(pathToWrite));
+            saverNormal.writeBatch();
+
             System.out.println(pathToWrite);
 
         }
 
+        System.exit(1);
 
         /*
 
