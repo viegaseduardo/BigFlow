@@ -38,7 +38,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         this.folderPath = pathArffs;
         this.featureSET = featureSet;
-        /*
+
 
         System.out.println("Path to test directory: " + this.folderPath + " searching for feature set: " + this.featureSET);
         mlModelBuilder.findFilesForTest(this.folderPath, featureSET, testFiles);
@@ -77,7 +77,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
         oos.writeObject(classifier);
         oos.flush();
         oos.close();
-
+*/
         final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 
 
@@ -97,7 +97,7 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
                 setParallelism(1);
 
         env.execute(pathArffs + "_DISTRIBUTED_NO_UPDATE");
-*/
+
         ParseRawOutputFlinkNoUpdate.generateSummaryFileWithoutRejection(outputPath + "_raw_output.csv", outputPath + "_summarized_monthly.csv",
                 ParseRawOutputFlinkNoUpdate.MonthRange);
 
