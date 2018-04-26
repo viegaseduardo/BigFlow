@@ -825,7 +825,7 @@ public class MachineLearningModelBuilders implements Serializable {
             print = print + (nCorrectlyAcceptedAttack / (float) nAttack) + ";";
             print = print + accAceito;
 
-            print = print.replace(",", ".");
+            //print = print.replace(",", ".");
 
             return print;
 
