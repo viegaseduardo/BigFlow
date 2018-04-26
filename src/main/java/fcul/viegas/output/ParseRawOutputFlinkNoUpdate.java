@@ -47,6 +47,7 @@ public class ParseRawOutputFlinkNoUpdate {
                     hashMap.get(month).nAnomalous += Integer.valueOf(split[3]);
                     hashMap.get(month).accNormal += (Float.valueOf(split[4]));
                     hashMap.get(month).accAnomalous += (Float.valueOf(split[5]));
+                    hashMap.get(month).nMeasures += 1.0f;
                     System.out.println("Accepted - " + split[0]);
                 } else {
                     if (split.length > 4) {
@@ -66,15 +67,15 @@ public class ParseRawOutputFlinkNoUpdate {
 
         PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
 
-        writer.println("month;nNormal;nAnomalous;ACC;accnormal;accatkp");
+        writer.println("month;nNormal;nAnomalous;avgACC;accnormal;accatkp");
 
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             ValuesDTO values = (ValuesDTO) pair.getValue();
             String s = (String) pair.getKey();
-            float acc = (values.accAnomalous + values.accNormal) / (float) (values.nAnomalous + values.nNormal);
-            float accNormal = values.accNormal / (float) values.nNormal;
-            float accAnomalous = values.accAnomalous / (float) values.nAnomalous;
+            float acc = ((values.accAnomalous + values.accNormal)/2.0f) / (values.nMeasures);
+            float accNormal = values.accNormal / (float) values.nMeasures;
+            float accAnomalous = values.accAnomalous / (float) values.nMeasures;
             writer.println(s + ";" +
                     values.nNormal + ";" +
                     values.nAnomalous + ";" +
