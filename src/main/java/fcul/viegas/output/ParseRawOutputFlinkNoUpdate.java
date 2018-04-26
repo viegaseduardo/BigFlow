@@ -46,7 +46,6 @@ public class ParseRawOutputFlinkNoUpdate {
                     hashMap.get(month).nNormal += Integer.valueOf(split[2]);
                     hashMap.get(month).nAnomalous += Integer.valueOf(split[3]);
                     hashMap.get(month).accNormal += (Float.valueOf(split[4]));
-                    System.out.println(split[0] + "  " + Float.valueOf(split[4]));
                     hashMap.get(month).accAnomalous += (Float.valueOf(split[5]));
                     hashMap.get(month).nMeasures += 1.0f;
                     System.out.println("Accepted - " + split[0]);
@@ -77,6 +76,13 @@ public class ParseRawOutputFlinkNoUpdate {
             float acc = ((values.accAnomalous + values.accNormal)/2.0f) / (values.nMeasures);
             float accNormal = values.accNormal / (float) values.nMeasures;
             float accAnomalous = values.accAnomalous / (float) values.nMeasures;
+            System.out.println(s + ";" +
+                    values.nNormal + ";" +
+                    values.nAnomalous + ";" +
+                    acc + ";" +
+                    accNormal + ";" +
+                    accAnomalous + ";" +
+                    values.nMeasures);
             writer.println(s + ";" +
                     values.nNormal + ";" +
                     values.nAnomalous + ";" +
