@@ -839,7 +839,7 @@ public class MachineLearningModelBuilders implements Serializable {
             for (int i = 0; i < dataTestMoa.size(); i++) {
                 com.yahoo.labs.samoa.instances.Instance inst = dataTestMoa.get(i);
 
-                double prob[] = classifier.getVotesForInstance(inst);
+                boolean correctlyClassifies = classifier.correctlyClassifies(inst);
 
                 //if is normal
                 if (inst.classValue() == 0.0d) {
@@ -850,20 +850,14 @@ public class MachineLearningModelBuilders implements Serializable {
                 }
 
                 //classified as normal
-                if (prob.length == 1 || prob[0] > prob[1]) {
+                if (correctlyClassifies) {
                     //if should accept
                     //if correctly classified
                     if (inst.classValue() == 0.0d) {
                         nCorrectlyAcceptedNormal++;
-                    }
-
-                } else {
-                    //classified as attack
-                    //if should accept
-                    if (inst.classValue() == 1.0d) {
+                    }else{
                         nCorrectlyAcceptedAttack++;
                     }
-
                 }
             }
 
