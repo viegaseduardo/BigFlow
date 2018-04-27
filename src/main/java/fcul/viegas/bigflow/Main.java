@@ -10,6 +10,7 @@ import fcul.viegas.topologies.Topologies_ARFF_CREATOR;
 import fcul.viegas.topologies.Topologies_ARFF_SPLIT_FEATURE_SET;
 import fcul.viegas.topologies.machinelearning.*;
 import fcul.viegas.topologies.machinelearning.ConformalEvaluator.ConformalEvaluator_Batch_ThresholdFinder;
+import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_MOA_TestWithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithUpdate;
 import fcul.viegas.topologies.machinelearning.flinkdistributed.Topologies_FLINK_DISTRIBUTED_TestWithoutUpdateWithRejection;
@@ -208,6 +209,26 @@ public class Main {
                     args[3],
                     args[4],
                     Integer.valueOf(args[5]));
+        }else if (args[0].equals("testwithoutupdatedistributedmoa")) {
+            /*
+            note that this version is way faster than "testwithupdatedistributedmoa"
+                due to the need to load from disk the models
+
+                args[1] = path to folder
+                args[2] = feature set {VIEGAS, MOORE, NIGEL or ORUNADA}
+                args[3] = output
+                args[4] = classifier {hoeffding, hoeffdingadaptivetree, ozabagging, ozaboosting, adahoeffdingoptiontree, ocboost, leveragingbag}
+                args[5] = days to use for training
+                args[6] = number ensemble
+
+             */
+            new Topologies_FLINK_DISTRIBUTED_MOA_TestWithoutUpdate().run(
+                    args[1],
+                    args[2],
+                    args[3],
+                    args[4],
+                    Integer.valueOf(args[5]),
+                    Integer.valueOf(args[6]));
         } else if (args[0].equals("testwithoutupdateconformalevaluator")) {
             /*
             note that this version is way faster than "testwithupdatedistributed" 

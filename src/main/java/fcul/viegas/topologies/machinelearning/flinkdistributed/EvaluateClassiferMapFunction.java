@@ -21,12 +21,19 @@ import weka.classifiers.Classifier;
 public class EvaluateClassiferMapFunction extends RichMapFunction<String, String> {
 
     private Classifier classifier;
+    private moa.classifiers.Classifier moaClassifier;
     private MachineLearningModelBuilders mlModelBuilder;
 
-    public EvaluateClassiferMapFunction(MachineLearningModelBuilders mlModelBuilder, Classifier classifier) {
+    public EvaluateClassiferMapFunction(MachineLearningModelBuilders mlModelBuilder, Classifier classifier, moa.classifiers.Classifier moaClassifier) {
         this.mlModelBuilder = mlModelBuilder;
+        this.classifier = null;
+        this.moaClassifier = null;
         try {
-            this.classifier = AbstractClassifier.makeCopy(classifier);
+            if(classifier  != null) {
+                this.classifier = AbstractClassifier.makeCopy(classifier);
+            }else{
+                this.moaClassifier = moaClassifier.copy();
+            }
         }catch(Exception ex){
             ex.printStackTrace();
         }
@@ -50,7 +57,10 @@ public class EvaluateClassiferMapFunction extends RichMapFunction<String, String
 
     @Override
     public String map(String path) throws Exception {
-        return mlModelBuilder.evaluateClassifier(path, classifier);
+        if(this.classifier != null) {
+            return mlModelBuilder.evaluateClassifier(path, classifier);
+        }
+        return mlModelBuilder.evaluateClassifier(path, this.moaClassifier);
     }
     
 }

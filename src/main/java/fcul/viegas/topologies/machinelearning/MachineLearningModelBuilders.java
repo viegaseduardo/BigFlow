@@ -29,6 +29,7 @@ import moa.classifiers.meta.OzaBoost;
 import moa.classifiers.trees.AdaHoeffdingOptionTree;
 import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.classifiers.trees.HoeffdingTree;
+import moa.core.DoubleVector;
 import moa.options.ClassOption;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -819,6 +820,79 @@ public class MachineLearningModelBuilders implements Serializable {
 
             String print = path + ";";
             print = print + (dataTest.size()) + ";";
+            print = print + nNormal + ";";
+            print = print + nAttack + ";";
+            print = print + (nCorrectlyAcceptedNormal / (float) nNormal) + ";";
+            print = print + (nCorrectlyAcceptedAttack / (float) nAttack) + ";";
+            print = print + accAceito;
+
+            //print = print.replace(",", ".");
+
+            return print;
+
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public String evaluateClassifier(String path, moa.classifiers.Classifier classifier) {
+        try {
+            Instances dataTestWeka = this.openFile(path);
+            com.yahoo.labs.samoa.instances.Instances dataTestMoa = new com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter().samoaInstances(dataTestWeka);
+
+            int nNormal = 0; //ok
+            int nAttack = 0; //ok
+            int nCorrectlyAcceptedNormal = 0; //ok
+            int nCorrectlyAcceptedAttack = 0;
+
+            for (int i = 0; i < dataTestMoa.size(); i++) {
+                com.yahoo.labs.samoa.instances.Instance inst = dataTestMoa.get(i);
+
+                double prob[] = classifier.getVotesForInstance(inst);
+
+                //if is normal
+                if (inst.classValue() == 0.0d) {
+                    nNormal++;
+                } else {
+                    //is attack
+                    nAttack++;
+                }
+
+                //classified as normal
+                if (prob.length == 1 || prob[0] > prob[1]) {
+                    //if should accept
+                    //if correctly classified
+                    if (inst.classValue() == 0.0d) {
+                        nCorrectlyAcceptedNormal++;
+                    }
+
+                } else {
+                    //classified as attack
+                    //if should accept
+                    if (inst.classValue() == 1.0d) {
+                        nCorrectlyAcceptedAttack++;
+                    }
+
+                }
+            }
+
+            if (nNormal == 0) {
+                nNormal = 1;
+            }
+            if (nAttack == 0) {
+                nAttack = 1;
+            }
+
+
+            float accAceito = ((nCorrectlyAcceptedNormal + nCorrectlyAcceptedAttack) / (float) (nNormal + nAttack));
+
+
+
+
+
+
+            String print = path + ";";
+            print = print + (dataTestMoa.size()) + ";";
             print = print + nNormal + ";";
             print = print + nAttack + ";";
             print = print + (nCorrectlyAcceptedNormal / (float) nNormal) + ";";

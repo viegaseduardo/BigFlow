@@ -1,38 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fcul.viegas.topologies.machinelearning.flinkdistributed;
 
 import fcul.viegas.output.ParseRawOutputFlinkNoUpdate;
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.core.fs.FileSystem;
-import weka.classifiers.Classifier;
-import weka.classifiers.trees.J48;
+import moa.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
 
-/**
- *
- * @author viegas
- */
-public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Topologies_FLINK_DISTRIBUTED_MOA_TestWithoutUpdate {
 
     public String folderPath;
     public String featureSET;
     //public static String PathToModel = "/home/viegas/model";
 
-    public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining) throws Exception {
+    public void run(String pathArffs, String featureSet, String outputPath, String classifierToBuild, int daysToUseForTraining, int numEnsemble) throws Exception {
         MachineLearningModelBuilders mlModelBuilder = new MachineLearningModelBuilders();
         ArrayList<String> testFiles = new ArrayList();
 
@@ -50,8 +38,10 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
         System.out.println("Opening training file....");
         Instances dataTrain = mlModelBuilder.openFile(testFiles.get(0));
+        dataTrain.randomize(new Random(1));
         for (int i = 1; i < daysToUseForTraining; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
+            dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTrain.add(inst);
             }
@@ -63,14 +53,16 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
             dataTrain = mlModelBuilder.removeParticularAttributesOrunada(dataTrain);
         }
 
-        final Classifier classifier = classifierToBuild.equals("naive")
-                ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
-                ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
-                ? mlModelBuilder.trainClassifierForest(dataTrain) : classifierToBuild.equals("bagging")
-                ? mlModelBuilder.trainClassifierBagging(dataTrain) : classifierToBuild.equals("extratrees")
-                ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
-                ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
-                ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
+
+        final Classifier classifier = classifierToBuild.equals("hoeffding")
+                ? mlModelBuilder.trainClassifierHoeffdingTreeMOA(dataTrain) : classifierToBuild.equals("hoeffdingadaptivetree")
+                ? mlModelBuilder.trainClassifierHoeffingAdaptiveTreeMOA(dataTrain) : classifierToBuild.equals("ozabagging")
+                ? mlModelBuilder.trainClassifierOzaBaggingMOA(dataTrain, numEnsemble) : classifierToBuild.equals("ozaboosting")
+                ? mlModelBuilder.trainClassifierOzaBoostingMOA(dataTrain,  numEnsemble) : classifierToBuild.equals("adaptiveforest")
+                ? mlModelBuilder.trainClassifierAdaptiveRandomForestMOA(dataTrain) : classifierToBuild.equals("adahoeffdingoptiontree")
+                ? mlModelBuilder.trainClassifierAdaHoeffdingOptionTreeMOA(dataTrain) : classifierToBuild.equals("ocboost")
+                ? mlModelBuilder.trainClassifierOCBoostMOA(dataTrain, numEnsemble) : classifierToBuild.equals("leveragingbag")
+                ? mlModelBuilder.trainClassifierLeveragingBagMOA(dataTrain, numEnsemble) : null;
 /*
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate.PathToModel));
@@ -82,10 +74,10 @@ public class Topologies_FLINK_DISTRIBUTED_TestWithoutUpdate {
 
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
         System.out.println("CLASSIFIER BUILT");
 
-        testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder, classifier, null))
+        testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder, null, classifier))
                 .setParallelism(env.getParallelism())
                 .sortPartition(new KeySelector<String, String>() {
                     @Override
