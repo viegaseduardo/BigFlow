@@ -732,22 +732,13 @@ public class MachineLearningModelBuilders implements Serializable {
 
         classifier.ensembleSizeOption = new IntOption("ensembleSize", 's',
                 "The number of models to boost.", nEnsemble, 1, Integer.MAX_VALUE);
-        classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
+      /*  classifier.baseLearnerOption = new ClassOption("baseLearner", 'l',
                 "Classifier to train.", moa.classifiers.Classifier.class,
                 "moa.classifiers.trees.AdaHoeffdingOptionTree");
 
-        SpreadSubsample subsample = new SpreadSubsample();
-        subsample.setInputFormat(train);
-        subsample.setDistributionSpread(1.0d);
-        Instances newTrain = Filter.useFilter(train, subsample);
-
-        Randomize randomTrain = new Randomize();
-        randomTrain.setInputFormat(newTrain);
-        newTrain = Filter.useFilter(newTrain, randomTrain);
-
-
+*/
         WekaToSamoaInstanceConverter converter = new WekaToSamoaInstanceConverter();
-        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(newTrain);
+        com.yahoo.labs.samoa.instances.Instances moaTrain = converter.samoaInstances(train);
         InstancesHeader instH = new InstancesHeader(moaTrain);
 
         classifier.setModelContext(instH);
