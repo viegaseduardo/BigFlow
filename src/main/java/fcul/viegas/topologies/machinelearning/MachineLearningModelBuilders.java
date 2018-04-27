@@ -747,7 +747,7 @@ public class MachineLearningModelBuilders implements Serializable {
         int pct = (int) (moaTrain.size() / 100.0f);
         for (int i = 0; i < moaTrain.size(); i++) {
             if (i % pct == 0) {
-                System.out.println("Trained with " + (i / pct) + " % of training instances...");
+                System.out.println("Trained with " + (i / pct) + " % of training instances... (" + i + "/" + moaTrain.size());
             }
             classifier.trainOnInstance(moaTrain.get(i));
         }
