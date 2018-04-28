@@ -74,7 +74,7 @@ public class Topologies_FLINK_DISTRIBUTED_MOA_TestWithoutUpdate {
 
 
         //Collections.shuffle(testFiles);
-        DataSet<String> testFilesDataset = env.fromCollection(testFiles.subList(0, 1000));
+        DataSet<String> testFilesDataset = env.fromCollection(testFiles);
         System.out.println("CLASSIFIER BUILT");
 
         testFilesDataset.map(new EvaluateClassiferMapFunction(mlModelBuilder, null, classifier))
