@@ -31,6 +31,7 @@ import moa.classifiers.trees.HoeffdingAdaptiveTree;
 import moa.classifiers.trees.HoeffdingTree;
 import moa.core.DoubleVector;
 import moa.options.ClassOption;
+import moa.streams.ArffFileStream;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
@@ -816,16 +817,18 @@ public class MachineLearningModelBuilders implements Serializable {
 
     public String evaluateClassifier(String path, moa.classifiers.Classifier classifier) {
         try {
-            Instances dataTestWeka = this.openFile(path);
-            com.yahoo.labs.samoa.instances.Instances dataTestMoa = new com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter().samoaInstances(dataTestWeka);
+            //Instances dataTestWeka = this.openFile(path);
+            //com.yahoo.labs.samoa.instances.Instances dataTestMoa = new com.yahoo.labs.samoa.instances.WekaToSamoaInstanceConverter().samoaInstances(dataTestWeka);
 
             int nNormal = 0; //ok
             int nAttack = 0; //ok
             int nCorrectlyAcceptedNormal = 0; //ok
             int nCorrectlyAcceptedAttack = 0;
+            ArffFileStream moaStream = new ArffFileStream(path, -1);
 
-            for (int i = 0; i < dataTestMoa.size(); i++) {
-                com.yahoo.labs.samoa.instances.Instance inst = dataTestMoa.get(i);
+
+           while(moaStream.hasMoreInstances()){
+                com.yahoo.labs.samoa.instances.Instance inst = moaStream.nextInstance().instance;
 
                 boolean correctlyClassifies = classifier.correctlyClassifies(inst);
 
@@ -865,7 +868,7 @@ public class MachineLearningModelBuilders implements Serializable {
 
 
             String print = path + ";";
-            print = print + (dataTestMoa.size()) + ";";
+            print = print + (nNormal + nAttack) + ";";
             print = print + nNormal + ";";
             print = print + nAttack + ";";
             print = print + (nCorrectlyAcceptedNormal / (float) nNormal) + ";";
