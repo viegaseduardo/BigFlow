@@ -195,7 +195,7 @@ public class ConformalEvaluator_Batch_Classifier {
         this.normalInstanceFormat.setDataset(dataNormal);
         //a
 
-        /*
+
         ArffSaver saverNormal = new ArffSaver();
         saverNormal.setInstances(dataNormal);
         saverNormal.setFile(new File("normal_train.arff"));
@@ -205,7 +205,7 @@ public class ConformalEvaluator_Batch_Classifier {
         saverAttack.setInstances(dataAttack);
         saverAttack.setFile(new File("attack_train.arff"));
         saverAttack.writeBatch();
-*/
+
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
         RandomForest normalTree = new RandomForest();
@@ -255,16 +255,19 @@ public class ConformalEvaluator_Batch_Classifier {
         this.startWriting = startWriting;
     }
 
-    public void writeDatasets() throws Exception{
+    public void writeDatasets(String normalPath, String attackPath) throws Exception{
         ArffSaver saverNormal = new ArffSaver();
         saverNormal.setInstances(this.normalDataset);
-        saverNormal.setFile(new File("normal_test.arff"));
+        saverNormal.setFile(new File(normalPath));
         saverNormal.writeBatch();
 
         ArffSaver saverAttack = new ArffSaver();
         saverAttack.setInstances(this.attackDataset);
-        saverAttack.setFile(new File("attack_test.arff"));
+        saverAttack.setFile(new File(attackPath));
         saverAttack.writeBatch();
+
+        this.normalDataset.clear();
+        this.attackDataset.clear();
     }
 
     public double probabilityForCorrectNormal(Instance inst, double probability) throws Exception {

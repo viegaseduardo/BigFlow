@@ -9,6 +9,7 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class ConformalEvaluator_Batch_ThresholdFinder {
@@ -312,33 +313,164 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         conformalEvaluatorBatch.setStartWriting(true);
 
+        int index = 0;
+        threads.clear();
 
-        testFiles = testFiles.subList(240,300);
-
-        threads = new ArrayList<>();
-        jump = testFiles.size() / 20;
-        start = 0;
-        for (int nThreads = 0; nThreads < 20; nThreads++) {
-            if (nThreads + 1 == 20) {
-                Thread t = new Thread(new TestClass(start, testFiles.size(), classifier));
-                t.start();
-                threads.add(t);
-                start += jump;
-            } else {
-                Thread t = new Thread(new TestClass(start, start + jump, classifier));
-                t.start();
-                threads.add(t);
-                start += jump;
-            }
+        for(; index < 30; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
         }
 
         for (Thread t : threads) {
             t.join();
         }
 
-        conformalEvaluatorBatch.writeDatasets();
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+        threads.clear();
+
+        for(; index < 60; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+        threads.clear();
+
+        for(; index < 90; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+        threads.clear();
+
+        for(; index < 120; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+
+        threads.clear();
+
+        for(; index < 150; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+
+        threads.clear();
+
+        for(; index < 180; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+
+        threads.clear();
+
+        for(; index < 210; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+        threads.clear();
+
+        for(; index < 240; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+        threads.clear();
+
+        for(; index < 270; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+
+        threads.clear();
+
+        for(; index < 300; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+
         //System.exit(1);
-        conformalEvaluatorBatch.setStartWriting(false);
+        //conformalEvaluatorBatch.setStartWriting(false);
 
 
         ArrayList<ValueForRejectEvaluation> listValuesPredictedNormal = new ArrayList<ValueForRejectEvaluation>();
