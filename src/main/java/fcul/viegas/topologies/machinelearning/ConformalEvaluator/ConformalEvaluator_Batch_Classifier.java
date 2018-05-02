@@ -195,6 +195,7 @@ public class ConformalEvaluator_Batch_Classifier {
         this.normalInstanceFormat.setDataset(dataNormal);
         //a
 
+        /*
         ArffSaver saverNormal = new ArffSaver();
         saverNormal.setInstances(dataNormal);
         saverNormal.setFile(new File("normal_train.arff"));
@@ -204,7 +205,7 @@ public class ConformalEvaluator_Batch_Classifier {
         saverAttack.setInstances(dataAttack);
         saverAttack.setFile(new File("attack_train.arff"));
         saverAttack.writeBatch();
-
+*/
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building NORMAL classifier...");
         RandomForest normalTree = new RandomForest();

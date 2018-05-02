@@ -23,10 +23,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
     public String folderPath;
     public String outputPath;
     public int daysToUseForTraining;
-    public ArrayList<String> testFilesVIEGAS = new ArrayList();
-    public ArrayList<String> testFilesMOORE = new ArrayList();
-    public ArrayList<String> testFilesNIGEL = new ArrayList();
-    public ArrayList<String> testFilesORUNADA = new ArrayList();
+    public List<String> testFiles = new ArrayList();
 
     public static String PathToModel = "/home/viegas/Bases2/model/model";
 
@@ -42,31 +39,24 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
 
         System.out.println("Path to test directory: " + this.folderPath);
-        mlModelBuilder.findFilesForTest(this.folderPath, "VIEGAS", testFilesVIEGAS);
-        mlModelBuilder.findFilesForTest(this.folderPath, "MOORE", testFilesMOORE);
-        mlModelBuilder.findFilesForTest(this.folderPath, "NIGEL", testFilesNIGEL);
-        mlModelBuilder.findFilesForTest(this.folderPath, "ORUNADA", testFilesORUNADA);
+        ArrayList<String> testFilesAux = new ArrayList();
+        mlModelBuilder.findFilesForTest(this.folderPath,featureSet, testFilesAux);
+        this.testFiles = testFilesAux;
 
-        java.util.Collections.sort(testFilesVIEGAS);
-        java.util.Collections.sort(testFilesMOORE);
-        java.util.Collections.sort(testFilesNIGEL);
-        java.util.Collections.sort(testFilesORUNADA);
+        java.util.Collections.sort(testFiles);
 
-        for (int i = 0; i < testFilesVIEGAS.size(); i++) {
-            System.out.println("\t" + testFilesVIEGAS.get(i) + " "
-                    + testFilesMOORE.get(i) + " "
-                    + testFilesNIGEL.get(i) + " "
-                    + testFilesORUNADA.get(i) + " ");
+        for (int i = 0; i < testFiles.size(); i++) {
+            System.out.println("\t" + testFiles.get(i));
         }
 
         System.out.println("Opening training file....");
-/*
+
         Instances dataTrain = null;
         if (featureSet.equals("VIEGAS")) {
-            Instances dataTrainVIEGAS = mlModelBuilder.openFile(testFilesVIEGAS.get(0));
+            Instances dataTrainVIEGAS = mlModelBuilder.openFile(testFiles.get(0));
             dataTrainVIEGAS.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
-                Instances dataTrainInc = mlModelBuilder.openFile(testFilesVIEGAS.get(i));
+                Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainVIEGAS.add(inst);
@@ -78,10 +68,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrain = dataTrainVIEGAS;
         } else if (featureSet.equals("MOORE")) {
 
-            Instances dataTrainMOORE = mlModelBuilder.openFile(testFilesMOORE.get(0));
+            Instances dataTrainMOORE = mlModelBuilder.openFile(testFiles.get(0));
             dataTrainMOORE.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
-                Instances dataTrainInc = mlModelBuilder.openFile(testFilesMOORE.get(i));
+                Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainMOORE.add(inst);
@@ -92,10 +82,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrain = dataTrainMOORE;
         } else if (featureSet.equals("NIGEL")) {
 
-            Instances dataTrainNIGEL = mlModelBuilder.openFile(testFilesNIGEL.get(0));
+            Instances dataTrainNIGEL = mlModelBuilder.openFile(testFiles.get(0));
             dataTrainNIGEL.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
-                Instances dataTrainInc = mlModelBuilder.openFile(testFilesNIGEL.get(i));
+                Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainNIGEL.add(inst);
@@ -106,10 +96,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrain = dataTrainNIGEL;
         } else if (featureSet.equals("ORUNADA")) {
 
-            Instances dataTrainORUNADA = mlModelBuilder.openFile(testFilesORUNADA.get(0));
+            Instances dataTrainORUNADA = mlModelBuilder.openFile(testFiles.get(0));
             dataTrainORUNADA.randomize(new Random(1));
             for (int i = 1; i < daysToUseForTraining; i++) {
-                Instances dataTrainInc = mlModelBuilder.openFile(testFilesORUNADA.get(i));
+                Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
                 dataTrainInc.randomize(new Random(1));
                 for (Instance inst : dataTrainInc) {
                     dataTrainORUNADA.add(inst);
@@ -119,6 +109,20 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
 
             dataTrain = dataTrainORUNADA;
+        }else if (featureSet.equals("ALL")) {
+
+            Instances dataTrainALL = mlModelBuilder.openFile(testFiles.get(0));
+            dataTrainALL.randomize(new Random(1));
+            for (int i = 1; i < daysToUseForTraining; i++) {
+                Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
+                dataTrainInc.randomize(new Random(1));
+                for (Instance inst : dataTrainInc) {
+                    dataTrainALL.add(inst);
+                }
+            }
+
+
+            dataTrain = dataTrainALL;
         }
 
 
@@ -149,104 +153,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
-*/
 
-
-        ArrayList<String[]> testFiles = new ArrayList<>();
-        for (int i = 0; i < testFilesVIEGAS.size(); i++) {
-            //for (int i = 0; i < 60; i++) {
-
-            String[] array = new String[4];
-            array[0] = testFilesVIEGAS.get(i);
-            array[1] = testFilesNIGEL.get(i);
-            array[2] = testFilesMOORE.get(i);
-            array[3] = testFilesORUNADA.get(i);
-
-            testFiles.add(array);
-        }
-
-        for(String[] s: testFiles){
-            String viegasPath = s[0];
-            String nigelPath = s[1];
-            String moorePath = s[2];
-            String orunadaPath = s[3];
-
-            Instances dataViegas = mlModelBuilder.openFile(viegasPath);
-            Instances dataNigel = mlModelBuilder.openFile(nigelPath);
-            Instances dataMoore = mlModelBuilder.openFile(moorePath);
-            Instances dataOrunada = mlModelBuilder.openFile(orunadaPath);
-
-            dataViegas = mlModelBuilder.getAsNormalizeFeatures(dataViegas);
-            dataViegas = mlModelBuilder.removeParticularAttributesViegas(dataViegas);
-            dataOrunada = mlModelBuilder.getAsNormalizeFeatures(dataOrunada);
-            dataOrunada = mlModelBuilder.removeParticularAttributesOrunada(dataOrunada);
-            dataNigel = mlModelBuilder.getAsNormalizeFeatures(dataNigel);
-            dataMoore = mlModelBuilder.getAsNormalizeFeatures(dataMoore);
-
-            ArrayList<Attribute> atts = new ArrayList<Attribute>((dataViegas.numAttributes() - 1)
-                    + (dataNigel.numAttributes() - 1)
-                    + (dataMoore.numAttributes() - 1)
-                    + (dataOrunada.numAttributes() - 1)
-                    + 1);
-            ArrayList<String> classVal = new ArrayList<String>();
-            classVal.add("normal");
-            classVal.add("attack");
-
-            for (int i = 0; i < dataViegas.numAttributes() - 1; i++) {
-                atts.add(dataViegas.attribute(i));
-            }
-            for (int i = 0; i < dataNigel.numAttributes() - 1; i++) {
-                atts.add(dataNigel.attribute(i));
-            }
-            for (int i = 0; i < dataMoore.numAttributes() - 1; i++) {
-                atts.add(dataMoore.attribute(i));
-            }
-            for (int i = 0; i < dataOrunada.numAttributes() - 1; i++) {
-                atts.add(dataOrunada.attribute(i));
-            }
-
-            atts.add(new Attribute("class", classVal));
-
-            Instances dataAll = new Instances("datasetNormal", atts, 0);
-
-            for(int j = 0; j < dataViegas.size(); j++){
-                double[] features = new double[atts.size()];
-
-                int k = 0;
-                for (int l = 0; l < dataViegas.numAttributes() - 1; l++) {
-                    features[k++] = dataViegas.get(j).toDoubleArray()[l];
-                }
-                for (int l = 0; l < dataNigel.numAttributes() - 1; l++) {
-                    features[k++] = dataNigel.get(j).toDoubleArray()[l];
-                }
-                for (int l = 0; l < dataMoore.numAttributes() - 1; l++) {
-                    features[k++] = dataMoore.get(j).toDoubleArray()[l];
-                }
-                for (int l = 0; l < dataOrunada.numAttributes(); l++) {
-                    features[k++] = dataOrunada.get(j).toDoubleArray()[l];
-                }
-
-                dataAll.add(new DenseInstance(1.0d, features));
-            }
-
-            String pathToWrite = "/home/viegas/Bases/allFeatures/";
-            String name = viegasPath.split("/")[viegasPath.split("/").length - 1];
-            name = name.replace("VIEGAS", "ALL");
-
-            pathToWrite = pathToWrite + name;
-
-            ArffSaver saverNormal = new ArffSaver();
-            saverNormal.setInstances(dataAll);
-            saverNormal.setFile(new File(pathToWrite));
-            saverNormal.writeBatch();
-
-            System.out.println(pathToWrite);
-
-        }
-
-        System.exit(1);
-
-        /*
 
         int j = 0;
 
@@ -344,17 +251,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 try {
                     for (int k = i; k < iUpper; k++) {
                         System.out.println("Thread: [" + k + "/" + iUpper + "]");
-                        String s = null;
-                        String[] s1 = testFiles.get(k);
-                        if (featureSet.equals("VIEGAS")) {
-                            s = s1[0];
-                        } else if (featureSet.equals("NIGEL")) {
-                            s = s1[1];
-                        } else if (featureSet.equals("MOORE")) {
-                            s = s1[2];
-                        } else if (featureSet.equals("ORUNADA")) {
-                            s = s1[3];
-                        }
+                        String s = testFiles.get(k);
+
 
                         Instances dataTest = mlModelBuilder.openFile(s);
                         dataTest = mlModelBuilder.getAsNormalizeFeatures(dataTest);
@@ -414,6 +312,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         conformalEvaluatorBatch.setStartWriting(true);
 
+
+        testFiles = testFiles.subList(240,300);
 
         threads = new ArrayList<>();
         jump = testFiles.size() / 20;
@@ -754,6 +654,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        */
+
     }
 }
