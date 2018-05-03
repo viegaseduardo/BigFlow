@@ -33,7 +33,7 @@ public class ConformalEvaluator_Batch_Classifier {
     private Instances attackDataset;
 
     public ConformalEvaluator_Batch_Classifier() {
-        this.startWriting = false;
+        this.startWriting = true;
     }
 
 

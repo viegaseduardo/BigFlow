@@ -41,7 +41,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         System.out.println("Path to test directory: " + this.folderPath);
         ArrayList<String> testFilesAux = new ArrayList();
-        mlModelBuilder.findFilesForTest(this.folderPath,featureSet, testFilesAux);
+        mlModelBuilder.findFilesForTest(this.folderPath, featureSet, testFilesAux);
         this.testFiles = testFilesAux;
 
         java.util.Collections.sort(testFiles);
@@ -110,7 +110,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             dataTrainORUNADA = mlModelBuilder.removeParticularAttributesOrunada(dataTrainORUNADA);
 
             dataTrain = dataTrainORUNADA;
-        }else if (featureSet.equals("ALL")) {
+        } else if (featureSet.equals("ALL")) {
 
             Instances dataTrainALL = mlModelBuilder.openFile(testFiles.get(0));
             dataTrainALL.randomize(new Random(1));
@@ -153,7 +153,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
-
 
 
         int j = 0;
@@ -241,11 +240,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             TestClass(int i, int iUpper, Classifier classifier) {
                 this.i = i;
                 this.iUpper = iUpper;
-                try {
-                    this.classifier = weka.classifiers.AbstractClassifier.makeCopy(classifier);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                this.classifier = classifier;
+
             }
 
             public void run() {
@@ -267,7 +263,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                         for (int counter = 0; counter < dataTest.size(); counter++) {
                             Instance inst = dataTest.get(counter);
-                            double prob[] = classifier.distributionForInstance(inst);
+                            double prob[] = null;
+                            synchronized (classifier) {
+                                prob =  classifier.distributionForInstance(inst);
+                            }
 
 
                             synchronized (stats) {
@@ -280,7 +279,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                                     if (inst.classValue() == 0.0d) {
                                         stats.acertou++;
                                     }
-                                }else{
+                                } else {
                                     if (inst.classValue() == 1.0d) {
                                         stats.acertou++;
                                     }
@@ -316,7 +315,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         int index = 0;
         threads.clear();
 
-        for(; index < 30; index = index + 5) {
+        for (; index < 30; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
             threads.add(t1);
         }
@@ -331,7 +330,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         threads.clear();
 
-        for(; index < 60; index = index + 5) {
+        for (; index < 60; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
             threads.add(t1);
         }
@@ -346,7 +345,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         threads.clear();
 
-        for(; index < 90; index = index + 5) {
+        for (; index < 90; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
             threads.add(t1);
         }
@@ -361,23 +360,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         threads.clear();
 
-        for(; index < 120; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-
-        threads.clear();
-
-        for(; index < 150; index = index + 5) {
+        for (; index < 120; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
             threads.add(t1);
         }
@@ -393,7 +376,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         threads.clear();
 
-        for(; index < 180; index = index + 5) {
+        for (; index < 150; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
             threads.add(t1);
         }
@@ -409,37 +392,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         threads.clear();
 
-        for(; index < 210; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-        threads.clear();
-
-        for(; index < 240; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-        threads.clear();
-
-        for(; index < 270; index = index + 5) {
+        for (; index < 180; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
             threads.add(t1);
         }
@@ -455,7 +408,53 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         threads.clear();
 
-        for(; index < 300; index = index + 5) {
+        for (; index < 210; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+        threads.clear();
+
+        for (; index < 240; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+        threads.clear();
+
+        for (; index < 270; index = index + 5) {
+            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            threads.add(t1);
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
+        listValueslThreadedNormal.clear();
+        listValueslThreadedAttack.clear();
+
+
+        threads.clear();
+
+        for (; index < 300; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
             threads.add(t1);
         }
