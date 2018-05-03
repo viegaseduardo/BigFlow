@@ -68,6 +68,11 @@
             <version>2017.10</version>
             <systemPath>${basedir}/libs/moa-2017.10-SNAPSHOT.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>isolationForest</artifactId>
+            <version>1.0.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

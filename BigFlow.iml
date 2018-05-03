@@ -219,5 +219,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: nz.ac.waikato.cms.weka:isolationForest:1.0.2" level="project" />
   </component>
 </module>
