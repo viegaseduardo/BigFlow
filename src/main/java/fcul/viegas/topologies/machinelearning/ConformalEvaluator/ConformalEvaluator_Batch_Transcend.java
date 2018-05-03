@@ -43,11 +43,13 @@ public class ConformalEvaluator_Batch_Transcend {
         ConformalEvaluator_BatchClassifier_IsolationForest isolationNormal = new ConformalEvaluator_BatchClassifier_IsolationForest();
         ConformalEvaluator_BatchClassifier_IsolationForest isolationAttack = new ConformalEvaluator_BatchClassifier_IsolationForest();
         isolationNormal.setNumTrees(1000);
-        isolationNormal.setSubsampleSize(1024);
+        isolationNormal.setSubsampleSize(128);
         isolationAttack.setNumTrees(1000);
-        isolationAttack.setSubsampleSize(1024);
+        isolationAttack.setSubsampleSize(128);
 
+        System.out.println("building normal classifier");
         isolationNormal.buildClassifier(dataTrainNormal);
+        System.out.println("building attack classifier");
         isolationAttack.buildClassifier(dataTrainAttack);
 
         this.conformalEvaluatorClassifierNormal = isolationNormal;
