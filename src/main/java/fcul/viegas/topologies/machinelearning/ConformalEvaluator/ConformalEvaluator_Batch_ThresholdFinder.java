@@ -189,7 +189,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         for (int i = 0; i < 30; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
-            for(int j = 0; j < dataTrainInc.size(); j++){
+            for(int j = 0; j < 2000; j++){
                 dataTrainConformal.add(dataTrainInc.get(j));
             }
         }
