@@ -48,7 +48,7 @@ public class ConformalEvaluator_Batch_Classifier {
         this.conformalFeaturesEvaluator.buildConformalEvaluator_Batch_Features(dataTrain);
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building conformal evaluator...");
-        this.conformalTranscend.buildConformal(dataTrain, true, null);
+        this.conformalTranscend.buildConformal(dataTrain, dataTrain);
 
         System.out.println("ConformalEvaluator_Batch_Classifier - Building feature for classifiers...");
         ArrayList<double[]> instancesConformalNormal = new ArrayList<>();

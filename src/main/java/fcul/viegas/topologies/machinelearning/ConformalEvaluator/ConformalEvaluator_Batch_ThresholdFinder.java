@@ -156,7 +156,28 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
         ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(200, 100));
-        conformalEvaluator.buildConformal(dataTrain, true, null);
+
+        Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
+        dataTrainConformal.randomize(new Random(1));
+        for (int i = 1; i < 20; i++) {
+            Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
+            dataTrainInc.randomize(new Random(1));
+            for (Instance inst : dataTrainInc) {
+                dataTrainConformal.add(inst);
+            }
+        }
+        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(20));
+        dataTestConformal.randomize(new Random(1));
+        for (int i = 20; i < 60; i++) {
+            Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
+            dataTrainInc.randomize(new Random(1));
+            for (Instance inst : dataTrainInc) {
+                dataTestConformal.add(inst);
+            }
+        }
+
+
+        conformalEvaluator.buildConformal(dataTrain, dataTestConformal);
 
 
         Instances dataTest = mlModelBuilder.openFile(testFiles.get(240));
@@ -168,7 +189,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 dataTest.add(inst);
             }
         }
-
+/*
         double[] classGivenByClassifier = new double[dataTest.size()];
         int j = 0;
 
@@ -234,7 +255,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         //conformalEvaluatorBatch.buildEvaluator(dataTrain, classGivenByClassifier, probabilities);
 
         conformalEvaluator.buildConformal(dataTest, false, classGivenByClassifier);
-
+*/
         List<ValueForRejectEvaluation> listValueslThreadedNormal = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
         List<ValueForRejectEvaluation> listValueslThreadedAttack = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
 
@@ -308,22 +329,30 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             }
         }
 
-        /*
-        conformalEvaluatorBatch.setStartWriting(true);
+
 
         int index = 0;
-        threads.clear();
-
-        for (; index < 30; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
+        ArrayList<Thread> threads = new ArrayList<>();
+        int jump = dataTest.size() / 20;
+        int start = 0;
+        for (int nThreads = 0; nThreads < 20; nThreads++) {
+            if (nThreads + 1 == 20) {
+                Thread t = new Thread(new TestClass(start, dataTest.size(), classifier));
+                t.start();
+                threads.add(t);
+                start += jump;
+            } else {
+                Thread t = new Thread(new TestClass(start, start + jump, classifier));
+                t.start();
+                threads.add(t);
+                start += jump;
+            }
         }
 
         for (Thread t : threads) {
             t.join();
         }
-
+/*
         conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
         listValueslThreadedNormal.clear();
         listValueslThreadedAttack.clear();
