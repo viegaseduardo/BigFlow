@@ -36,7 +36,7 @@ public class ConformalEvaluator_Batch_Transcend {
 
         int nInstancesNormal = 0;
         int nInstancesAttack = 0;
-        if(!updateInternalEvaluator) {
+        if(updateInternalEvaluator) {
             for (Instance inst : insts) {
                 if (inst.classValue() == 0.0d) {
                     nInstancesNormal++;
@@ -88,7 +88,7 @@ public class ConformalEvaluator_Batch_Transcend {
                             }
                         }
                         if(k < i){
-                            if(!updateInternalEvaluator) {
+                            if(updateInternalEvaluator) {
                                 if (insts.get(k).classValue() == 0.0d) {
                                     iNormal++;
                                 } else {
@@ -102,7 +102,7 @@ public class ConformalEvaluator_Batch_Transcend {
                                 }
                             }
                         }else{
-                            if(!updateInternalEvaluator) {
+                            if(updateInternalEvaluator) {
                                 if (insts.get(k).classValue() == 0.0d) {
                                     nonConformityMeasures[0][iNormal] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 0.0d);
                                     iNormal++;

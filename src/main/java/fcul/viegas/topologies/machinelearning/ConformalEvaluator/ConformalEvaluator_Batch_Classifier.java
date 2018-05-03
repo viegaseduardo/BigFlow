@@ -40,7 +40,7 @@ public class ConformalEvaluator_Batch_Classifier {
 
     public void buildEvaluator(Instances dataTrain, double[] classGivenByClassifier, double[] probabilities) throws Exception {
 
-        this.conformalTranscend = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(200, 100));
+        this.conformalTranscend = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(100, 100));
         //this.conformalTranscend = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
         this.conformalFeaturesEvaluator = new ConformalEvaluator_Batch_Features();
 
