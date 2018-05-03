@@ -194,7 +194,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             }
         }
         System.out.println("Opening testing file...");
-        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(150));
+        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(31));
         dataTestConformal.randomize(new Random(1));
         dataTestConformal.clear();
         for (int i = 31; i < 60; i++) {
@@ -208,8 +208,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         conformalEvaluator.buildConformal(dataTrain, dataTestConformal);
 
-
-        Instances dataTest = mlModelBuilder.openFile(testFiles.get(240));
+/*
+        Instances dataTest = mlModelBuilder.openFile(testFiles.get(31));
         dataTest.randomize(new Random(1));
         for (int i = 241; i < 300; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
@@ -218,6 +218,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 dataTest.add(inst);
             }
         }
+*/
+        Instances dataTest = new Instances(dataTestConformal);
 
         List<ValueForRejectEvaluation> listValueslThreadedNormal = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
         List<ValueForRejectEvaluation> listValueslThreadedAttack = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
