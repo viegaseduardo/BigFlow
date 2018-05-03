@@ -157,7 +157,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
         ObjectOutputStream oos = new ObjectOutputStream(
-                new FileOutputStream("model"));
+                new FileOutputStream("/home/viegas/model"));
         oos.writeObject(classifier);
         oos.flush();
         oos.close();
