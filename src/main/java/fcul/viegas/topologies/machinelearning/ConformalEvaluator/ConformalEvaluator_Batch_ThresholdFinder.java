@@ -155,7 +155,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
-        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(500, 100));
+        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
 
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
         dataTrainConformal.randomize(new Random(1));
@@ -166,7 +166,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 dataTrainConformal.add(inst);
             }
         }
-        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(20));
+        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(150));
         dataTestConformal.randomize(new Random(1));
         for (int i = 150; i < 180; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
@@ -248,7 +248,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         if (prob[0] >= prob[1]) {
                             values.predictClass = 0.0d;
                             values.instClass = inst.classValue();
-                            values.alpha = conformalEvaluator.getPValueForNormal(inst)* (1 - conformalEvaluator.getPValueForAttack(inst));
+                            values.alpha = conformalEvaluator.getPValueForNormal(inst) * (1 - conformalEvaluator.getPValueForAttack(inst));
                             listValueslThreadedNormal.add(values);
                         } else {
                             values.predictClass = 1.0d;
