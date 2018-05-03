@@ -210,9 +210,9 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         threadLoadModel.join();
         classifier = loadModel.classifier;
 
-        int indexTest = 0;
+        int indexTest = 60;
 
-        while(true) {
+        while(indexTest < 300) {
 
             System.out.println("Oppening indexTest " + indexTest);
             Instances dataTest = mlModelBuilder.openFile(testFiles.get(indexTest));
@@ -291,12 +291,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             if (prob[0] >= prob[1]) {
                                 values.predictClass = 0.0d;
                                 values.instClass = inst.classValue();
-                                values.alpha = 1.0d - conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
+                                values.alpha = conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
                                 listValueslThreadedNormal.add(values);
                             } else {
                                 values.predictClass = 1.0d;
                                 values.instClass = inst.classValue();
-                                values.alpha = 1.0d - conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
+                                values.alpha = conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
                                 listValueslThreadedAttack.add(values);
                             }
                         }
