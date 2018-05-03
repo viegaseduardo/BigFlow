@@ -1,6 +1,7 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
+import fcul.viegas.topologies.machinelearning.method.Topologies_EVALUATION_DISTRIBUTED_HYBRID_CASCADE_WithConformal;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
@@ -154,6 +155,13 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
+
+        ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream("model"));
+        oos.writeObject(classifier);
+        oos.flush();
+        oos.close();
+        System.exit(1);
 
         ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(100, 100));
 
