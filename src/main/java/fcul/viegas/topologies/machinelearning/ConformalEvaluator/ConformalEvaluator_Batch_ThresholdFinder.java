@@ -155,11 +155,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
-        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
+        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(100, 100));
 
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
         dataTrainConformal.randomize(new Random(1));
-        for (int i = 1; i < 30; i++) {
+        for (int i = 1; i < 60; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
@@ -168,7 +168,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         }
         Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(150));
         dataTestConformal.randomize(new Random(1));
-        for (int i = 150; i < 180; i++) {
+        for (int i = 151; i < 180; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
@@ -182,7 +182,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         Instances dataTest = mlModelBuilder.openFile(testFiles.get(240));
         dataTest.randomize(new Random(1));
-        for (int i = 240; i < 300; i++) {
+        for (int i = 241; i < 300; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
@@ -210,19 +210,28 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             TestClass(int i, int iUpper, Classifier classifier) {
                 this.i = i;
                 this.iUpper = iUpper;
-                try {
-                    this.classifier = AbstractClassifier.makeCopy(classifier);
-                }catch(Exception ex){
-                    ex.printStackTrace();
-                }
+                this.classifier = classifier;
+
             }
 
             public void run() {
                 try {
+                    int pct = 0;
                     for (int k = i; k < iUpper; k++) {
 
+                        if (k >= i) {
+                            if (k % ((dataTest.size()) / 100) == 0) {
+                                pct++;
+                                System.out.println("\tTestClass " + pct + "% ...[" + k + "/" + iUpper + "]");
+                            }
+                        }
+
                         Instance inst = dataTest.get(k);
-                        double prob[] = classifier.distributionForInstance(inst);;
+                        double prob[] = null;
+                        synchronized (classifier) {
+                            prob = classifier.distributionForInstance(inst);
+                        }
+
 
 
                         synchronized (stats) {
@@ -262,7 +271,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 }
             }
         }
-
 
 
         int index = 0;
