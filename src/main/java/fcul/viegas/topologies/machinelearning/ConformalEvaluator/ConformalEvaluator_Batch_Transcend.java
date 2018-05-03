@@ -26,19 +26,8 @@ public class ConformalEvaluator_Batch_Transcend {
         Instances newinsts = Filter.useFilter(instTrain, balancer);
 
 
-        this.conformalEvaluatorClassifier.buildClassifier(newinsts);
 
-        Instances dataTrainNormal = new Instances(instTrain);
-        Instances dataTrainAttack = new Instances(instTrain);
-        dataTrainAttack.clear();
-        dataTrainNormal.clear();
-        for (Instance inst : instTrain) {
-            if (inst.classValue() == 0.0d) {
-                dataTrainNormal.add(inst);
-            } else {
-                dataTrainAttack.add(inst);
-            }
-        }
+        this.conformalEvaluatorClassifier.buildClassifier(newinsts);
 
 
         this.nonConformityMeasures = new Double[2][];
