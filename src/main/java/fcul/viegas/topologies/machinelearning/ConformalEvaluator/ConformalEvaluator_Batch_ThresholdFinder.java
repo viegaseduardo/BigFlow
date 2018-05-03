@@ -147,6 +147,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         System.out.println("STATIC - Building " + classifierToBuild + " classifier...");
         //se nao for nem A nem B, da pau...
+        /*
         classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
                 ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
@@ -155,13 +156,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
+*/
+        ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream("/home/viegas/model"));
+        classifier = (Classifier) ois.readObject();
+        ois.close();
 
-        ObjectOutputStream oos = new ObjectOutputStream(
-                new FileOutputStream("/home/viegas/model"));
-        oos.writeObject(classifier);
-        oos.flush();
-        oos.close();
-        System.exit(1);
 
         ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(100, 100));
 
@@ -176,11 +176,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         }
         Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(150));
         dataTestConformal.randomize(new Random(1));
-        for (int i = 151; i < 180; i++) {
+        dataTestConformal.clear();
+        for (int i = 150; i < 180; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
-            for (Instance inst : dataTrainInc) {
-                dataTestConformal.add(inst);
+            for(int j = 0; j < 2000; j++){
+                dataTestConformal.add(dataTrainInc.get(j));
             }
         }
 
