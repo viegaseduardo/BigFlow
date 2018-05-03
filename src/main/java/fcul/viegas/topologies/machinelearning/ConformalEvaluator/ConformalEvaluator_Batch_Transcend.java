@@ -9,25 +9,24 @@ import java.util.ArrayList;
 
 public class ConformalEvaluator_Batch_Transcend {
 
-    private ConformalEvaluator_BatchClassifier_Transcend conformalEvaluatorClassifierNormal;
-    private ConformalEvaluator_BatchClassifier_Transcend conformalEvaluatorClassifierAttack;
+    private ConformalEvaluator_BatchClassifier_Transcend conformalEvaluatorClassifier;
     private Double[][] nonConformityMeasures;
     private Double[][] pvalues;
 
     public ConformalEvaluator_Batch_Transcend(ConformalEvaluator_BatchClassifier_Transcend conformalEvaluatorClassifier) {
-        //this.conformalEvaluatorClassifier = conformalEvaluatorClassifier;
+        this.conformalEvaluatorClassifier = conformalEvaluatorClassifier;
     }
 
     public void buildConformal(Instances instTrain, Instances instTest) throws Exception {
 
         System.out.println("CONFORMAL: building classifier");
 
-        //ClassBalancer balancer = new ClassBalancer();
-        //balancer.setInputFormat(instTrain);
-        //Instances newinsts = Filter.useFilter(instTrain, balancer);
+        ClassBalancer balancer = new ClassBalancer();
+        balancer.setInputFormat(instTrain);
+        Instances newinsts = Filter.useFilter(instTrain, balancer);
 
 
-        //this.conformalEvaluatorClassifier.buildClassifier(instTrain);
+        this.conformalEvaluatorClassifier.buildClassifier(newinsts);
 
         Instances dataTrainNormal = new Instances(instTrain);
         Instances dataTrainAttack = new Instances(instTrain);
@@ -40,20 +39,7 @@ public class ConformalEvaluator_Batch_Transcend {
                 dataTrainAttack.add(inst);
             }
         }
-        ConformalEvaluator_BatchClassifier_IsolationForest isolationNormal = new ConformalEvaluator_BatchClassifier_IsolationForest();
-        ConformalEvaluator_BatchClassifier_IsolationForest isolationAttack = new ConformalEvaluator_BatchClassifier_IsolationForest();
-        isolationNormal.setNumTrees(1000);
-        isolationNormal.setSubsampleSize(128);
-        isolationAttack.setNumTrees(1000);
-        isolationAttack.setSubsampleSize(128);
 
-        System.out.println("building normal classifier");
-        isolationNormal.buildClassifier(dataTrainNormal);
-        System.out.println("building attack classifier");
-        isolationAttack.buildClassifier(dataTrainAttack);
-
-        this.conformalEvaluatorClassifierNormal = isolationNormal;
-        this.conformalEvaluatorClassifierAttack = isolationAttack;
 
         this.nonConformityMeasures = new Double[2][];
         this.pvalues = new Double[2][];
@@ -111,10 +97,10 @@ public class ConformalEvaluator_Batch_Transcend {
 
                         } else {
                             if (instTest.get(k).classValue() == 0.0d) {
-                                nonConformityMeasures[0][iNormal] = isolationNormal.computeNonConformityForClass(insts.get(k), 0.0d);
+                                nonConformityMeasures[0][iNormal] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 0.0d);
                                 iNormal++;
                             } else {
-                                nonConformityMeasures[1][iAttack] = isolationAttack.computeNonConformityForClass(insts.get(k), 1.0d);
+                                nonConformityMeasures[1][iAttack] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 1.0d);
                                 iAttack++;
                             }
 
@@ -150,7 +136,7 @@ public class ConformalEvaluator_Batch_Transcend {
     }
 
     public double getPValueForAttack(Instance inst) throws Exception {
-        double nonConformity = this.conformalEvaluatorClassifierAttack.computeNonConformityForClass(inst, 1.0d);
+        double nonConformity = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 1.0d);
         int nInstancesHigher = 0;
         for (int j = 0; j < this.nonConformityMeasures[1].length; j++) {
             if (this.nonConformityMeasures[1][j] >= nonConformity) {
@@ -161,7 +147,7 @@ public class ConformalEvaluator_Batch_Transcend {
     }
 
     public double getPValueForNormal(Instance inst) throws Exception {
-        double nonConformity = this.conformalEvaluatorClassifierNormal.computeNonConformityForClass(inst, 0.0d);
+        double nonConformity = this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, 0.0d);
         int nInstancesHigher = 0;
         for (int j = 0; j < this.nonConformityMeasures[0].length; j++) {
             if (this.nonConformityMeasures[0][j] >= nonConformity) {
@@ -172,11 +158,7 @@ public class ConformalEvaluator_Batch_Transcend {
     }
 
     public double getNonConformity(Instance inst, double givenClass) throws Exception {
-        if(givenClass == 0.0d)
-        {
-            return this.conformalEvaluatorClassifierNormal.computeNonConformityForClass(inst, givenClass);
-        }
-        return this.conformalEvaluatorClassifierAttack.computeNonConformityForClass(inst, givenClass);
+        return this.conformalEvaluatorClassifier.computeNonConformityForClass(inst, givenClass);
     }
 
 }

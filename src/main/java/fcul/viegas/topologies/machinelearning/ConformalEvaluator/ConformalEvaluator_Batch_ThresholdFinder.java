@@ -208,18 +208,16 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         conformalEvaluator.buildConformal(dataTrain, dataTestConformal);
 
-/*
-        Instances dataTest = mlModelBuilder.openFile(testFiles.get(31));
+
+        Instances dataTest = mlModelBuilder.openFile(testFiles.get(120));
         dataTest.randomize(new Random(1));
-        for (int i = 241; i < 300; i++) {
+        for (int i = 121; i < 150; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
                 dataTest.add(inst);
             }
         }
-*/
-        Instances dataTest = new Instances(dataTestConformal);
 
         List<ValueForRejectEvaluation> listValueslThreadedNormal = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
         List<ValueForRejectEvaluation> listValueslThreadedAttack = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
@@ -290,12 +288,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         if (prob[0] >= prob[1]) {
                             values.predictClass = 0.0d;
                             values.instClass = inst.classValue();
-                            values.alpha = conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
+                            values.alpha = 1.0d - conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
                             listValueslThreadedNormal.add(values);
                         } else {
                             values.predictClass = 1.0d;
                             values.instClass = inst.classValue();
-                            values.alpha = conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
+                            values.alpha = 1.0d - conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
                             listValueslThreadedAttack.add(values);
                         }
                     }
