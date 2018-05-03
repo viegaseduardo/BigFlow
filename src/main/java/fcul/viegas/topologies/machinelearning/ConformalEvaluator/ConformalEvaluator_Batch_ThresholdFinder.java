@@ -1,6 +1,7 @@
 package fcul.viegas.topologies.machinelearning.ConformalEvaluator;
 
 import fcul.viegas.topologies.machinelearning.MachineLearningModelBuilders;
+import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -240,8 +241,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
             TestClass(int i, int iUpper, Classifier classifier) {
                 this.i = i;
                 this.iUpper = iUpper;
-                this.classifier = classifier;
-
+                try {
+                    this.classifier = AbstractClassifier.makeCopy(classifier);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
             }
 
             public void run() {
@@ -263,10 +267,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
                         for (int counter = 0; counter < dataTest.size(); counter++) {
                             Instance inst = dataTest.get(counter);
-                            double prob[] = null;
-                            synchronized (classifier) {
-                                prob =  classifier.distributionForInstance(inst);
-                            }
+                            double prob[] = classifier.distributionForInstance(inst);;
 
 
                             synchronized (stats) {
@@ -317,6 +318,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 30; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -332,6 +334,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 60; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -347,6 +350,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 90; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -362,6 +366,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 120; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -378,6 +383,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 150; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -394,6 +400,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 180; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -410,6 +417,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 210; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -425,6 +433,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 240; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -440,6 +449,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 270; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
@@ -456,6 +466,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         for (; index < 300; index = index + 5) {
             Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
+            t1.start();
             threads.add(t1);
         }
 
