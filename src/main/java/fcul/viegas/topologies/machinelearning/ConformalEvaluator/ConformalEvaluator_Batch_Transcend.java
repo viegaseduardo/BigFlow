@@ -21,12 +21,12 @@ public class ConformalEvaluator_Batch_Transcend {
 
         System.out.println("CONFORMAL: building classifier");
 
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(instTrain);
-        Instances newinsts = Filter.useFilter(instTrain, balancer);
+        //ClassBalancer balancer = new ClassBalancer();
+        //balancer.setInputFormat(instTrain);
+        //Instances newinsts = Filter.useFilter(instTrain, balancer);
 
 
-        this.conformalEvaluatorClassifier.buildClassifier(newinsts);
+        this.conformalEvaluatorClassifier.buildClassifier(instTrain);
 
 
         this.nonConformityMeasures = new Double[2][];
