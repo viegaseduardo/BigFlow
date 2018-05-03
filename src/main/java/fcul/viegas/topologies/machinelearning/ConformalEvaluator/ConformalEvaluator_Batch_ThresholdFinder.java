@@ -155,11 +155,11 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
-        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(200, 100));
+        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(500, 100));
 
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
         dataTrainConformal.randomize(new Random(1));
-        for (int i = 1; i < 20; i++) {
+        for (int i = 1; i < 30; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
@@ -168,7 +168,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         }
         Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(20));
         dataTestConformal.randomize(new Random(1));
-        for (int i = 20; i < 60; i++) {
+        for (int i = 30; i < 60; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for (Instance inst : dataTrainInc) {
@@ -189,73 +189,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 dataTest.add(inst);
             }
         }
-/*
-        double[] classGivenByClassifier = new double[dataTest.size()];
-        int j = 0;
 
-        class TrainClass implements Runnable {
-            int ilower;
-            int iUpper;
-            Classifier classifier;
-            Instances dataTrain;
-
-            TrainClass(int ilower, int iUpper, Classifier classifier, Instances dataTrain) {
-                this.ilower = ilower;
-                this.iUpper = iUpper;
-                this.dataTrain = dataTrain;
-                try {
-                    this.classifier = weka.classifiers.AbstractClassifier.makeCopy(classifier);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-            public void run() {
-                try {
-                    for (int k = this.ilower; k < iUpper; k++) {
-                        Instance inst = dataTrain.get(k);
-                        double predict = 0.0d;
-                        predict = classifier.classifyInstance(inst);
-
-                        if (Double.compare(predict, 0.0d) == 0) {
-                            classGivenByClassifier[k] = 0.0d;
-                            //probabilities[k] = classifier.distributionForInstance(inst)[0];
-                        } else {
-                            classGivenByClassifier[k] = 1.0d;
-                            //probabilities[k] = classifier.distributionForInstance(inst)[1];
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-
-        ArrayList<Thread> threads = new ArrayList<>();
-        int jump = dataTest.size() / 20;
-        int start = 0;
-        for (int nThreads = 0; nThreads < 20; nThreads++) {
-            if (nThreads + 1 == 20) {
-                Thread t = new Thread(new TrainClass(start, dataTest.size(), classifier, dataTest));
-                t.start();
-                threads.add(t);
-                start += jump;
-            } else {
-                Thread t = new Thread(new TrainClass(start, start + jump, classifier, dataTest));
-                t.start();
-                threads.add(t);
-                start += jump;
-            }
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        //conformalEvaluatorBatch.buildEvaluator(dataTrain, classGivenByClassifier, probabilities);
-
-        conformalEvaluator.buildConformal(dataTest, false, classGivenByClassifier);
-*/
         List<ValueForRejectEvaluation> listValueslThreadedNormal = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
         List<ValueForRejectEvaluation> listValueslThreadedAttack = Collections.synchronizedList(new ArrayList<ValueForRejectEvaluation>());
 
@@ -314,12 +248,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         if (prob[0] >= prob[1]) {
                             values.predictClass = 0.0d;
                             values.instClass = inst.classValue();
-                            values.alpha = conformalEvaluator.getPValueForNormal(inst);
+                            values.alpha = conformalEvaluator.getPValueForNormal(inst)* (1 - conformalEvaluator.getPValueForAttack(inst));
                             listValueslThreadedNormal.add(values);
                         } else {
                             values.predictClass = 1.0d;
                             values.instClass = inst.classValue();
-                            values.alpha = conformalEvaluator.getPValueForAttack(inst);
+                            values.alpha = conformalEvaluator.getPValueForAttack(inst) * (1 - conformalEvaluator.getPValueForNormal(inst));
                             listValueslThreadedAttack.add(values);
                         }
                     }
@@ -352,156 +286,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         for (Thread t : threads) {
             t.join();
         }
-/*
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-        threads.clear();
-
-        for (; index < 60; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-        threads.clear();
-
-        for (; index < 90; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-        threads.clear();
-
-        for (; index < 120; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-
-        threads.clear();
-
-        for (; index < 150; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-
-        threads.clear();
-
-        for (; index < 180; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-
-        threads.clear();
-
-        for (; index < 210; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-        threads.clear();
-
-        for (; index < 240; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-        threads.clear();
-
-        for (; index < 270; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        conformalEvaluatorBatch.writeDatasets("normal_" + index + ".arff", "attack_" + index + ".arff");
-        listValueslThreadedNormal.clear();
-        listValueslThreadedAttack.clear();
-
-
-        threads.clear();
-
-        for (; index < 300; index = index + 5) {
-            Thread t1 = new Thread(new TestClass(index, index + 5, classifier));
-            t1.start();
-            threads.add(t1);
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-        */
-
 
         //System.exit(1);
         //conformalEvaluatorBatch.setStartWriting(false);
