@@ -186,18 +186,18 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
         dataTrainConformal.randomize(new Random(1));
         dataTrainConformal.clear();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 1; i < 60; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
-            for(int j = 0; j < 2000; j++){
+            for(int j = 0; j < dataTrainInc.size(); j++){
                 dataTrainConformal.add(dataTrainInc.get(j));
             }
         }
         System.out.println("Opening testing file...");
-        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(31));
+        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(60));
         dataTestConformal.randomize(new Random(1));
         dataTestConformal.clear();
-        for (int i = 31; i < 60; i++) {
+        for (int i = 61; i < 90; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for(int j = 0; j < dataTrainInc.size(); j++){
