@@ -155,8 +155,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
 
-        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(1000, 100));
-        conformalEvaluator.buildConformal(dataTrain, false, null);
+        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(200, 100));
+        conformalEvaluator.buildConformal(dataTrain, true, null);
 
 
         Instances dataTest = mlModelBuilder.openFile(testFiles.get(240));
