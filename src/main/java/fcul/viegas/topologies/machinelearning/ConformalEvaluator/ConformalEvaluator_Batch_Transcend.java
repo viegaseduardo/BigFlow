@@ -17,15 +17,18 @@ public class ConformalEvaluator_Batch_Transcend {
         this.conformalEvaluatorClassifier = conformalEvaluatorClassifier;
     }
 
-    public void buildConformal(Instances insts) throws Exception {
+    public void buildConformal(Instances insts, boolean updateInternalEvaluator, double[] classGivenByClassifier) throws Exception {
 
         System.out.println("CONFORMAL: building classifier");
 
-        ClassBalancer balancer = new ClassBalancer();
-        balancer.setInputFormat(insts);
-        Instances newinsts = Filter.useFilter(insts, balancer);
+        if(updateInternalEvaluator) {
+            ClassBalancer balancer = new ClassBalancer();
+            balancer.setInputFormat(insts);
+            Instances newinsts = Filter.useFilter(insts, balancer);
 
-        this.conformalEvaluatorClassifier.buildClassifier(newinsts);
+
+            this.conformalEvaluatorClassifier.buildClassifier(newinsts);
+        }
 
         this.nonConformityMeasures = new Double[2][];
         this.pvalues = new Double[2][];
@@ -33,11 +36,21 @@ public class ConformalEvaluator_Batch_Transcend {
 
         int nInstancesNormal = 0;
         int nInstancesAttack = 0;
-        for (Instance inst : insts) {
-            if(inst.classValue() == 0.0d){
-                nInstancesNormal++;
-            }else{
-                nInstancesAttack++;
+        if(!updateInternalEvaluator) {
+            for (Instance inst : insts) {
+                if (inst.classValue() == 0.0d) {
+                    nInstancesNormal++;
+                } else {
+                    nInstancesAttack++;
+                }
+            }
+        }else{
+            for (int i = 0; i < insts.size(); i++) {
+                if (classGivenByClassifier[i] == 0.0d) {
+                    nInstancesNormal++;
+                } else {
+                    nInstancesAttack++;
+                }
             }
         }
 
@@ -75,18 +88,36 @@ public class ConformalEvaluator_Batch_Transcend {
                             }
                         }
                         if(k < i){
-                            if(insts.get(k).classValue() == 0.0d){
-                                iNormal++;
+                            if(!updateInternalEvaluator) {
+                                if (insts.get(k).classValue() == 0.0d) {
+                                    iNormal++;
+                                } else {
+                                    iAttack++;
+                                }
                             }else{
-                                iAttack++;
+                                if (classGivenByClassifier[k] == 0.0d) {
+                                    iNormal++;
+                                } else {
+                                    iAttack++;
+                                }
                             }
                         }else{
-                            if(insts.get(k).classValue() == 0.0d){
-                                nonConformityMeasures[0][iNormal] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 0.0d);
-                                iNormal++;
+                            if(!updateInternalEvaluator) {
+                                if (insts.get(k).classValue() == 0.0d) {
+                                    nonConformityMeasures[0][iNormal] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 0.0d);
+                                    iNormal++;
+                                } else {
+                                    nonConformityMeasures[1][iAttack] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 1.0d);
+                                    iAttack++;
+                                }
                             }else{
-                                nonConformityMeasures[1][iAttack] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 1.0d);
-                                iAttack++;
+                                if (classGivenByClassifier[k] == 0.0d) {
+                                    nonConformityMeasures[0][iNormal] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 0.0d);
+                                    iNormal++;
+                                } else {
+                                    nonConformityMeasures[1][iAttack] = conformalEvaluatorClassifier.computeNonConformityForClass(insts.get(k), 1.0d);
+                                    iAttack++;
+                                }
                             }
                         }
                     }
