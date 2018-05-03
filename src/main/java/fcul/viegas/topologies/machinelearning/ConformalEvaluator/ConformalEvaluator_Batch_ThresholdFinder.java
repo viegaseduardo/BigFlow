@@ -169,7 +169,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
         dataTrainConformal.randomize(new Random(1));
         dataTrainConformal.clear();
-        for (int i = 0; i < 60; i++) {
+        for (int i = 0; i < 30; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for(int j = 0; j < 2000; j++){
@@ -269,12 +269,12 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                         if (prob[0] >= prob[1]) {
                             values.predictClass = 0.0d;
                             values.instClass = inst.classValue();
-                            values.alpha = conformalEvaluator.getPValueForNormal(inst) * (1 - conformalEvaluator.getPValueForAttack(inst));
+                            values.alpha = conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
                             listValueslThreadedNormal.add(values);
                         } else {
                             values.predictClass = 1.0d;
                             values.instClass = inst.classValue();
-                            values.alpha = conformalEvaluator.getPValueForAttack(inst) * (1 - conformalEvaluator.getPValueForNormal(inst));
+                            values.alpha = conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
                             listValueslThreadedAttack.add(values);
                         }
                     }
