@@ -147,7 +147,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         System.out.println("STATIC - Building " + classifierToBuild + " classifier...");
         //se nao for nem A nem B, da pau...
-
+/*
         classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
                 ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
@@ -156,14 +156,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
+*/
 
-        ObjectOutputStream oos = new ObjectOutputStream(
-                new FileOutputStream("/home/viegas/model"));
-        oos.writeObject(classifier);
-        oos.flush();
-        oos.close();
-
-        System.exit(1);
         class LoadModel implements Runnable {
 
             public Classifier classifier;
@@ -187,13 +181,13 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         threadLoadModel.start();
 
 
-        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(1000, 100));
+        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_NearestNeighbor());
 
         System.out.println("Opening training file...");
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
         dataTrainConformal.randomize(new Random(1));
         //dataTrainConformal.clear();
-        for (int i = 1; i < 30; i++) {
+        for (int i = 1; i < 15; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for(int j = 0; j < dataTrainInc.size(); j++){
@@ -202,10 +196,10 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         }
         //a
         System.out.println("Opening testing file...");
-        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(30));
+        Instances dataTestConformal = mlModelBuilder.openFile(testFiles.get(15));
         dataTestConformal.randomize(new Random(1));
         //dataTestConformal.clear();
-        for (int i = 31; i < 60; i++) {
+        for (int i = 16; i < 30; i++) {
             Instances dataTrainInc = mlModelBuilder.openFile(testFiles.get(i));
             dataTrainInc.randomize(new Random(1));
             for(int j = 0; j < dataTrainInc.size(); j++){
@@ -217,7 +211,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         threadLoadModel.join();
         classifier = loadModel.classifier;
 
-        int indexTest = 60;
+        int indexTest = 30;
 
         while(indexTest < 300) {
 
