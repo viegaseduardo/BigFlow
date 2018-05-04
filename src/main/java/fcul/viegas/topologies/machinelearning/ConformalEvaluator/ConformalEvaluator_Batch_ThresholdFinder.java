@@ -291,12 +291,14 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             if (prob[0] >= prob[1]) {
                                 values.predictClass = 0.0d;
                                 values.instClass = inst.classValue();
-                                values.alpha = conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
+                                //values.alpha = conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
+                                values.alpha = prob[0];
                                 listValueslThreadedNormal.add(values);
                             } else {
                                 values.predictClass = 1.0d;
                                 values.instClass = inst.classValue();
-                                values.alpha = conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
+                                //values.alpha = conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
+                                values.alpha = prob[1];
                                 listValueslThreadedAttack.add(values);
                             }
                         }
