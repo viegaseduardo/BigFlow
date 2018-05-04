@@ -7,7 +7,7 @@ public class Modified_IBK extends IBk {
 
     public double getDistanceNearest(Instance inst){
         try {
-            return this.m_NNSearch.getDistanceFunction().distance(this.m_NNSearch.nearestNeighbour(inst), inst);
+            return this.m_NNSearch.getDistanceFunction().distance(this.m_NNSearch.kNearestNeighbours(inst, 1).get(0), inst);
         }catch(Exception ex){
             ex.printStackTrace();
             return 0.0d;
