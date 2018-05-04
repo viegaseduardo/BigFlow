@@ -33,7 +33,10 @@ public class ConformalEvaluator_BatchClassifier_NaiveBayes extends NaiveBayes im
     @Override
     public double computeNonConformityForClass(Instance inst, double classValue) throws Exception{
         double[] prob = this.distributionForInstance(inst);
-        int index = Utils.minIndex(prob);
-        return 1.0f - prob[index];
+        if(classValue == 0.0d){
+            return 1.0d - prob[0];
+        }else{
+            return 1.0d - prob[1];
+        }
     }
 }
