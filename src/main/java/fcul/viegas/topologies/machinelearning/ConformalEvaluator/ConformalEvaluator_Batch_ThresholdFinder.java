@@ -181,7 +181,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         threadLoadModel.start();
 
 
-        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(500,100));
+//        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(500,100));
+        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_NaiveBayes(false));
 
         System.out.println("Opening training file...");
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
