@@ -147,7 +147,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
 
         System.out.println("STATIC - Building " + classifierToBuild + " classifier...");
         //se nao for nem A nem B, da pau...
-        /*
+
         classifier = classifierToBuild.equals("naive")
                 ? mlModelBuilder.trainClassifierNaive(dataTrain) : classifierToBuild.equals("tree")
                 ? mlModelBuilder.trainClassifierTree(dataTrain) : classifierToBuild.equals("forest")
@@ -156,7 +156,14 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                 ? mlModelBuilder.trainClassifierExtraTrees(dataTrain) : classifierToBuild.equals("adaboost")
                 ? mlModelBuilder.trainClassifierAdaboostTree(dataTrain) : classifierToBuild.equals("hoeffding")
                 ? mlModelBuilder.trainClassifierHoeffing(dataTrain) : null;
-*/
+
+        ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream("/home/viegas/model"));
+        oos.writeObject(classifier);
+        oos.flush();
+        oos.close();
+
+        System.exit(1);
         class LoadModel implements Runnable {
 
             public Classifier classifier;
