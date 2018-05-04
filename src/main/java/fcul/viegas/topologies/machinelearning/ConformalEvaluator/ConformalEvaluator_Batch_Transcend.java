@@ -25,8 +25,6 @@ public class ConformalEvaluator_Batch_Transcend {
         balancer.setInputFormat(instTrain);
         Instances newinsts = Filter.useFilter(instTrain, balancer);
 
-
-
         this.conformalEvaluatorClassifier.buildClassifier(newinsts);
 
 
