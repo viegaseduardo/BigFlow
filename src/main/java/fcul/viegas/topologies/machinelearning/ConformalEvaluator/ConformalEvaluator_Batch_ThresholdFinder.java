@@ -181,7 +181,7 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
         threadLoadModel.start();
 
 
-        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_NearestNeighbor());
+        ConformalEvaluator_Batch_Transcend conformalEvaluator = new ConformalEvaluator_Batch_Transcend(new ConformalEvaluator_BatchClassifier_RandomForest(500,100));
 
         System.out.println("Opening training file...");
         Instances dataTrainConformal = mlModelBuilder.openFile(testFiles.get(0));
@@ -291,14 +291,14 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             if (prob[0] >= prob[1]) {
                                 values.predictClass = 0.0d;
                                 values.instClass = inst.classValue();
-                                //values.alpha = conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
-                                values.alpha = prob[0];
+                                values.alpha = conformalEvaluator.getPValueForNormal(inst);// * (1 - conformalEvaluator.getPValueForAttack(inst));
+                                //values.alpha = prob[0];
                                 listValueslThreadedNormal.add(values);
                             } else {
                                 values.predictClass = 1.0d;
                                 values.instClass = inst.classValue();
-                                //values.alpha = conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
-                                values.alpha = prob[1];
+                                values.alpha = conformalEvaluator.getPValueForAttack(inst);// * (1 - conformalEvaluator.getPValueForNormal(inst));
+                                //values.alpha = prob[1];
                                 listValueslThreadedAttack.add(values);
                             }
                         }
@@ -443,7 +443,6 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                                         nAtkAcc++;
                                     }
                                 }
-
                             }
 
                             if (nNormal == 0) {
@@ -455,6 +454,8 @@ public class ConformalEvaluator_Batch_ThresholdFinder {
                             if (n == 0) {
                                 n = 1;
                             }
+
+
 
 
                             outputList.add(iAttack + ";"
